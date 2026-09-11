@@ -1,0 +1,13 @@
+<library path="leonardo_hardware">
+    <class name="fd_left_hardware/FDLeftHardwareInterface"
+           type="fd_left_hardware::FDLeftHardwareInterface"
+           base_class_type="hardware_interface::SystemInterface">
+        <description>Force Dimension 左手omega硬件接口</description>
+    </class>
+
+    <class name="fd_right_hardware/FDRightHardwareInterface"
+           type="fd_right_hardware::FDRightHardwareInterface"
+           base_class_type="hardware_interface::SystemInterface">
+        <description>Force Dimension 右手omega硬件接口</description>
+    </class>
+</library>
