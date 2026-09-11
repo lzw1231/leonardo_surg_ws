@@ -62,7 +62,7 @@ ament_target_dependencies(${PROJECT_NAME} ${DEPENDENCIES})
 # 插件导出
 # ==============================================================================
 # 导出 hardware_interface 插件描述文件
-pluginlib_export_plugin_description_file(hardware_interface leonardo_hardware_plugins.xml)
+pluginlib_export_plugin_description_file(hardware_interface mtm_hardware_plugins.xml)
 
 # ==============================================================================
 # 安装规则

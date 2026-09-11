@@ -7,7 +7,7 @@
     <xacro:arg name="use_clutch" default="true"/>
 
     <!-- Import interface urdf file -->
-    <xacro:include filename="$(find raphael_description)/urdf/mtm/fd_right/fd_right.urdf.xacro"/>
+    <xacro:include filename="$(find mtm_description)/urdf/fd_right/fd_right.urdf.xacro"/>
     <xacro:haptic_interface
             robot_id="$(arg robot_id)"
             use_orientation="$(arg use_orientation)"
@@ -15,7 +15,7 @@
     />
 
     <!-- Import and setup interface ros2_control description -->
-    <xacro:include filename="$(find raphael_description)/urdf/mtm/fd_right/fd_right.r2c_hardware.xacro"/>
+    <xacro:include filename="$(find mtm_description)/urdf/fd_right/fd_right.r2c_hardware.xacro"/>
     <xacro:fd_ros2_control
             interface_id="-1"
             interface_sn="40819"

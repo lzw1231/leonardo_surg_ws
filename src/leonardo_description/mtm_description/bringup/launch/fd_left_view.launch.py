@@ -17,10 +17,10 @@ from launch.actions import ExecuteProcess
 
 def generate_launch_description():
     # fd_left 的 xacro 模型路径
-    robot_description_xacro = os.path.join(get_package_share_path("raphael_description"), 'urdf', 'mtm', 'fd_left', 'fd_left.config.xacro')
+    robot_description_xacro = os.path.join(get_package_share_path("mtm_description"), 'urdf', 'fd_left', 'fd_left.config.xacro')
 
     # RViz 的 config 路径
-    robot_config_rviz = os.path.join(get_package_share_path("raphael_description"), 'rviz', 'fd_left_config.rviz')
+    robot_config_rviz = os.path.join(get_package_share_path("mtm_description"), 'rviz', 'fd_left_config.rviz')
 
     # 机器人状态发布：编译xacro，输出robot_description与TF树
     robot_state_publisher_node = Node(

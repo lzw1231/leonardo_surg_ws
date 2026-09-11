@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
 project(ecm_hardware)
 
+# 启用 compile_commands.json 导出，以支持 IDE 代码索引
+set(_dummy ${CMAKE_EXPORT_COMPILE_COMMANDS})
+
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif ()
