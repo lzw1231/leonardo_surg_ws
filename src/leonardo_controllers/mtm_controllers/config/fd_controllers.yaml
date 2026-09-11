@@ -1,0 +1,40 @@
+fd_controller/controller_manager:
+  ros__parameters:
+    update_rate: 1000 # Hz
+
+    # broadcaster
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # 左手力控制器
+    fd_left_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    # 右手力控制器
+    fd_right_controller:
+      type: effort_controllers/JointGroupEffortController
+
+
+# ---------------- 左手控制器参数 ----------------
+fd_controller/fd_left_controller:
+  ros__parameters:
+    joints:
+      - fd_left_x
+      - fd_left_y
+      - fd_left_z
+      - fd_left_roll
+      - fd_left_pitch
+      - fd_left_yaw
+      - fd_left_gripper
+
+# ---------------- 右手控制器参数 ----------------
+fd_controller/fd_right_controller:
+  ros__parameters:
+    joints:
+      - fd_right_x
+      - fd_right_y
+      - fd_right_z
+      - fd_right_roll
+      - fd_right_pitch
+      - fd_right_yaw
+      - fd_right_gripper
