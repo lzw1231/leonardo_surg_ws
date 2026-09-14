@@ -6,10 +6,24 @@ fd_controller/controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+    # ---------------- 定义左手控制器 ----------------
     # 左手力控制器
     fd_left_controller:
       type: effort_controllers/JointGroupEffortController
 
+    # 左手末端位姿控制器
+    fd_left_ee_broadcaster:
+      type: ee_pose_broadcaster/EePoseBroadcaster
+
+    # 左手惯量控制器
+    fd_left_inertia_broadcaster:
+      type: fd_inertia_broadcaster/FdInertiaBroadcaster
+
+    # 左手夹爪控制器
+    fd_left_clutch_broadcaster:
+      type: fd_clutch_broadcaster/FdClutchBroadcaster
+
+    # ---------------- 定义右手控制器 ----------------
     # 右手力控制器
     fd_right_controller:
       type: effort_controllers/JointGroupEffortController
