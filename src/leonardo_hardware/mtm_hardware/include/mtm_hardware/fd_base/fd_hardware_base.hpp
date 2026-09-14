@@ -11,7 +11,7 @@ namespace fd_hardware_base{
      * 封装了 DHD SDK 的通用连接、配置、状态导出及生命周期管理逻辑。
      * 子类需实现具体的 read() 和 write() 方法以适配不同型号设备。
      */
-    class MTM_HARDWARE_PUBLIC FDHardwareBase : public hardware_interface::SystemInterface {
+    class FDHardwareBase : public hardware_interface::SystemInterface {
     public:
         RCLCPP_SHARED_PTR_DEFINITIONS(FDHardwareBase);
 
