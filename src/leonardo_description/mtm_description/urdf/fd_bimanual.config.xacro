@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fd_bimanual">
+
+    <!-- ==================== 公共参数 ==================== -->
+    <xacro:arg name="use_fake_hardware" default="false"/>
+    <xacro:arg name="use_orientation" default="true"/>
+    <xacro:arg name="use_clutch" default="false"/>
+
+    <!-- 右手 base 相对左手 base 的偏移 -->
+    <xacro:arg name="right_base_offset_x" default="1"/>
+    <xacro:arg name="right_base_offset_y" default="0.0"/>
+    <xacro:arg name="right_base_offset_z" default="0.0"/>
+
+    <!-- ==================== 引入通用模板 ==================== -->
+    <xacro:include filename="$(find mtm_description)/urdf/common/fd.urdf.xacro"/>
+    <xacro:include filename="$(find mtm_description)/urdf/common/fd.ros2_control_hardware.xacro"/>
+
+    <!-- ==================== 左侧主手 ==================== -->
+    <xacro:fd_haptic_interface
+            robot_id="fd_left"
+            use_orientation="$(arg use_orientation)"
+            use_clutch="$(arg use_clutch)"/>
+
+    <xacro:fd_ros2_control
+            robot_id="fd_left"
+            ros2_control_name="FDLeftHardware"
+            plugin_name="fd_left_hardware/FDLeftHardwareInterface"
+            interface_id="-1"
+            interface_sn="40819"
+            use_fake_hardware="$(arg use_fake_hardware)"
+            use_orientation="$(arg use_orientation)"
+            orientation_is_actuated="$(arg use_orientation)"
+            ignore_orientation_readings="false"
+            use_clutch="$(arg use_clutch)"
+            emulate_button="true"
+            effector_mass="-0.71"/>
+
+    <!-- ==================== 把右手 base 挂到左手 base 上 ==================== -->
+    <joint name="fd_left_to_right_base" type="fixed">
+        <origin rpy="0 0 0"
+                xyz="$(arg right_base_offset_x) $(arg right_base_offset_y) $(arg right_base_offset_z)"/>
+        <parent link="fd_left_base"/>
+        <child link="fd_right_base"/>
+    </joint>
+
+    <!-- ==================== 右侧主手 ==================== -->
+    <xacro:fd_haptic_interface
+            robot_id="fd_right"
+            use_orientation="$(arg use_orientation)"
+            use_clutch="$(arg use_clutch)"/>
+
+    <xacro:fd_ros2_control
+            robot_id="fd_right"
+            ros2_control_name="FDRightHardware"
+            plugin_name="fd_right_hardware/FDRightHardwareInterface"
+            interface_id="-1"
+            interface_sn="40619"
+            use_fake_hardware="$(arg use_fake_hardware)"
+            use_orientation="$(arg use_orientation)"
+            orientation_is_actuated="$(arg use_orientation)"
+            ignore_orientation_readings="false"
+            use_clutch="$(arg use_clutch)"
+            emulate_button="true"
+            effector_mass="-0.71"/>
+
+</robot>

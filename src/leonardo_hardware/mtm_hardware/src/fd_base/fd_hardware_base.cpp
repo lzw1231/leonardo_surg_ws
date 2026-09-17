@@ -3,11 +3,6 @@
 
 
 namespace fd_hardware_base{
-    /**
-     * @brief 初始化硬件组件
-     *
-     * 解析 URDF 中的硬件信息，验证接口定义合法性，并加载配置参数。
-     */
     hardware_interface::CallbackReturn FDHardwareBase::on_init(const hardware_interface::HardwareComponentInterfaceParams& params) {
         auto based_logger = rclcpp::get_logger(logger_name_);
 
@@ -21,30 +16,34 @@ namespace fd_hardware_base{
         logger_name_ = info_.name;
         auto logger = rclcpp::get_logger(logger_name_);
 
-        // 验证关节接口定义
         for (const auto& joint : info_.joints) {
             if (!validateJointInterfaces(joint)) {
                 return hardware_interface::CallbackReturn::ERROR;
             }
         }
 
-        // 验证 GPIO 接口定义
         for (const auto& gpio : info_.gpios) {
             if (!validateGpioInterfaces(gpio)) {
                 return hardware_interface::CallbackReturn::ERROR;
             }
         }
 
-        // 解析硬件参数
         parseHardwareParameters();
+
+        hw_math::resize_and_fill(hw_states_position_, info_.joints.size(), BUF_INIT_NAN);
+        hw_math::resize_and_fill(hw_states_velocity_, info_.joints.size(), BUF_INIT_NAN);
+        hw_math::resize_and_fill(hw_states_effort_, info_.joints.size(), BUF_INIT_NAN);
+        hw_math::resize_and_fill(hw_commands_effort_, info_.joints.size(), BUF_INIT_NAN);
+        hw_math::resize_and_fill(hw_states_inertia_, INERTIA_MATRIX_FLATTEN_SIZE, BUF_INIT_NAN);
+        hw_math::resize_and_fill(hw_button_state_, info_.gpios.size(), BUF_INIT_NAN);
+
+        if (emulate_button_ && (info_.joints.size() == 4 || info_.joints.size() > 6)) {
+            hw_commands_effort_[info_.joints.size() - 1U] = 0.0;
+        }
+
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    /**
-     * @brief 配置硬件组件
-     *
-     * 分配并初始化状态缓冲区，设置初始命令值。
-     */
     hardware_interface::CallbackReturn FDHardwareBase::on_configure(const rclcpp_lifecycle::State& previous_state) {
         auto logger = rclcpp::get_logger(logger_name_);
         auto ret = hardware_interface::SystemInterface::on_configure(previous_state);
@@ -53,27 +52,9 @@ namespace fd_hardware_base{
             return ret;
         }
 
-        // 初始化状态缓冲区为 NaN
-        hw_math::resize_and_fill(hw_states_position_, info_.joints.size(), BUF_INIT_NAN);
-        hw_math::resize_and_fill(hw_states_velocity_, info_.joints.size(), BUF_INIT_NAN);
-        hw_math::resize_and_fill(hw_states_effort_, info_.joints.size(), BUF_INIT_NAN);
-        hw_math::resize_and_fill(hw_commands_effort_, info_.joints.size(), BUF_INIT_NAN);
-        hw_math::resize_and_fill(hw_states_inertia_, INERTIA_MATRIX_FLATTEN_SIZE, BUF_INIT_NAN);
-        hw_math::resize_and_fill(hw_button_state_, info_.gpios.size(), BUF_INIT_NAN);
-
-        // 若启用按键模拟且存在夹爪关节，初始化夹爪命令为 0
-        if (emulate_button_ && (info_.joints.size() == 4 || info_.joints.size() > 6)) {
-            hw_commands_effort_[info_.joints.size() - 1U] = 0.0;
-        }
-
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    /**
-     * @brief 导出状态接口
-     *
-     * 创建位置、速度、力、按钮及惯性矩阵的状态句柄。
-     */
     std::vector<hardware_interface::StateInterface::ConstSharedPtr> FDHardwareBase::on_export_state_interfaces() {
         std::vector<hardware_interface::StateInterface::ConstSharedPtr> state_interfaces;
         state_if_storage_.clear();
@@ -83,7 +64,6 @@ namespace fd_hardware_base{
         state_interfaces.reserve(total_size);
         state_if_storage_.reserve(total_size);
 
-        // 导出关节状态接口 (Position, Velocity, Effort)
         for (size_t i = 0; i < info_.joints.size(); ++i) {
             const auto& joint_name = info_.joints[i].name;
 
@@ -103,7 +83,6 @@ namespace fd_hardware_base{
             state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_eff));
         }
 
-        // 导出 GPIO 状态接口
         for (size_t i = 0; i < info_.gpios.size(); ++i) {
             const auto& gpio_name = info_.gpios[i].name;
             auto if_btn = std::make_shared<hardware_interface::StateInterface>(
@@ -112,7 +91,6 @@ namespace fd_hardware_base{
             state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_btn));
         }
 
-        // 导出惯性矩阵状态接口 (上三角部分)
         for (uint row = 0; row < 6; ++row) {
             for (uint col = row; col < 6; ++col) {
                 size_t idx = hw_math::flattened_index_from_triangular_index(row, col);
@@ -126,11 +104,6 @@ namespace fd_hardware_base{
         return state_interfaces;
     }
 
-    /**
-     * @brief 导出命令接口
-     *
-     * 创建关节力/力矩命令句柄。
-     */
     std::vector<hardware_interface::CommandInterface::SharedPtr> FDHardwareBase::on_export_command_interfaces() {
         std::vector<hardware_interface::CommandInterface::SharedPtr> cmds;
         command_storage_.clear();
@@ -144,28 +117,32 @@ namespace fd_hardware_base{
         return cmds;
     }
 
-    /**
-     * @brief 激活硬件
-     *
-     * 建立与物理设备的通信连接。
-     */
     hardware_interface::CallbackReturn FDHardwareBase::on_activate(const rclcpp_lifecycle::State& /*previous_state*/) {
         auto logger = rclcpp::get_logger(logger_name_);
+
         RCLCPP_INFO(logger, "正在激活硬件接口...");
-        if (connectToDevice()) {
-            RCLCPP_INFO(logger, "硬件设备连接成功");
-            return hardware_interface::CallbackReturn::SUCCESS;
-        } else {
+        if (!connectToDevice()) {
             RCLCPP_ERROR(logger, "硬件设备连接失败");
             return hardware_interface::CallbackReturn::ERROR;
         }
+        RCLCPP_INFO(logger, "硬件设备连接成功");
+
+        // 连接成功后，对主动轴执行自动校准（仅平移轴，腕部仍需手动校准）
+        if (drdAutoInit(interface_id_) < 0) {
+            RCLCPP_WARN(logger, "drdAutoInit 失败: %s", dhdErrorGetLastStr());
+        } else if (drdCheckInit(interface_id_) < 0) {
+            RCLCPP_WARN(logger, "drdCheckInit 失败: %s", dhdErrorGetLastStr());
+        } else {
+            RCLCPP_INFO(logger, "主动轴自动校准完成");
+        }
+
+        if (drdStop(true, interface_id_) < 0) {
+            RCLCPP_WARN(logger, "drdStop 失败: %s", dhdErrorGetLastStr());
+        }
+
+        return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    /**
-     * @brief 停用硬件
-     *
-     * 断开与物理设备的通信连接。
-     */
     hardware_interface::CallbackReturn
     FDHardwareBase::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/) {
         auto logger = rclcpp::get_logger(logger_name_);
@@ -179,22 +156,14 @@ namespace fd_hardware_base{
         }
     }
 
-    /**
-     * @brief 连接至 DHD 设备
-     *
-     * 打开设备句柄，配置力反馈参数、重力补偿及按键模拟。
-     * @return true 连接成功, false 连接失败
-     */
     bool FDHardwareBase::connectToDevice() {
         auto logger = rclcpp::get_logger(logger_name_);
 
-        // 获取 SDK 版本信息
         int major, minor, release, revision;
         dhdGetSDKVersion(&major, &minor, &release, &revision);
         RCLCPP_INFO(logger, "DHD SDK 版本: %d.%d (Release %d / Revision %d)", major, minor, release, revision);
 
         bool dhd_open_success = false;
-        // 尝试通过序列号打开设备
         if (interface_sn_ >= 0) {
             RCLCPP_INFO(logger, "尝试通过序列号 %d 打开设备...", interface_sn_);
             interface_id_ = static_cast<char>(dhdOpenSerial(interface_sn_));
@@ -207,7 +176,15 @@ namespace fd_hardware_base{
             return false;
         }
 
-        // 获取设备基本信息
+        // 让 DRD 接管这台设备
+        int drd_id = drdOpenID(interface_id_);
+        if (drd_id < 0) {
+            RCLCPP_WARN(logger, "drdOpenID 失败: %s", dhdErrorGetLastStr());
+        } else {
+            RCLCPP_INFO(logger, "drdOpenID 成功, drd_id=%d", drd_id);
+            interface_id_ = static_cast<char>(drd_id);
+        }
+
         RCLCPP_INFO(logger, "设备名称: %s", dhdGetSystemName(interface_id_));
 
         uint16_t serialNumber = 0;
@@ -218,14 +195,12 @@ namespace fd_hardware_base{
         }
         RCLCPP_INFO(logger, "内部接口 ID: %d", static_cast<int>(interface_id_));
 
-        // 检测腕部自由度
         if (dhdHasWrist(interface_id_)) {
             RCLCPP_INFO(logger, "检测到腕部自由度");
         } else {
             RCLCPP_INFO(logger, "未检测到腕部自由度");
         }
 
-        // 获取当前末端质量
         double current_effector_mass = 0.0;
         if (dhdGetEffectorMass(&current_effector_mass, interface_id_) == DHD_NO_ERROR) {
             RCLCPP_INFO(logger, "当前末端质量: %.2f g", current_effector_mass * 1000.0);
@@ -233,7 +208,6 @@ namespace fd_hardware_base{
             RCLCPP_WARN(logger, "无法获取末端质量");
         }
 
-        // 配置力反馈参数
         if (dhdSetMaxForce(DEFAULT_MAX_FORCE, interface_id_) < DHD_NO_ERROR) {
             RCLCPP_ERROR(logger, "设置最大力失败");
             disconnectFromDevice();
@@ -248,7 +222,6 @@ namespace fd_hardware_base{
             return false;
         }
 
-        // 设置用户指定的末端质量
         if (effector_mass_ > 0.0) {
             RCLCPP_INFO(logger, "更新末端质量: %.2f g -> %.2f g", current_effector_mass * 1000.0, effector_mass_ * 1000.0);
             if (dhdSetEffectorMass(effector_mass_, interface_id_) < DHD_NO_ERROR) {
@@ -258,7 +231,6 @@ namespace fd_hardware_base{
             }
         }
 
-        // 开启重力补偿
         if (dhdSetGravityCompensation(DHD_ON, interface_id_) < DHD_NO_ERROR) {
             RCLCPP_ERROR(logger, "开启重力补偿失败");
             disconnectFromDevice();
@@ -266,7 +238,6 @@ namespace fd_hardware_base{
         }
         RCLCPP_INFO(logger, "重力补偿已开启");
 
-        // 配置按键模拟
         if (emulate_button_ && !dhdHasGripper(interface_id_)) {
             RCLCPP_ERROR(logger, "启用按键模拟但设备无夹爪");
         } else if (emulate_button_ && dhdHasGripper(interface_id_)) {
@@ -279,14 +250,12 @@ namespace fd_hardware_base{
             RCLCPP_INFO(logger, "按键模拟功能已激活");
         }
 
-        // 初始化力输出为零
         if (dhdSetForceAndTorqueAndGripperForce(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, interface_id_) < DHD_NO_ERROR) {
             RCLCPP_ERROR(logger, "初始化力输出失败");
             disconnectFromDevice();
             return false;
         }
 
-        // 根据硬件能力调整姿态读取策略
         ignore_orientation_ |= !dhdHasWrist(interface_id_);
         if (ignore_orientation_) {
             RCLCPP_INFO(logger, "因硬件限制，忽略姿态读数");
@@ -298,42 +267,24 @@ namespace fd_hardware_base{
         return true;
     }
 
-    /**
-     * @brief 断开与 DHD 设备的连接
-     *
-     * 停止设备运动并关闭句柄。
-     * @return true 断开成功, false 断开失败
-     */
+    // 用 DRD 关闭设备（设备已归 DRD 接管）
     bool FDHardwareBase::disconnectFromDevice() {
         auto logger = rclcpp::get_logger(logger_name_);
         if (!isConnected_) {
             return true;
         }
 
-        // 停止设备运动
-        int hasStopped = -1;
-        while (hasStopped < 0) {
-            RCLCPP_INFO(logger, "正在停止 DHD 设备...");
-            hasStopped = dhdStop(interface_id_);
-            dhdSleep(0.1);
-        }
-
-        // 关闭设备连接
-        int connectionIsClosed = dhdClose(interface_id_);
-        if (connectionIsClosed >= 0) {
-            RCLCPP_INFO(logger, "DHD 设备已关闭");
-            interface_id_ = -1;
-            isConnected_ = false;
-            return true;
-        } else {
-            RCLCPP_ERROR(logger, "DHD 设备关闭失败");
+        if (drdClose(interface_id_) < 0) {
+            RCLCPP_ERROR(logger, "drdClose 失败: %s", dhdErrorGetLastStr());
             return false;
         }
+
+        RCLCPP_INFO(logger, "DHD 设备已关闭");
+        interface_id_ = -1;
+        isConnected_ = false;
+        return true;
     }
 
-    /**
-     * @brief 验证关节接口定义
-     */
     bool FDHardwareBase::validateJointInterfaces(const hardware_interface::ComponentInfo& joint) {
         auto logger = rclcpp::get_logger(logger_name_);
         if (joint.command_interfaces.size() != 1U) {
@@ -372,9 +323,6 @@ namespace fd_hardware_base{
         return true;
     }
 
-    /**
-     * @brief 验证 GPIO 接口定义
-     */
     bool FDHardwareBase::validateGpioInterfaces(const hardware_interface::ComponentInfo& button) {
         auto logger = rclcpp::get_logger(logger_name_);
         if (button.state_interfaces.size() != 1U) {
@@ -391,24 +339,26 @@ namespace fd_hardware_base{
         return true;
     }
 
-    /**
-     * @brief 解析硬件参数
-     *
-     * 从 URDF 参数中提取序列号、质量、模拟开关等配置。
-     */
     void FDHardwareBase::parseHardwareParameters() {
         auto logger = rclcpp::get_logger(logger_name_);
 
-        // 解析序列号
-        auto it_sn = info_.hardware_parameters.find("interface_sn");
+        auto it_id = info_.hardware_parameters.find("interface_id");
+        if (it_id != info_.hardware_parameters.end()) {
+            interface_id_ = static_cast<char>(std::stoi(it_id->second));
+            RCLCPP_INFO(logger, "配置接口 ID: %d", static_cast<int>(interface_id_));
+        } else {
+            interface_id_ = -1;
+        }
+
+        auto it_sn = info_.hardware_parameters.find("interface_serial_number");
         if (it_sn != info_.hardware_parameters.end()) {
             interface_sn_ = std::stoi(it_sn->second);
             RCLCPP_INFO(logger, "配置序列号 SN: %d", interface_sn_);
         } else {
             interface_sn_ = -1;
+            RCLCPP_WARN(logger, "hardware_parameters 中未找到 interface_serial_number");
         }
 
-        // 解析按键模拟开关
         auto it_emu_btn = info_.hardware_parameters.find("emulate_button");
         if (it_emu_btn != info_.hardware_parameters.end()) {
             emulate_button_ = hardware_interface::parse_bool(it_emu_btn->second);
@@ -417,14 +367,14 @@ namespace fd_hardware_base{
         }
         RCLCPP_INFO(logger, "按键模拟开启: %s", emulate_button_ ? "true" : "false");
 
-        // 解析惯性矩阵接口名称
         auto it_inertia_name = info_.hardware_parameters.find("inertia_interface_name");
         if (it_inertia_name != info_.hardware_parameters.end()) {
             inertia_interface_name_ = it_inertia_name->second;
         } else {
             inertia_interface_name_ = "fd_inertia";
         }
-        // 解析末端质量
+        RCLCPP_INFO(logger, "惯性矩阵接口名: %s", inertia_interface_name_.c_str());
+
         auto it_mass = info_.hardware_parameters.find("effector_mass");
         if (it_mass != info_.hardware_parameters.end()) {
             effector_mass_ = hardware_interface::stod(it_mass->second);
@@ -433,7 +383,6 @@ namespace fd_hardware_base{
             effector_mass_ = -1.0;
         }
 
-        // 解析姿态忽略标志
         auto it_ignore_ori = info_.hardware_parameters.find("ignore_orientation_readings");
         if (it_ignore_ori != info_.hardware_parameters.end()) {
             ignore_orientation_ = hardware_interface::parse_bool(it_ignore_ori->second);

@@ -3,7 +3,7 @@
 
 namespace mtm_controllers{
     // 初始化阶段：仅声明参数，不读取实际值
-    controller_interface::CallbackReturn FDRightEePoseBroadcaster::on_init() {
+    controller_interface::CallbackReturn FDLeftEePoseBroadcaster::on_init() {
         try {
             auto_declare<std::vector<std::string>>("joints", std::vector<std::string>());
             auto_declare<std::vector<std::string>>("buttons", std::vector<std::string>());
@@ -18,7 +18,7 @@ namespace mtm_controllers{
     }
 
     // 配置阶段：读取参数、构造固定变换、创建发布者
-    controller_interface::CallbackReturn FDRightEePoseBroadcaster::on_configure(const rclcpp_lifecycle::State& /*previous_state*/) {
+    controller_interface::CallbackReturn FDLeftEePoseBroadcaster::on_configure(const rclcpp_lifecycle::State& /*previous_state*/) {
         // 读取关节与按钮名称
         joints_ = get_node()->get_parameter("joints").as_string_array();
         buttons_ = get_node()->get_parameter("buttons").as_string_array();
@@ -99,14 +99,14 @@ namespace mtm_controllers{
     }
 
     // 命令接口配置：本控制器为纯 broadcaster，不声明命令接口
-    controller_interface::InterfaceConfiguration FDRightEePoseBroadcaster::command_interface_configuration() const {
+    controller_interface::InterfaceConfiguration FDLeftEePoseBroadcaster::command_interface_configuration() const {
         return controller_interface::InterfaceConfiguration{
             controller_interface::interface_configuration_type::NONE
         };
     }
 
     // 状态接口配置：按 joints_ 与 buttons_ 拼接 position 接口名
-    controller_interface::InterfaceConfiguration FDRightEePoseBroadcaster::state_interface_configuration() const {
+    controller_interface::InterfaceConfiguration FDLeftEePoseBroadcaster::state_interface_configuration() const {
         controller_interface::InterfaceConfiguration state_interfaces_config;
         state_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
@@ -130,7 +130,7 @@ namespace mtm_controllers{
     }
 
     // 激活阶段：校验租借到的状态接口数量是否与配置一致
-    controller_interface::CallbackReturn FDRightEePoseBroadcaster::on_activate(const rclcpp_lifecycle::State& /*previous_state*/) {
+    controller_interface::CallbackReturn FDLeftEePoseBroadcaster::on_activate(const rclcpp_lifecycle::State& /*previous_state*/) {
         if (state_interfaces_.size() != (joints_.size() + buttons_.size())) {
             RCLCPP_ERROR(get_node()->get_logger(),
                          "状态接口数量不符：期望 %zu，实际 %zu",
@@ -143,12 +143,12 @@ namespace mtm_controllers{
     }
 
     // 停用阶段：仅停止运行，不清配置（支持再次激活）
-    controller_interface::CallbackReturn FDRightEePoseBroadcaster::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/) {
+    controller_interface::CallbackReturn FDLeftEePoseBroadcaster::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/) {
         return controller_interface::CallbackReturn::SUCCESS;
     }
 
     // 清理阶段：释放发布者，重置配置与位姿状态
-    controller_interface::CallbackReturn FDRightEePoseBroadcaster::on_cleanup(const rclcpp_lifecycle::State& /*previous_state*/) {
+    controller_interface::CallbackReturn FDLeftEePoseBroadcaster::on_cleanup(const rclcpp_lifecycle::State& /*previous_state*/) {
         // 释放发布者
         realtime_ee_pose_publisher_.reset();
         ee_pose_publisher_.reset();
@@ -165,15 +165,15 @@ namespace mtm_controllers{
     }
 
     // 周期更新：读取状态接口，计算末端位姿并发布
-    controller_interface::return_type FDRightEePoseBroadcaster::update(const rclcpp::Time& time, const rclcpp::Duration& /*period*/) {
+    controller_interface::return_type FDLeftEePoseBroadcaster::update(const rclcpp::Time& time, const rclcpp::Duration& /*period*/) {
         // 缓存当前所有状态接口值，供后续按名查找
         for (const auto& state_interface : state_interfaces_) {
             auto val_opt = state_interface.get_optional();
             if (val_opt.has_value()) {
                 name_if_value_mapping_[state_interface.get_prefix_name()][state_interface.get_interface_name()] = val_opt.value();
-                RCLCPP_INFO(
-                    get_node()->get_logger(), "%s/%s: %f\n", state_interface.get_prefix_name().c_str(),
-                    state_interface.get_interface_name().c_str(), val_opt.value());
+                // RCLCPP_INFO(
+                //     get_node()->get_logger(), "%s/%s: %f\n", state_interface.get_prefix_name().c_str(),
+                //     state_interface.get_interface_name().c_str(), val_opt.value());
             }
         }
 
@@ -253,4 +253,4 @@ namespace mtm_controllers{
 } // namespace mtm_controllers
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(mtm_controllers::FDRightEePoseBroadcaster, controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(mtm_controllers::FDLeftEePoseBroadcaster, controller_interface::ControllerInterface)

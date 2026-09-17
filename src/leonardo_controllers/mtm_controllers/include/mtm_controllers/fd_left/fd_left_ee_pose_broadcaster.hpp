@@ -14,13 +14,13 @@ namespace mtm_controllers{
     /**
      * @brief Force Dimension 左末端执行器位姿广播控制器。
      */
-    class FDRightEePoseBroadcaster : public controller_interface::ControllerInterface {
+    class FDLeftEePoseBroadcaster : public controller_interface::ControllerInterface {
     public:
-        RCLCPP_SHARED_PTR_DEFINITIONS(FDRightEePoseBroadcaster);
+        RCLCPP_SHARED_PTR_DEFINITIONS(FDLeftEePoseBroadcaster);
 
         // 构造函数
         MTM_CONTROLLERS_PUBLIC
-        FDRightEePoseBroadcaster() = default;
+        FDLeftEePoseBroadcaster() = default;
 
         MTM_CONTROLLERS_PUBLIC
         controller_interface::CallbackReturn on_init() override;

@@ -171,9 +171,9 @@ namespace mtm_controllers{
             auto val_opt = state_interface.get_optional();
             if (val_opt.has_value()) {
                 name_if_value_mapping_[state_interface.get_prefix_name()][state_interface.get_interface_name()] = val_opt.value();
-                RCLCPP_INFO(
-                    get_node()->get_logger(), "%s/%s: %f\n", state_interface.get_prefix_name().c_str(),
-                    state_interface.get_interface_name().c_str(), val_opt.value());
+                // RCLCPP_INFO(
+                //     get_node()->get_logger(), "%s/%s: %f\n", state_interface.get_prefix_name().c_str(),
+                //     state_interface.get_interface_name().c_str(), val_opt.value());
             }
         }
 

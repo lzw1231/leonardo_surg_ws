@@ -3,7 +3,7 @@
 # ==============================================================================
 mtm_controllers/controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
+    update_rate: 50  # Hz
     # joint state broadcaster
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -30,7 +30,7 @@ mtm_controllers/fd_left_effort_controller:
       - fd_left_roll
       - fd_left_pitch
       - fd_left_yaw
-      - fd_left_gripper
+#      - fd_left_gripper
 mtm_controllers/fd_left_ee_broadcaster:
   ros__parameters:
     transform_translation:
@@ -63,7 +63,7 @@ mtm_controllers/fd_right_effort_controller:
       - fd_right_roll
       - fd_right_pitch
       - fd_right_yaw
-      - fd_right_gripper
+#      - fd_right_gripper
 mtm_controllers/fd_right_ee_broadcaster:
   ros__parameters:
     transform_translation:

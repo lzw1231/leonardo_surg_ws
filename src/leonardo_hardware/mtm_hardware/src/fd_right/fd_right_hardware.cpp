@@ -20,13 +20,12 @@ namespace fd_right_hardware{
         flag += dhdGetPosition(&hw_states_position_[0], &hw_states_position_[1], &hw_states_position_[2], interface_id_);
         if (!ignore_orientation_ && hw_states_position_.size() > 3) {
             flag += dhdGetOrientationRad(&hw_states_position_[3], &hw_states_position_[4], &hw_states_position_[5], interface_id_);
-        } else if (ignore_orientation_&& hw_states_position_
+        } else if (ignore_orientation_ && hw_states_position_
 
 
-        .
-        size() > 3
-        )
-        {
+            .
+            size() > 3
+        ) {
             hw_states_position_[3] = 0.0;
             hw_states_position_[4] = 0.0;
             hw_states_position_[5] = 0.0;
@@ -45,13 +44,7 @@ namespace fd_right_hardware{
         flag += dhdGetLinearVelocity(&hw_states_velocity_[0], &hw_states_velocity_[1], &hw_states_velocity_[2], interface_id_);
         if (!ignore_orientation_ && hw_states_velocity_.size() > 3) {
             flag += dhdGetAngularVelocityRad(&hw_states_velocity_[3], &hw_states_velocity_[4], &hw_states_velocity_[5], interface_id_);
-        } else if (ignore_orientation_&& hw_states_velocity_
-
-
-        .
-        size() > 3
-        )
-        {
+        } else if (ignore_orientation_ && hw_states_velocity_.size() > 3) {
             hw_states_velocity_[3] = 0.0;
             hw_states_velocity_[4] = 0.0;
             hw_states_velocity_[5] = 0.0;
@@ -81,13 +74,12 @@ namespace fd_right_hardware{
             hw_states_effort_[3] = torque[0];
             hw_states_effort_[4] = torque[1];
             hw_states_effort_[5] = torque[2];
-        } else if (ignore_orientation_&& hw_states_effort_
+        } else if (ignore_orientation_ && hw_states_effort_
 
 
-        .
-        size() > 3
-        )
-        {
+            .
+            size() > 3
+        ) {
             hw_states_effort_[3] = 0.0;
             hw_states_effort_[4] = 0.0;
             hw_states_effort_[5] = 0.0;

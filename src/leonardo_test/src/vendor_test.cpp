@@ -6,196 +6,105 @@
 #include <array>
 
 int main() {
-    int32_t id_left = dhdOpenSerial(40619);
-    int32_t id_right = dhdOpenSerial(40819);
+    int32_t id_40619 = dhdOpenSerial(40619);
+    int32_t id_40819 = dhdOpenSerial(40819);
 
     std::cout << "========================================" << std::endl;
-    std::cout << "Force‑Dimension device open status" << std::endl;
-    std::cout << "  Left  (SN:40619) | id = " << id_left << (id_left >= 0 ? " | SUCCESS" : " | FAILED") << std::endl;
-    std::cout << "  Right (SN:40819) | id = " << id_right << (id_right >= 0 ? " | SUCCESS" : " | FAILED") << std::endl;
+    std::cout << "Force Dimension device open status" << std::endl;
+
+    std::cout << "  SN:40619 | id = " << id_40619;
+    if (id_40619 >= 0) {
+        const char* name_40619 = dhdGetSystemName(static_cast<char>(id_40619));
+        std::cout << " | SUCCESS | name = " << (name_40619 ? name_40619 : "(null)");
+    } else {
+        std::cout << " | FAILED";
+    }
+    std::cout << std::endl;
+
+    std::cout << "  SN:40819 | id = " << id_40819;
+    if (id_40819 >= 0) {
+        const char* name_40819 = dhdGetSystemName(static_cast<char>(id_40819));
+        std::cout << " | SUCCESS | name = " << (name_40819 ? name_40819 : "(null)");
+    } else {
+        std::cout << " | FAILED";
+    }
+    std::cout << std::endl;
+
     std::cout << "========================================" << std::endl;
 
-    if (id_left < 0 || id_right < 0) {
-        std::cerr << "力反馈设备打开失败，请检查连接！" << std::endl;
+    if (id_40619 < 0 || id_40819 < 0) {
+        std::cerr << "Failed to open one or both DHD devices" << std::endl;
         return -1;
     } else {
-        dhdStop(static_cast<char>(id_left));
-        dhdStop(static_cast<char>(id_right));
+        dhdStop(static_cast<char>(id_40619));
+        dhdStop(static_cast<char>(id_40819));
         dhdSleep(0.1);
-        int connectionIsClosed_left = dhdClose(static_cast<char>(id_left));
-        int connectionIsClosed_right = dhdClose(static_cast<char>(id_right));
+        int connectionIsClosed_40619 = dhdClose(static_cast<char>(id_40619));
+        int connectionIsClosed_40819 = dhdClose(static_cast<char>(id_40819));
 
-        if (connectionIsClosed_left >= 0 && connectionIsClosed_right >= 0) {
-            std::cout << "力反馈设备已断开连接！" << std::endl;
+        if (connectionIsClosed_40619 >= 0 && connectionIsClosed_40819 >= 0) {
+            std::cout << "Both DHD devices closed successfully" << std::endl;
         } else {
-            std::cerr << "力反馈设备断开失败!" << std::endl;
+            std::cerr << "Failed to close one or both DHD devices" << std::endl;
         }
     }
 
-    // ST3215舵机控制
+    // ST3215 servo bus
     SMS_STS sms_sts;
-    const char* port = "/dev/ttyACM0"; // 根据实际修改
+    const char* port = "/dev/ttyACM0";
     int baud = 1000000;
 
-    if
-    (
-        !
-        sms_sts
-        .
-        begin(baud, port)
-    ) {
-        std::cerr << "串口初始化失败" << std::endl;
+    if (!sms_sts.begin(baud, port)) {
+        std::cerr << "Failed to open serial port" << std::endl;
         return -1;
     }
-    std::cout
-        <<
-        "串口已打开"
-        <<
-        std::endl;
+    std::cout << "Serial port opened" << std::endl;
 
-    // 6个舵机ID 11~16
+    // 6 servos, IDs 11~16
     std::array<uint8_t, 6> motor_ids = {11, 12, 13, 14, 15, 16};
-    // Ping检测所有舵机
-    for
-    (
-        auto id : motor_ids
-    ) {
+
+    // Ping all servos
+    for (auto id : motor_ids) {
         uint8_t ping_id = sms_sts.Ping(id);
         if (ping_id != id) {
-            std::cerr << "舵机ID " << (int)id << " Ping失败" << std::endl;
+            std::cerr << "Ping failed for servo ID " << (int)id << std::endl;
             sms_sts.end();
             return -1;
         }
-        std::cout << "舵机ID " << (int)id << " 在线" << std::endl;
+        std::cout << "Servo ID " << (int)id << " online" << std::endl;
     }
 
-    // 设为位置模式
-    for
-    (
-        auto id : motor_ids
-    ) {
+    // Set all servos to position mode
+    for (auto id : motor_ids) {
         sms_sts.ServoMode(id);
     }
-    std::cout
-        <<
-        "所有舵机已设为位置模式"
-        <<
-        std::endl;
+    std::cout << "All servos set to position mode" << std::endl;
 
-    // 准备同步写数据
     std::array<uint16_t, 6> positions;
-    std::array<uint16_t, 6> speeds; // 速度
-    std::array<uint8_t, 6> accs; // 加速度
-    speeds
-        .
-        fill(
-            0
-        ); // 默认速度
-    accs
-        .
-        fill(
-            0
-        ); // 默认加速度
+    std::array<uint16_t, 6> speeds;
+    std::array<uint8_t, 6> accs;
+    speeds.fill(0);
+    accs.fill(0);
 
-    // 第一次同步写：全部转到135°
-    positions
-        .
-        fill(
-            4095
-        );
-    sms_sts
-        .
-        SyncWritePosEx(motor_ids
-                       .
-                       data(), motor_ids
-                       .
-                       size(),
+    // Move all servos to 4095
+    positions.fill(4095);
+    sms_sts.SyncWritePosEx(motor_ids.data(), motor_ids.size(),
+                           reinterpret_cast<int16_t*>(positions.data()),
+                           reinterpret_cast<uint16_t*>(speeds.data()),
+                           accs.data());
+    std::cout << "Command sent: all servos to 4095" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
-                       reinterpret_cast
-                       <
-                           int16_t*>
-                       (positions
-                           .
-                           data()
-                       )
-                       ,
-                       reinterpret_cast
-                       <
-                           uint16_t*>
-                       (speeds
-                           .
-                           data()
-                       )
-                       ,
-                       accs
-                       .
-                       data()
-        );
-    std::cout
-        <<
-        "已发送指令：所有舵机转到360°"
-        <<
-        std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds
-        (
-            2000
-        )
-    ); // 等待转动
+    // Move all servos back to 0
+    positions.fill(0);
+    sms_sts.SyncWritePosEx(motor_ids.data(), motor_ids.size(),
+                           reinterpret_cast<int16_t*>(positions.data()),
+                           reinterpret_cast<uint16_t*>(speeds.data()),
+                           accs.data());
+    std::cout << "Command sent: all servos to 0" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    // 第二次同步写：全部转回0°
-    positions
-        .
-        fill(
-            0
-        );
-    sms_sts
-        .
-        SyncWritePosEx(motor_ids
-                       .
-                       data(), motor_ids
-                       .
-                       size(),
-
-                       reinterpret_cast
-                       <
-                           int16_t*>
-                       (positions
-                           .
-                           data()
-                       )
-                       ,
-                       reinterpret_cast
-                       <
-                           uint16_t*>
-                       (speeds
-                           .
-                           data()
-                       )
-                       ,
-                       accs
-                       .
-                       data()
-        );
-    std::cout
-        <<
-        "已发送指令：所有舵机转回0°"
-        <<
-        std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds
-        (
-            500
-        )
-    );
-
-
-    sms_sts
-        .
-        end();
-    std::cout
-        <<
-        "测试完成"
-        <<
-        std::endl;
-    return
-        0;
+    sms_sts.end();
+    std::cout << "Test finished" << std::endl;
+    return 0;
 }

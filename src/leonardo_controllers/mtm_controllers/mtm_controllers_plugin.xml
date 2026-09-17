@@ -7,8 +7,8 @@
 </library>
 
 <library path="mtm_fd_right_controllers">
-<class name="mtm_controllers/FdRightEePoseBroadcaster"
-       type="mtm_controllers::FdRightEePoseBroadcaster"
+<class name="mtm_controllers/FDRightEePoseBroadcaster"
+       type="mtm_controllers::FDRightEePoseBroadcaster"
        base_class_type="controller_interface::ControllerInterface">
     <description>右侧主手末端位姿广播器</description>
 </class>
