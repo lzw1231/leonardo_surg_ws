@@ -1,4 +1,4 @@
-#include "mtm_controllers/fd_left/fd_left_ee_pose_broadcaster.hpp"
+#include "mtm_controllers/fd_right/fd_right_ee_pose_broadcaster.hpp"
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 
 namespace mtm_controllers{
@@ -79,13 +79,13 @@ namespace mtm_controllers{
         // 创建位姿与按钮发布者及其 realtime 包装
         try {
             ee_pose_publisher_ =
-                get_node()->create_publisher<geometry_msgs::msg::PoseStamped>("~/fd_left_ee_pose", rclcpp::SystemDefaultsQoS());
+                get_node()->create_publisher<geometry_msgs::msg::PoseStamped>("~/fd_right_ee_pose", rclcpp::SystemDefaultsQoS());
 
             realtime_ee_pose_publisher_ =
                 std::make_shared<realtime_tools::RealtimePublisher<geometry_msgs::msg::PoseStamped>>(ee_pose_publisher_);
 
             button_publisher_ =
-                get_node()->create_publisher<std_msgs::msg::Bool>("~/fd_left_button_state", rclcpp::SystemDefaultsQoS());
+                get_node()->create_publisher<std_msgs::msg::Bool>("~/fd_right_button_state", rclcpp::SystemDefaultsQoS());
 
             realtime_button_publisher_ =
                 std::make_shared<realtime_tools::RealtimePublisher<std_msgs::msg::Bool>>(button_publisher_);
@@ -178,7 +178,10 @@ namespace mtm_controllers{
         }
 
         // 发布末端位姿
-        if (realtime_ee_pose_publisher_ && realtime_ee_pose_publisher_->trylock()) {
+        if (realtime_ee_pose_publisher_ && realtime_ee_pose_publisher_
+            ->
+            trylock()
+        ) {
             pose_ = Eigen::Matrix4d::Identity();
 
             // 平移：从 joints_[0..2] 取 x/y/z
@@ -223,7 +226,7 @@ namespace mtm_controllers{
             auto& ee_pose_msg = realtime_ee_pose_publisher_->msg_;
 
             ee_pose_msg.header.stamp = time;
-            ee_pose_msg.header.frame_id = "fd_left_base";
+            ee_pose_msg.header.frame_id = "fd_right_base";
             // 填充位置
             ee_pose_msg.pose.position.x = pose_(0, 3);
             ee_pose_msg.pose.position.y = pose_(1, 3);
@@ -239,7 +242,10 @@ namespace mtm_controllers{
 
         // 发布按钮状态
         if (!buttons_.empty()) {
-            if (realtime_button_publisher_ && realtime_button_publisher_->trylock()) {
+            if (realtime_button_publisher_ && realtime_button_publisher_
+                ->
+                trylock()
+            ) {
                 auto& ee_button_msg = realtime_button_publisher_->msg_;
                 double button_status =
                     lookup_state_interface_value(name_if_value_mapping_, buttons_[0], hardware_interface::HW_IF_POSITION);

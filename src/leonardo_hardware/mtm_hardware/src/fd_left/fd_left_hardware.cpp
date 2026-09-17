@@ -17,50 +17,48 @@ namespace fd_left_hardware{
         int flag = 0; // 用于累计 API 调用错误码
 
         // 1. 读取位置与姿态
-        flag += dhdGetPosition(&hw_states_position_[0], &hw_states_position_[1], &hw_states_position_[2], dev_id_);
+        flag += dhdGetPosition(&hw_states_position_[0], &hw_states_position_[1], &hw_states_position_[2], interface_id_);
         if (!ignore_orientation_ && hw_states_position_.size() > 3) {
-            flag += dhdGetOrientationRad(&hw_states_position_[3], &hw_states_position_[4], &hw_states_position_[5], dev_id_);
-        } else if (ignore_orientation_&& hw_states_position_
+            flag += dhdGetOrientationRad(&hw_states_position_[3], &hw_states_position_[4], &hw_states_position_[5], interface_id_);
+        } else if (ignore_orientation_ && hw_states_position_
 
-        .
-        size() > 3
-        )
-        {
+            .
+            size() > 3
+        ) {
             hw_states_position_[3] = 0.0;
             hw_states_position_[4] = 0.0;
             hw_states_position_[5] = 0.0;
         }
 
         // 读取夹爪角度
-        if (dhdHasGripper(dev_id_)) {
+        if (dhdHasGripper(interface_id_)) {
             if (hw_states_position_.size() == 4) {
-                flag += dhdGetGripperAngleRad(&hw_states_position_[3], dev_id_);
+                flag += dhdGetGripperAngleRad(&hw_states_position_[3], interface_id_);
             } else if (hw_states_position_.size() > 6) {
-                flag += dhdGetGripperAngleRad(&hw_states_position_[6], dev_id_);
+                flag += dhdGetGripperAngleRad(&hw_states_position_[6], interface_id_);
             }
         }
 
         // 2. 读取线速度与角速度
-        flag += dhdGetLinearVelocity(&hw_states_velocity_[0], &hw_states_velocity_[1], &hw_states_velocity_[2], dev_id_);
+        flag += dhdGetLinearVelocity(&hw_states_velocity_[0], &hw_states_velocity_[1], &hw_states_velocity_[2], interface_id_);
         if (!ignore_orientation_ && hw_states_velocity_.size() > 3) {
-            flag += dhdGetAngularVelocityRad(&hw_states_velocity_[3], &hw_states_velocity_[4], &hw_states_velocity_[5], dev_id_);
-        } else if (ignore_orientation_&& hw_states_velocity_
+            flag += dhdGetAngularVelocityRad(&hw_states_velocity_[3], &hw_states_velocity_[4], &hw_states_velocity_[5], interface_id_);
+        } else if (ignore_orientation_ && hw_states_velocity_
 
-        .
-        size() > 3
-        )
-        {
+            .
+            size() > 3
+        ) {
             hw_states_velocity_[3] = 0.0;
             hw_states_velocity_[4] = 0.0;
             hw_states_velocity_[5] = 0.0;
         }
 
         // 读取夹爪角速度
-        if (dhdHasGripper(dev_id_)) {
+        if (dhdHasGripper(interface_id_)) {
             if (hw_states_velocity_.size() == 4) {
-                flag += dhdGetGripperAngularVelocityRad(&hw_states_velocity_[3], dev_id_);
+                flag += dhdGetGripperAngularVelocityRad(&hw_states_velocity_[3], interface_id_);
             } else if (hw_states_velocity_.size() > 6) {
-                flag += dhdGetGripperAngularVelocityRad(&hw_states_velocity_[6], dev_id_);
+                flag += dhdGetGripperAngularVelocityRad(&hw_states_velocity_[6], interface_id_);
             }
         }
 
@@ -71,7 +69,7 @@ namespace fd_left_hardware{
             &hw_states_effort_[0], &hw_states_effort_[1], &hw_states_effort_[2],
             &torque[0], &torque[1], &torque[2],
             &gripper_force,
-            dev_id_
+            interface_id_
         );
 
         // 处理力矩数据
@@ -79,19 +77,14 @@ namespace fd_left_hardware{
             hw_states_effort_[3] = torque[0];
             hw_states_effort_[4] = torque[1];
             hw_states_effort_[5] = torque[2];
-        } else if (ignore_orientation_&& hw_states_effort_
-
-        .
-        size() > 3
-        )
-        {
+        } else if (ignore_orientation_ && hw_states_effort_.size() > 3) {
             hw_states_effort_[3] = 0.0;
             hw_states_effort_[4] = 0.0;
             hw_states_effort_[5] = 0.0;
         }
 
         // 处理夹爪力数据
-        if (dhdHasGripper(dev_id_)) {
+        if (dhdHasGripper(interface_id_)) {
             if (hw_states_effort_.size() == 4) {
                 hw_states_effort_[3] = gripper_force;
             } else if (hw_states_effort_.size() > 6) {
@@ -103,8 +96,8 @@ namespace fd_left_hardware{
         double inertia_array[6][6];
         double joint_position[DHD_MAX_DOF];
         flag += dhdEnableExpertMode();
-        flag += dhdGetJointAngles(joint_position, dev_id_);
-        flag += dhdJointAnglesToInertiaMatrix(joint_position, inertia_array, dev_id_);
+        flag += dhdGetJointAngles(joint_position, interface_id_);
+        flag += dhdJointAnglesToInertiaMatrix(joint_position, inertia_array, interface_id_);
         flag += dhdDisableExpertMode();
 
         // 将上三角矩阵映射到扁平化数组
@@ -115,7 +108,7 @@ namespace fd_left_hardware{
         }
 
         // 5. 读取按钮状态
-        int button_status = dhdGetButton(0, dev_id_);
+        int button_status = dhdGetButton(0, interface_id_);
         if (button_status == 1) {
             hw_button_state_[0] = 1.0;
         } else if (button_status == 0) {
@@ -151,32 +144,32 @@ namespace fd_left_hardware{
 
         if (!isNan) {
             // 根据设备配置（是否有夹爪、腕部）选择对应的 SDK 调用参数
-            if (dhdHasGripper(dev_id_) && hw_states_effort_.size() > 6) {
+            if (dhdHasGripper(interface_id_) && hw_states_effort_.size() > 6) {
                 // 7-DOF 设备 (带夹爪)
                 dhdSetForceAndTorqueAndGripperForce(
                     hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
                     hw_commands_effort_[3], hw_commands_effort_[4], hw_commands_effort_[5],
-                    hw_commands_effort_[6], dev_id_);
-            } else if (dhdHasWrist(dev_id_) && hw_states_effort_.size() == 4) {
+                    hw_commands_effort_[6], interface_id_);
+            } else if (dhdHasWrist(interface_id_) && hw_states_effort_.size() == 4) {
                 // 4-DOF 设备 (带夹爪，无力矩)
                 dhdSetForceAndTorqueAndGripperForce(
                     hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
-                    0.0, 0.0, 0.0, hw_commands_effort_[3], dev_id_);
-            } else if (dhdHasWrist(dev_id_) && hw_states_effort_.size() > 3) {
+                    0.0, 0.0, 0.0, hw_commands_effort_[3], interface_id_);
+            } else if (dhdHasWrist(interface_id_) && hw_states_effort_.size() > 3) {
                 // 6-DOF 设备 (带腕部，无夹爪)
                 dhdSetForceAndTorqueAndGripperForce(
                     hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
                     hw_commands_effort_[3], hw_commands_effort_[4], hw_commands_effort_[5],
-                    0, dev_id_);
+                    0, interface_id_);
             } else {
                 // 3-DOF 设备 (仅平移)
                 dhdSetForceAndTorqueAndGripperForce(
                     hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
-                    0, 0, 0, 0, dev_id_);
+                    0, 0, 0, 0, interface_id_);
             }
         } else {
             // 安全模式：发送零力
-            dhdSetForceAndTorqueAndGripperForce(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dev_id_);
+            dhdSetForceAndTorqueAndGripperForce(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, interface_id_);
         }
         return hardware_interface::return_type::OK;
     }

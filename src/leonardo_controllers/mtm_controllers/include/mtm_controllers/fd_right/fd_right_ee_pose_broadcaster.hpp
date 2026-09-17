@@ -12,7 +12,7 @@
 
 namespace mtm_controllers{
     /**
-     * @brief Force Dimension 左末端执行器位姿广播控制器。
+     * @brief Force Dimension 右末端执行器位姿广播控制器。
      */
     class FDRightEePoseBroadcaster : public controller_interface::ControllerInterface {
     public:

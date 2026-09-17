@@ -195,10 +195,10 @@ namespace fd_hardware_base{
 
         bool dhd_open_success = false;
         // 尝试通过序列号打开设备
-        if (interface_SN_ >= 0) {
-            RCLCPP_INFO(logger, "尝试通过序列号 %d 打开设备...", interface_SN_);
-            dev_id_ = static_cast<char>(dhdOpenSerial(interface_SN_));
-            dhd_open_success = (static_cast<int>(dev_id_) >= 0);
+        if (interface_sn_ >= 0) {
+            RCLCPP_INFO(logger, "尝试通过序列号 %d 打开设备...", interface_sn_);
+            interface_id_ = static_cast<char>(dhdOpenSerial(interface_sn_));
+            dhd_open_success = (static_cast<int>(interface_id_) >= 0);
         }
 
         if (!dhd_open_success) {
@@ -208,18 +208,18 @@ namespace fd_hardware_base{
         }
 
         // 获取设备基本信息
-        RCLCPP_INFO(logger, "设备名称: %s", dhdGetSystemName(dev_id_));
+        RCLCPP_INFO(logger, "设备名称: %s", dhdGetSystemName(interface_id_));
 
         uint16_t serialNumber = 0;
-        if (dhdGetSerialNumber(&serialNumber, dev_id_) != DHD_NO_ERROR) {
+        if (dhdGetSerialNumber(&serialNumber, interface_id_) != DHD_NO_ERROR) {
             RCLCPP_WARN(logger, "无法获取序列号: %s", dhdErrorGetLastStr());
         } else {
             RCLCPP_INFO(logger, "设备序列号: %d", serialNumber);
         }
-        RCLCPP_INFO(logger, "内部接口 ID: %d", static_cast<int>(dev_id_));
+        RCLCPP_INFO(logger, "内部接口 ID: %d", static_cast<int>(interface_id_));
 
         // 检测腕部自由度
-        if (dhdHasWrist(dev_id_)) {
+        if (dhdHasWrist(interface_id_)) {
             RCLCPP_INFO(logger, "检测到腕部自由度");
         } else {
             RCLCPP_INFO(logger, "未检测到腕部自由度");
@@ -227,22 +227,22 @@ namespace fd_hardware_base{
 
         // 获取当前末端质量
         double current_effector_mass = 0.0;
-        if (dhdGetEffectorMass(&current_effector_mass, dev_id_) == DHD_NO_ERROR) {
+        if (dhdGetEffectorMass(&current_effector_mass, interface_id_) == DHD_NO_ERROR) {
             RCLCPP_INFO(logger, "当前末端质量: %.2f g", current_effector_mass * 1000.0);
         } else {
             RCLCPP_WARN(logger, "无法获取末端质量");
         }
 
         // 配置力反馈参数
-        if (dhdSetMaxForce(DEFAULT_MAX_FORCE, dev_id_) < DHD_NO_ERROR) {
+        if (dhdSetMaxForce(DEFAULT_MAX_FORCE, interface_id_) < DHD_NO_ERROR) {
             RCLCPP_ERROR(logger, "设置最大力失败");
             disconnectFromDevice();
             return false;
         }
 
-        dhdSetBrakes(DHD_OFF, dev_id_);
+        dhdSetBrakes(DHD_OFF, interface_id_);
 
-        if (dhdEnableForce(DHD_ON, dev_id_) < DHD_NO_ERROR) {
+        if (dhdEnableForce(DHD_ON, interface_id_) < DHD_NO_ERROR) {
             RCLCPP_ERROR(logger, "启用力反馈失败");
             disconnectFromDevice();
             return false;
@@ -251,7 +251,7 @@ namespace fd_hardware_base{
         // 设置用户指定的末端质量
         if (effector_mass_ > 0.0) {
             RCLCPP_INFO(logger, "更新末端质量: %.2f g -> %.2f g", current_effector_mass * 1000.0, effector_mass_ * 1000.0);
-            if (dhdSetEffectorMass(effector_mass_, dev_id_) < DHD_NO_ERROR) {
+            if (dhdSetEffectorMass(effector_mass_, interface_id_) < DHD_NO_ERROR) {
                 RCLCPP_ERROR(logger, "设置末端质量失败");
                 disconnectFromDevice();
                 return false;
@@ -259,7 +259,7 @@ namespace fd_hardware_base{
         }
 
         // 开启重力补偿
-        if (dhdSetGravityCompensation(DHD_ON, dev_id_) < DHD_NO_ERROR) {
+        if (dhdSetGravityCompensation(DHD_ON, interface_id_) < DHD_NO_ERROR) {
             RCLCPP_ERROR(logger, "开启重力补偿失败");
             disconnectFromDevice();
             return false;
@@ -267,11 +267,11 @@ namespace fd_hardware_base{
         RCLCPP_INFO(logger, "重力补偿已开启");
 
         // 配置按键模拟
-        if (emulate_button_ && !dhdHasGripper(dev_id_)) {
+        if (emulate_button_ && !dhdHasGripper(interface_id_)) {
             RCLCPP_ERROR(logger, "启用按键模拟但设备无夹爪");
-        } else if (emulate_button_&& dhdHasGripper(dev_id_)) {
+        } else if (emulate_button_ && dhdHasGripper(interface_id_)) {
             RCLCPP_INFO(logger, "设备带有夹爪，启用按键模拟");
-            if (dhdEmulateButton(DHD_ON, dev_id_) < DHD_NO_ERROR) {
+            if (dhdEmulateButton(DHD_ON, interface_id_) < DHD_NO_ERROR) {
                 RCLCPP_ERROR(logger, "启用按键模拟失败");
                 disconnectFromDevice();
                 return false;
@@ -280,14 +280,14 @@ namespace fd_hardware_base{
         }
 
         // 初始化力输出为零
-        if (dhdSetForceAndTorqueAndGripperForce(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dev_id_) < DHD_NO_ERROR) {
+        if (dhdSetForceAndTorqueAndGripperForce(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, interface_id_) < DHD_NO_ERROR) {
             RCLCPP_ERROR(logger, "初始化力输出失败");
             disconnectFromDevice();
             return false;
         }
 
         // 根据硬件能力调整姿态读取策略
-        ignore_orientation_ |= !dhdHasWrist(dev_id_);
+        ignore_orientation_ |= !dhdHasWrist(interface_id_);
         if (ignore_orientation_) {
             RCLCPP_INFO(logger, "因硬件限制，忽略姿态读数");
         }
@@ -314,15 +314,15 @@ namespace fd_hardware_base{
         int hasStopped = -1;
         while (hasStopped < 0) {
             RCLCPP_INFO(logger, "正在停止 DHD 设备...");
-            hasStopped = dhdStop(dev_id_);
+            hasStopped = dhdStop(interface_id_);
             dhdSleep(0.1);
         }
 
         // 关闭设备连接
-        int connectionIsClosed = dhdClose(dev_id_);
+        int connectionIsClosed = dhdClose(interface_id_);
         if (connectionIsClosed >= 0) {
             RCLCPP_INFO(logger, "DHD 设备已关闭");
-            dev_id_ = -1;
+            interface_id_ = -1;
             isConnected_ = false;
             return true;
         } else {
@@ -402,10 +402,10 @@ namespace fd_hardware_base{
         // 解析序列号
         auto it_sn = info_.hardware_parameters.find("interface_sn");
         if (it_sn != info_.hardware_parameters.end()) {
-            interface_SN_ = std::stoi(it_sn->second);
-            RCLCPP_INFO(logger, "配置序列号 SN: %d", interface_SN_);
+            interface_sn_ = std::stoi(it_sn->second);
+            RCLCPP_INFO(logger, "配置序列号 SN: %d", interface_sn_);
         } else {
-            interface_SN_ = -1;
+            interface_sn_ = -1;
         }
 
         // 解析按键模拟开关
@@ -424,7 +424,6 @@ namespace fd_hardware_base{
         } else {
             inertia_interface_name_ = "fd_inertia";
         }
-
         // 解析末端质量
         auto it_mass = info_.hardware_parameters.find("effector_mass");
         if (it_mass != info_.hardware_parameters.end()) {

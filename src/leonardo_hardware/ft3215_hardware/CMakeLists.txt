@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.28)
 project(ft3215_hardware)
 
 # 启用 compile_commands.json 导出，以支持 IDE 代码索引

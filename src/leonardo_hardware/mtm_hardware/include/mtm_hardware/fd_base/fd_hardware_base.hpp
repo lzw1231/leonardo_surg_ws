@@ -15,20 +15,29 @@ namespace fd_hardware_base{
     public:
         RCLCPP_SHARED_PTR_DEFINITIONS(FDHardwareBase);
 
+        MTM_HARDWARE_PUBLIC
         ~FDHardwareBase() override = default;
 
         // 生命周期回调
+        MTM_HARDWARE_PUBLIC
         hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams& params) override;
+        MTM_HARDWARE_PUBLIC
         hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
+        MTM_HARDWARE_PUBLIC
         hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+        MTM_HARDWARE_PUBLIC
         hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
 
         // 接口导出
+        MTM_HARDWARE_PUBLIC
         std::vector<hardware_interface::StateInterface::ConstSharedPtr> on_export_state_interfaces() override;
+        MTM_HARDWARE_PUBLIC
         std::vector<hardware_interface::CommandInterface::SharedPtr> on_export_command_interfaces() override;
 
         // 纯虚函数，由子类实现具体数据读写逻辑
+        MTM_HARDWARE_PUBLIC
         hardware_interface::return_type read(const rclcpp::Time& time, const rclcpp::Duration& period) override = 0;
+        MTM_HARDWARE_PUBLIC
         hardware_interface::return_type write(const rclcpp::Time& time, const rclcpp::Duration& period) override = 0;
 
     protected:
@@ -45,8 +54,8 @@ namespace fd_hardware_base{
         std::vector<double> hw_button_state_; // 按钮/GPIO 状态
 
         // 设备标识与配置参数
-        char dev_id_{-1}; // DHD 设备内部 ID
-        int interface_SN_{-1}; // 设备序列号
+        char interface_id_{-1}; // 设备内部ID
+        int interface_sn_{-1}; // 设备序列号
         bool emulate_button_{false}; // 是否启用夹爪按键模拟
         std::string inertia_interface_name_; // 惯性矩阵接口名称前缀
         double effector_mass_{-1.0}; // 末端执行器质量 (kg)

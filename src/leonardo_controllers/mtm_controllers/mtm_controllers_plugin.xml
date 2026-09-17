@@ -1,9 +1,15 @@
-<library path="fd_left_ee_pose_broadcaster">
+<library path="mtm_fd_left_controllers">
     <class name="mtm_controllers/FDLeftEePoseBroadcaster"
            type="mtm_controllers::FDLeftEePoseBroadcaster"
            base_class_type="controller_interface::ControllerInterface">
-        <description>
-            Left EE pose broadcaster (skeleton).
-        </description>
+        <description>左侧主手末端位姿广播器</description>
     </class>
+</library>
+
+<library path="mtm_fd_right_controllers">
+<class name="mtm_controllers/FdRightEePoseBroadcaster"
+       type="mtm_controllers::FdRightEePoseBroadcaster"
+       base_class_type="controller_interface::ControllerInterface">
+    <description>右侧主手末端位姿广播器</description>
+</class>
 </library>

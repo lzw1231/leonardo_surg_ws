@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:macro
-            name="fd_right_xacro"
-            params="robot_id ros2_control_name:='FDRightHardware' interface_id:='-1' interface_sn:='-1' effector_mass:='-1.0' use_fake_hardware:='false' use_orientation:='false' orientation_is_actuated:='false' use_clutch:='false' emulate_button:='false' ignore_orientation_readings:='false'">
+            name="fd_left_ros2_control"
+            params="robot_id ros2_control_name:='FDLeftHardware' interface_id:='-1' interface_sn:='-1' effector_mass:='-1.0' use_fake_hardware:='false' use_orientation:='false' orientation_is_actuated:='false' use_gripper:='false' emulate_button:='false' ignore_orientation_readings:='false'">
         <ros2_control name="${ros2_control_name}" type="system">
             <hardware>
                 <xacro:if value="${use_fake_hardware}">
                     <plugin>fake_components/GenericSystem</plugin>
                 </xacro:if>
                 <xacro:unless value="${use_fake_hardware}">
-                    <plugin>fd_hardware/FDEffortHardwareInterface</plugin>
+                    <plugin>fd_left_hardware/FDLeftHardwareInterface</plugin>
                     <param name="interface_id">${interface_id}</param>
-                    <param name="interface_serial_number">${interface_sn}</param>
+                    <param name="interface_sn">${interface_sn}</param>
                     <param name="emulate_button">${emulate_button}</param>
                     <param name="inertia_interface_name">${robot_id}_inertia</param>
                     <param name="effector_mass">${effector_mass}</param>
@@ -20,7 +20,7 @@
             </hardware>
 
             <!-- Configure GPIOs -->
-            <gpio name="button">
+            <gpio name="${robot_id}_button">
                 <state_interface name="position"/>
             </gpio>
 
@@ -54,9 +54,9 @@
                 <xacro:configure_rotation_joint joint_name="${robot_id}_yaw"/>
             </xacro:if>
 
-            <!-- Configure clutch -->
-            <xacro:if value="${use_clutch}">
-                <xacro:configure_translation_joint joint_name="${robot_id}_clutch"/>
+            <!-- Configure gripper -->
+            <xacro:if value="${use_gripper}">
+                <xacro:configure_translation_joint joint_name="${robot_id}_gripper"/>
             </xacro:if>
         </ros2_control>
     </xacro:macro>
