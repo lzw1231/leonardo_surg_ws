@@ -1,7 +1,7 @@
 # ==============================================================================
 # Controller Manager
 # ==============================================================================
-mtm_controllers/controller_manager:
+mtm/controller_manager:
   ros__parameters:
     update_rate: 50  # Hz
     # joint state broadcaster
@@ -21,7 +21,7 @@ mtm_controllers/controller_manager:
 # ==============================================================================
 # Left controller params
 # ==============================================================================
-mtm_controllers/fd_left_effort_controller:
+mtm/fd_left_effort_controller:
   ros__parameters:
     joints:
       - fd_left_x
@@ -31,7 +31,7 @@ mtm_controllers/fd_left_effort_controller:
       - fd_left_pitch
       - fd_left_yaw
 #      - fd_left_gripper
-mtm_controllers/fd_left_ee_broadcaster:
+mtm/fd_left_ee_broadcaster:
   ros__parameters:
     transform_translation:
       - 0.0
@@ -54,7 +54,7 @@ mtm_controllers/fd_left_ee_broadcaster:
 # ==============================================================================
 # Right controller params
 # ==============================================================================
-mtm_controllers/fd_right_effort_controller:
+mtm/fd_right_effort_controller:
   ros__parameters:
     joints:
       - fd_right_x
@@ -64,7 +64,7 @@ mtm_controllers/fd_right_effort_controller:
       - fd_right_pitch
       - fd_right_yaw
 #      - fd_right_gripper
-mtm_controllers/fd_right_ee_broadcaster:
+mtm/fd_right_ee_broadcaster:
   ros__parameters:
     transform_translation:
       - 0.0

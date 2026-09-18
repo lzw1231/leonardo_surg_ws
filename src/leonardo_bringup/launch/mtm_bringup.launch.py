@@ -28,13 +28,13 @@ def generate_launch_description():
     )
 
     # 命名空间：统一所有节点，规避跨命名空间的 remap 依赖
-    ns = "mtm_controllers"
+    ns_mtm = "mtm"
 
     # 机器人模型发布
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
-        namespace=ns,
+        namespace=ns_mtm,
         parameters=[
             {
                 "robot_description": ParameterValue(
@@ -44,8 +44,8 @@ def generate_launch_description():
             }
         ],
         remappings=[
-            ('/tf', '/mtm_controllers/tf'),
-            ('/tf_static', '/mtm_controllers/tf_static'),
+            ('/tf', '/mtm/tf'),
+            ('/tf_static', '/mtm/tf_static'),
         ]
     )
 
@@ -53,7 +53,7 @@ def generate_launch_description():
     controller_manager_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        namespace=ns,
+        namespace=ns_mtm,
         parameters=[robot_controllers_yaml_path],
     )
 
@@ -61,35 +61,35 @@ def generate_launch_description():
     joint_state_broadcaster_node = Node(
         package="controller_manager",
         executable="spawner",
-        namespace=ns,
+        namespace=ns_mtm,
         arguments=["joint_state_broadcaster"],
     )
 
     fd_left_effort_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        namespace=ns,
+        namespace=ns_mtm,
         arguments=["fd_left_effort_controller"],
     )
 
     fd_left_ee_broadcaster_node = Node(
         package="controller_manager",
         executable="spawner",
-        namespace=ns,
+        namespace=ns_mtm,
         arguments=["fd_left_ee_broadcaster"],
     )
 
     fd_right_effort_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        namespace=ns,
+        namespace=ns_mtm,
         arguments=["fd_right_effort_controller"],
     )
 
     fd_right_ee_broadcaster_node = Node(
         package="controller_manager",
         executable="spawner",
-        namespace=ns,
+        namespace=ns_mtm,
         arguments=["fd_right_ee_broadcaster"],
     )
 
@@ -97,12 +97,12 @@ def generate_launch_description():
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
-        namespace=ns,
+        namespace=ns_mtm,
         arguments=["-d", rviz_config_file_path],
         remappings=[
-            ("/tf", "/mtm_controllers/tf"),
-            ("/tf_static", "/mtm_controllers/tf_static"),
-            ("robot_description", "/mtm_controllers/robot_description"),
+            ("/tf", "/mtm/tf"),
+            ("/tf_static", "/mtm/tf_static"),
+            ("robot_description", "/mtm/robot_description"),
         ],
     )
 
