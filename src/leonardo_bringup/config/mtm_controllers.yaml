@@ -1,27 +1,12 @@
 # ==============================================================================
-# Controller Manager
+# MTM 控制器参数
+# 命名空间：leonardo（和 leonardo_controller_manager.yaml 保持一致）
 # ==============================================================================
-mtm/controller_manager:
-  ros__parameters:
-    update_rate: 50  # Hz
-    # joint state broadcaster
-    joint_state_broadcaster:
-      type: joint_state_broadcaster/JointStateBroadcaster
-    # Left arm
-    fd_left_effort_controller:
-      type: effort_controllers/JointGroupEffortController
-    fd_left_ee_broadcaster:
-      type: mtm_controllers/FDLeftEePoseBroadcaster
-    # Right arm
-    fd_right_effort_controller:
-      type: effort_controllers/JointGroupEffortController
-    fd_right_ee_broadcaster:
-      type: mtm_controllers/FDRightEePoseBroadcaster
 
 # ==============================================================================
-# Left controller params
+# Left arm
 # ==============================================================================
-mtm/fd_left_effort_controller:
+leonardo/fd_left_effort_controller:
   ros__parameters:
     joints:
       - fd_left_x
@@ -31,16 +16,14 @@ mtm/fd_left_effort_controller:
       - fd_left_pitch
       - fd_left_yaw
 #      - fd_left_gripper
-mtm/fd_left_ee_broadcaster:
+
+leonardo/fd_left_ee_broadcaster:
   ros__parameters:
-    transform_translation:
-      - 0.0
-      - 0.0
-      - 0.0
-    transform_rotation:
-      - 0.0
-      - 0.0
-      - 0.0
+    pose_topic: /leonardo/fd_left_ee_pose
+    button_topic: /leonardo/fd_left_button_state
+    rpy_topic: /leonardo/fd_left_ee_rpy
+    transform_translation: [ 0.0, 0.0, 0.0 ]
+    transform_rotation: [ 0.0, 0.0, 0.0 ]
     joints:
       - fd_left_x
       - fd_left_y
@@ -52,9 +35,9 @@ mtm/fd_left_ee_broadcaster:
       - fd_left_button
 
 # ==============================================================================
-# Right controller params
+# Right arm
 # ==============================================================================
-mtm/fd_right_effort_controller:
+leonardo/fd_right_effort_controller:
   ros__parameters:
     joints:
       - fd_right_x
@@ -64,16 +47,14 @@ mtm/fd_right_effort_controller:
       - fd_right_pitch
       - fd_right_yaw
 #      - fd_right_gripper
-mtm/fd_right_ee_broadcaster:
+
+leonardo/fd_right_ee_broadcaster:
   ros__parameters:
-    transform_translation:
-      - 0.0
-      - 0.0
-      - 0.0
-    transform_rotation:
-      - 0.0
-      - 0.0
-      - 0.0
+    pose_topic: /leonardo/fd_right_ee_pose
+    button_topic: /leonardo/fd_right_button_state
+    rpy_topic: /leonardo/fd_right_ee_rpy
+    transform_translation: [ 0.0, 0.0, 0.0 ]
+    transform_rotation: [ 0.0, 0.0, 0.0 ]
     joints:
       - fd_right_x
       - fd_right_y

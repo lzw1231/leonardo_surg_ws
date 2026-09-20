@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(mtm_description)
+project(leonardo_description)
 
 # 显式定义，避免未使用警告
 set(_dummy ${CMAKE_EXPORT_COMPILE_COMMANDS})
@@ -14,10 +14,13 @@ endif ()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
-
 install(
-        DIRECTORY urdf rviz bringup
+        DIRECTORY
+        urdf
+        mtm_description
+        ft3215_description
         DESTINATION share/${PROJECT_NAME}
 )
 
 ament_package()
+

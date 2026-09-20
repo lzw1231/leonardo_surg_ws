@@ -1,0 +1,12 @@
+<library path="psm_controllers">
+    <class name="psm_controllers/FT3215AController"
+           type="psm_controllers::FT3215AController"
+           base_class_type="controller_interface::ControllerInterface">
+        <description>FT3215 A 控制器（控制前 3 个关节）</description>
+    </class>
+    <class name="psm_controllers/FT3215BController"
+           type="psm_controllers::FT3215BController"
+           base_class_type="controller_interface::ControllerInterface">
+        <description>FT3215 B 控制器（控制后 3 个关节）</description>
+    </class>
+</library>

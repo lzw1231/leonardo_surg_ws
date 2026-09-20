@@ -1,0 +1,29 @@
+leonardo/controller_manager:
+  ros__parameters:
+    update_rate: 50
+    # --------------------------------------------------------------------------
+    # Broadcasters
+    # --------------------------------------------------------------------------
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # --------------------------------------------------------------------------
+    # MTM 主端控制器
+    # --------------------------------------------------------------------------
+    fd_left_effort_controller:
+      type: effort_controllers/JointGroupEffortController
+    fd_right_effort_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    fd_left_ee_broadcaster:
+      type: mtm_controllers/FDLeftEePoseBroadcaster
+    fd_right_ee_broadcaster:
+      type: mtm_controllers/FDRightEePoseBroadcaster
+
+    # --------------------------------------------------------------------------
+    # PSM 从端控制器
+    # --------------------------------------------------------------------------
+    ft3215_controller_a:
+      type: psm_controllers/FT3215AController
+    ft3215_controller_b:
+      type: psm_controllers/FT3215BController

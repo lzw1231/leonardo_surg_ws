@@ -12,8 +12,8 @@
     <xacro:arg name="right_base_offset_z" default="0.0"/>
 
     <!-- ==================== 引入通用模板 ==================== -->
-    <xacro:include filename="$(find mtm_description)/urdf/common/fd.urdf.xacro"/>
-    <xacro:include filename="$(find mtm_description)/urdf/common/fd.ros2_control_hardware.xacro"/>
+    <xacro:include filename="common/fd.urdf.xacro"/>
+    <xacro:include filename="common/fd.ros2_control_hardware.xacro"/>
 
     <!-- ==================== 左侧主手 ==================== -->
     <xacro:fd_haptic_interface
@@ -35,14 +35,6 @@
             emulate_button="true"
             effector_mass="-0.71"/>
 
-    <!-- ==================== 把右手 base 挂到左手 base 上 ==================== -->
-    <joint name="fd_left_to_right_base" type="fixed">
-        <origin rpy="0 0 0"
-                xyz="$(arg right_base_offset_x) $(arg right_base_offset_y) $(arg right_base_offset_z)"/>
-        <parent link="fd_left_base"/>
-        <child link="fd_right_base"/>
-    </joint>
-
     <!-- ==================== 右侧主手 ==================== -->
     <xacro:fd_haptic_interface
             robot_id="fd_right"
@@ -62,5 +54,14 @@
             use_clutch="$(arg use_clutch)"
             emulate_button="true"
             effector_mass="-0.71"/>
+
+    <!-- ==================== 左右手连接：将右手 base 固定到左手 base ==================== -->
+    <joint name="fd_left_to_right_base" type="fixed">
+        <origin rpy="0 0 0"
+                xyz="$(arg right_base_offset_x) $(arg right_base_offset_y) $(arg right_base_offset_z)"/>
+        <parent link="fd_left_base"/>
+        <child link="fd_right_base"/>
+    </joint>
+
 
 </robot>

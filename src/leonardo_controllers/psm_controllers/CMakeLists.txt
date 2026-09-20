@@ -1,9 +1,9 @@
 # ==============================================================================
-# mtm_controllers 的 CMake 配置
+# psm_controllers 的 CMake 配置
 # ==============================================================================
 cmake_minimum_required(VERSION 3.28)
 cmake_policy(SET CMP0167 OLD)
-project(mtm_controllers)
+project(psm_controllers)
 
 # 强制 C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -24,82 +24,51 @@ endif ()
 # 依赖查找
 # ==============================================================================
 find_package(ament_cmake REQUIRED)
-find_package(builtin_interfaces REQUIRED)
-find_package(controller_interface REQUIRED)
-find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
-find_package(rcutils REQUIRED)
-find_package(realtime_tools REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(eigen3_cmake_module REQUIRED)
-find_package(Eigen3 REQUIRED)
+find_package(controller_interface REQUIRED)
 find_package(example_interfaces REQUIRED)
+find_package(pluginlib REQUIRED)
 
 # ament 依赖：用于 ament_target_dependencies 与 ament_export_dependencies
 set(AMENT_DEPENDENCIES
-        builtin_interfaces
+        rclcpp
+        rclcpp_lifecycle
         controller_interface
         example_interfaces
         pluginlib
-        rclcpp
-        rclcpp_lifecycle
-        rcutils
-        realtime_tools
-        geometry_msgs
-        std_msgs
-        eigen3_cmake_module
-        Eigen3
 )
 
 # ==============================================================================
-# 左侧控制器
+# psm从端控制器
 # ==============================================================================
-add_library(mtm_fd_left_controllers SHARED
-        src/fd_left/fd_left_ee_pose_broadcaster.cpp
-        # src/fd_left/xxx_left_controller.cpp
+add_library(psm_controllers SHARED
+        src/ft3215/ft3215_a_controller.cpp
+        src/ft3215/ft3215_b_controller.cpp
 )
-target_include_directories(mtm_fd_left_controllers
+target_include_directories(psm_controllers
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 # 构建 DLL 时使用 dllexport
-target_compile_definitions(mtm_fd_left_controllers PRIVATE MTM_CONTROLLERS_BUILDING_DLL
+target_compile_definitions(psm_controllers PRIVATE PSM_CONTROLLERS_BUILDING_DLL
 )
 # 让 pluginlib 不再依赖 Boost 的 function/bind
-target_compile_definitions(mtm_fd_left_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
-ament_target_dependencies(mtm_fd_left_controllers ${AMENT_DEPENDENCIES})
-
-# ==============================================================================
-# 右侧控制器
-# ==============================================================================
-add_library(mtm_fd_right_controllers SHARED
-        src/fd_right/fd_right_ee_pose_broadcaster.cpp
-        # src/fd_right/xxx_right_controller.cpp
-)
-target_include_directories(mtm_fd_right_controllers
-        PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)
-target_compile_definitions(mtm_fd_right_controllers PRIVATE MTM_CONTROLLERS_BUILDING_DLL)
-target_compile_definitions(mtm_fd_right_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
-ament_target_dependencies(mtm_fd_right_controllers ${AMENT_DEPENDENCIES})
+target_compile_definitions(psm_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
+ament_target_dependencies(psm_controllers ${AMENT_DEPENDENCIES})
 
 # ==============================================================================
 # pluginlib 插件描述
 # ==============================================================================
-pluginlib_export_plugin_description_file(controller_interface mtm_controllers_plugin.xml)
+pluginlib_export_plugin_description_file(controller_interface psm_controllers_plugin.xml)
 
 # ==============================================================================
 # 安装
 # ==============================================================================
 install(TARGETS
-        mtm_fd_left_controllers
-        mtm_fd_right_controllers
-        EXPORT export_mtm_controllers
+        psm_controllers
+        EXPORT export_psm_controllers
         RUNTIME DESTINATION bin
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
@@ -112,7 +81,7 @@ install(DIRECTORY include/
 # ==============================================================================
 # ament 导出（供下游包 find_package 使用）
 # ==============================================================================
-ament_export_targets(export_mtm_controllers HAS_LIBRARY_TARGET)
+ament_export_targets(export_psm_controllers HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
 ament_export_dependencies(${AMENT_DEPENDENCIES})
 

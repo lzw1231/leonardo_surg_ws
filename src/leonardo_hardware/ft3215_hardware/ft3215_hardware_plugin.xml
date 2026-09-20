@@ -1,0 +1,7 @@
+<library path="ft3215_hardware">
+    <class name="ft3215_hardware/FT3215HardwareInterface"
+           type="ft3215_hardware::FT3215HardwareInterface"
+           base_class_type="hardware_interface::SystemInterface">
+        <description>ft3215电机的硬件接口</description>
+    </class>
+</library>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="leonardo">
+
+    <!-- ==================== 引入 MTM 双臂 ==================== -->
+    <xacro:include filename="$(find leonardo_description)/mtm_description/urdf/fd_bimanual.config.xacro"/>
+
+    <!-- ==================== 引入 FT3215 蛇形臂 ==================== -->
+    <xacro:include filename="$(find leonardo_description)/ft3215_description/ft3215.urdf.xacro"/>
+
+    <!-- ==================== 把 FT3215 挂到 fd_left_base 上 ==================== -->
+    <joint name="fd_left_base_to_ft3215" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="fd_left_base"/>
+        <child link="link_ft_11"/>
+    </joint>
+
+</robot>

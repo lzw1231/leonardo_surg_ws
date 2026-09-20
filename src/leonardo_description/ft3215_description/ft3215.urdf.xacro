@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ft3215">
+
+    <link name="link_ft_11"/>
+    <link name="link_ft_12"/>
+    <link name="link_ft_13"/>
+    <link name="link_ft_14"/>
+    <link name="link_ft_15"/>
+    <link name="link_ft_16"/>
+    <link name="link_ft_17"/>
+
+
+    <joint name="joint_ft_11_12" type="revolute">
+        <parent link="link_ft_11"/>
+        <child link="link_ft_12"/>
+        <origin xyz="0 1 0" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit effort="10" velocity="10.0" lower="-3.1415926" upper="3.1415926"/>
+    </joint>
+
+    <joint name="joint_ft_12_13" type="revolute">
+        <parent link="link_ft_12"/>
+        <child link="link_ft_13"/>
+        <origin xyz="0 1 0" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit effort="10" velocity="10.0" lower="-3.1415926" upper="3.1415926"/>
+    </joint>
+
+    <joint name="joint_ft_13_14" type="revolute">
+        <parent link="link_ft_13"/>
+        <child link="link_ft_14"/>
+        <origin xyz="0 1 0" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit effort="10" velocity="10.0" lower="-3.1415926" upper="3.1415926"/>
+    </joint>
+
+    <joint name="joint_ft_14_15" type="revolute">
+        <parent link="link_ft_14"/>
+        <child link="link_ft_15"/>
+        <origin xyz="0 1 0" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit effort="10" velocity="10.0" lower="-3.1415926" upper="3.1415926"/>
+    </joint>
+
+    <joint name="joint_ft_15_16" type="revolute">
+        <parent link="link_ft_15"/>
+        <child link="link_ft_16"/>
+        <origin xyz="0 1 0" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit effort="10" velocity="10.0" lower="-3.1415926" upper="3.1415926"/>
+    </joint>
+
+    <joint name="joint_ft_16_17" type="revolute">
+        <parent link="link_ft_16"/>
+        <child link="link_ft_17"/>
+        <origin xyz="0 1 0" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit effort="10" velocity="10.0" lower="-3.1415926" upper="3.1415926"/>
+    </joint>
+
+    <ros2_control name="ft_123456" type="system">
+        <hardware>
+            <plugin>ft3215_hardware/FT3215HardwareInterface</plugin>
+            <param name="ft3215_port">/dev/ttyACM0</param>
+            <param name="baud">1000000</param>
+            <param name="joint_11_12">11</param>
+            <param name="joint_12_13">12</param>
+            <param name="joint_13_14">13</param>
+            <param name="joint_14_15">14</param>
+            <param name="joint_15_16">15</param>
+            <param name="joint_16_17">16</param>
+        </hardware>
+
+        <joint name="joint_ft_11_12">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="joint_ft_12_13">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="joint_ft_13_14">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="joint_ft_14_15">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="joint_ft_15_16">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="joint_ft_16_17">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+    </ros2_control>
+</robot>
