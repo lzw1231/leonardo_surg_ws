@@ -43,8 +43,7 @@ set(AMENT_DEPENDENCIES
 # psm从端控制器
 # ==============================================================================
 add_library(psm_controllers SHARED
-        src/ft3215/ft3215_a_controller.cpp
-        src/ft3215/ft3215_b_controller.cpp
+        src/ft3215/ft3215_controller.cpp
 )
 target_include_directories(psm_controllers
         PUBLIC

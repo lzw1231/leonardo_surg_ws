@@ -18,7 +18,7 @@ endif ()
 # ==============================================================================
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(example_interfaces REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBEVDEV REQUIRED libevdev)
 
@@ -39,7 +39,7 @@ target_link_directories(topic_router PRIVATE ${LIBEVDEV_LIBRARY_DIRS})
 
 ament_target_dependencies(topic_router
         rclcpp
-        example_interfaces
+        std_msgs
 )
 
 # ==============================================================================

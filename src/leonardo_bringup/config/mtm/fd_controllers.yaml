@@ -2,26 +2,12 @@
 # MTM 控制器参数
 # 命名空间：leonardo（和 leonardo_controller_manager.yaml 保持一致）
 # ==============================================================================
-
 # ==============================================================================
-# Left arm
+# 左侧主手末端链式控制器
 # ==============================================================================
-leonardo/fd_left_effort_controller:
-  ros__parameters:
-    joints:
-      - fd_left_x
-      - fd_left_y
-      - fd_left_z
-      - fd_left_roll
-      - fd_left_pitch
-      - fd_left_yaw
-#      - fd_left_gripper
-
 leonardo/fd_left_ee_broadcaster:
+  type: mtm_controllers/FDLeftEeController
   ros__parameters:
-    pose_topic: /leonardo/fd_left_ee_pose
-    button_topic: /leonardo/fd_left_button_state
-    rpy_topic: /leonardo/fd_left_ee_rpy
     transform_translation: [ 0.0, 0.0, 0.0 ]
     transform_rotation: [ 0.0, 0.0, 0.0 ]
     joints:
@@ -34,25 +20,23 @@ leonardo/fd_left_ee_broadcaster:
     buttons:
       - fd_left_button
 
-# ==============================================================================
-# Right arm
-# ==============================================================================
-leonardo/fd_right_effort_controller:
+leonardo/fd_left_effort_controller:
   ros__parameters:
     joints:
-      - fd_right_x
-      - fd_right_y
-      - fd_right_z
-      - fd_right_roll
-      - fd_right_pitch
-      - fd_right_yaw
-#      - fd_right_gripper
+      - fd_left_x
+      - fd_left_y
+      - fd_left_z
+      - fd_left_roll
+      - fd_left_pitch
+      - fd_left_yaw
+#      - fd_left_gripper
 
+# ==============================================================================
+# 右侧主手末端链式控制器
+# ==============================================================================
 leonardo/fd_right_ee_broadcaster:
+  type: mtm_controllers/FDRightEeController
   ros__parameters:
-    pose_topic: /leonardo/fd_right_ee_pose
-    button_topic: /leonardo/fd_right_button_state
-    rpy_topic: /leonardo/fd_right_ee_rpy
     transform_translation: [ 0.0, 0.0, 0.0 ]
     transform_rotation: [ 0.0, 0.0, 0.0 ]
     joints:
@@ -64,3 +48,14 @@ leonardo/fd_right_ee_broadcaster:
       - fd_right_yaw
     buttons:
       - fd_right_button
+
+leonardo/fd_right_effort_controller:
+  ros__parameters:
+    joints:
+      - fd_right_x
+      - fd_right_y
+      - fd_right_z
+      - fd_right_roll
+      - fd_right_pitch
+      - fd_right_yaw
+#      - fd_right_gripper

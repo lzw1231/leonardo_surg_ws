@@ -1,0 +1,10 @@
+# ==============================================================================
+# 遥操作辅助节点参数
+# ==============================================================================
+
+leonardo/topic_router:
+  ros__parameters:
+    # 踏板设备（by-id 路径稳定，不随 event 号变化）
+    device_path: /dev/input/by-id/usb-PCsensor_FS20Pro-event-kbd
+    # 发布话题（和 psm_controllers.yaml 里的 pedal_state_topic 对齐）
+    pedal_state_topic: /leonardo/pedal_state

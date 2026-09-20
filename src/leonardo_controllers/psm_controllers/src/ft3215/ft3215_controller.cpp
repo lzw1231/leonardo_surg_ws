@@ -1,9 +1,9 @@
-#include "psm_controllers/ft3215/ft3215_b_controller.hpp"
+#include "psm_controllers/ft3215/ft3215_controller.hpp"
 #include <cmath>
 #include <algorithm>
 
 namespace psm_controllers{
-    controller_interface::CallbackReturn FT3215BController::on_init() {
+    controller_interface::CallbackReturn FT3215AController::on_init() {
         joint_names_ = auto_declare<std::vector<std::string>>("joints", {});
         interface_name_ = auto_declare<std::string>("interface_name", "position");
         coefficient_ = auto_declare<double>("coefficient", 1.0);
@@ -12,7 +12,7 @@ namespace psm_controllers{
         return CallbackReturn::SUCCESS;
     }
 
-    controller_interface::InterfaceConfiguration FT3215BController::state_interface_configuration() const {
+    controller_interface::InterfaceConfiguration FT3215AController::state_interface_configuration() const {
         controller_interface::InterfaceConfiguration config;
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
         config.names.reserve(joint_names_.size());
@@ -22,7 +22,7 @@ namespace psm_controllers{
         return config;
     }
 
-    controller_interface::InterfaceConfiguration FT3215BController::command_interface_configuration() const {
+    controller_interface::InterfaceConfiguration FT3215AController::command_interface_configuration() const {
         controller_interface::InterfaceConfiguration config;
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
         config.names.reserve(joint_names_.size());
@@ -32,7 +32,8 @@ namespace psm_controllers{
         return config;
     }
 
-    controller_interface::CallbackReturn FT3215BController::on_configure(const rclcpp_lifecycle::State& previous_state) {
+
+    controller_interface::CallbackReturn FT3215AController::on_configure(const rclcpp_lifecycle::State& previous_state) {
         (void)previous_state;
 
         rt_command_buffer_.initRT(std::vector<double>(joint_names_.size(), 0.0));
@@ -71,6 +72,7 @@ namespace psm_controllers{
             }
 
             // 3. 通过检查，写入实时缓冲区
+
             rt_command_buffer_.writeFromNonRT(msg->data);
         };
 
@@ -79,7 +81,7 @@ namespace psm_controllers{
         return CallbackReturn::SUCCESS;
     }
 
-    controller_interface::CallbackReturn FT3215BController::on_activate(const rclcpp_lifecycle::State& previous_state) {
+    controller_interface::CallbackReturn FT3215AController::on_activate(const rclcpp_lifecycle::State& previous_state) {
         (void)previous_state;
 
         std::vector<double> initial_cmd(joint_names_.size());
@@ -99,7 +101,7 @@ namespace psm_controllers{
         return CallbackReturn::SUCCESS;
     }
 
-    controller_interface::return_type FT3215BController::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
+    controller_interface::return_type FT3215AController::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
         (void)time;
         (void)period;
 
@@ -121,4 +123,4 @@ namespace psm_controllers{
 } // namespace ft3215_controller
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(psm_controllers::FT3215BController, controller_interface::ControllerInterface)
+PLUGINLIB_EXPORT_CLASS(psm_controllers::FT3215AController, controller_interface::ControllerInterface)
