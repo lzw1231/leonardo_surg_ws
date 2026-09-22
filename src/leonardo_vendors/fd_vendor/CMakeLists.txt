@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 4.2)
 project(fd_vendor)
 
 # 启用 compile_commands.json 导出，以支持 IDE 代码索引
@@ -8,7 +8,7 @@ set(_dummy ${CMAKE_EXPORT_COMPILE_COMMANDS})
 set(FD_SDK_VERSION "3.17.8")
 
 # 设定 C++ 标准
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 依赖 ROS2 ament 构建系统

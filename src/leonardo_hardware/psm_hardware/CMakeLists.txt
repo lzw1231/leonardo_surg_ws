@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 4.2)
 project(psm_hardware)
 
 # 启用 compile_commands.json 导出，以支持 IDE 代码索引

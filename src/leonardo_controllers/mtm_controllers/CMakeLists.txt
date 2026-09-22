@@ -1,12 +1,12 @@
 # ==============================================================================
 # mtm_controllers 的 CMake 配置
 # ==============================================================================
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 4.2)
 cmake_policy(SET CMP0167 OLD)
 project(mtm_controllers)
 
 # 使用 C++17
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -15,7 +15,7 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra)
 endif ()
 
-# Clang 22 对 C2y 扩展的警告抑制（pluginlib 用到 __COUNTER__）
+# Clang 对 C2y 扩展的警告抑制（pluginlib 用到 __COUNTER__）
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wno-c2y-extensions)
 endif ()
@@ -37,7 +37,7 @@ find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(example_interfaces REQUIRED)
 
-# ament 依赖列表（供 ament_target_dependencies 与 ament_export_dependencies）
+# 供 ament_export_dependencies 使用的包名列表
 set(AMENT_DEPENDENCIES
         builtin_interfaces
         controller_interface
@@ -51,6 +51,24 @@ set(AMENT_DEPENDENCIES
         std_msgs
         eigen3_cmake_module
         Eigen3
+)
+
+# 供 target_link_libraries 使用的目标列表
+# 普通库: 包名::包名
+# 消息/接口包: ${包名_TARGETS}
+# Eigen3: Eigen3::Eigen
+set(MTM_TARGET_LIBS
+        ${builtin_interfaces_TARGETS}
+        controller_interface::controller_interface
+        ${example_interfaces_TARGETS}
+        pluginlib::pluginlib
+        rclcpp::rclcpp
+        rclcpp_lifecycle::rclcpp_lifecycle
+        rcutils::rcutils
+        realtime_tools::realtime_tools
+        ${geometry_msgs_TARGETS}
+        ${std_msgs_TARGETS}
+        Eigen3::Eigen
 )
 
 # ==============================================================================
@@ -70,7 +88,7 @@ target_compile_definitions(mtm_fd_left_controllers PRIVATE MTM_CONTROLLERS_BUILD
 )
 # 关闭 pluginlib 对 Boost function/bind 的依赖
 target_compile_definitions(mtm_fd_left_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
-ament_target_dependencies(mtm_fd_left_controllers ${AMENT_DEPENDENCIES})
+target_link_libraries(mtm_fd_left_controllers PUBLIC ${MTM_TARGET_LIBS})
 
 # ==============================================================================
 # 右臂控制器库
@@ -86,7 +104,7 @@ target_include_directories(mtm_fd_right_controllers
 )
 target_compile_definitions(mtm_fd_right_controllers PRIVATE MTM_CONTROLLERS_BUILDING_DLL)
 target_compile_definitions(mtm_fd_right_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
-ament_target_dependencies(mtm_fd_right_controllers ${AMENT_DEPENDENCIES})
+target_link_libraries(mtm_fd_right_controllers PUBLIC ${MTM_TARGET_LIBS})
 
 # ==============================================================================
 # pluginlib 插件注册

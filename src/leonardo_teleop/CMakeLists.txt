@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 4.2)
 project(leonardo_teleop)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -34,12 +34,12 @@ target_include_directories(topic_router
         $<INSTALL_INTERFACE:include>
 )
 target_include_directories(topic_router PRIVATE ${LIBEVDEV_INCLUDE_DIRS})
-target_link_libraries(topic_router ${LIBEVDEV_LIBRARIES})
 target_link_directories(topic_router PRIVATE ${LIBEVDEV_LIBRARY_DIRS})
 
-ament_target_dependencies(topic_router
-        rclcpp
-        std_msgs
+target_link_libraries(topic_router PRIVATE
+        ${LIBEVDEV_LIBRARIES}
+        rclcpp::rclcpp
+        ${std_msgs_TARGETS}
 )
 
 # ==============================================================================

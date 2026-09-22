@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
 # ROS2 Workspace Build Script
-# Toolchain: LLVM 22 (clang / clang++ / lld)  |  Backend: Ninja
+# Toolchain: LLVM 23 (clang / clang++ / lld)  |  Backend: Ninja
 # CCJ Strategy: Full=bear | Incremental=bear capture + python merge
 #
 # Usage:
@@ -12,10 +12,9 @@
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
-ROS_DISTRO="jazzy"
-QT6_PATH="/home/lzw/Qt/6.11.1/gcc_64"
-LLVM_BIN="/opt/LLVM-22/bin"
-CMAKE_BIN="/opt/cmake-4/bin/cmake"
+ROS_DISTRO="lyrical"
+LLVM_BIN="/opt/LLVM-23/bin"
+CMAKE_BIN="/usr/bin/cmake"
 
 CC="${LLVM_BIN}/clang"
 CXX="${LLVM_BIN}/clang++"
@@ -57,7 +56,7 @@ COLCON_BUILD_ARGS=(
 # -----------------------------------------------------------------------------
 export PATH="$(dirname "${CMAKE_BIN}"):$PATH"
 export PATH="${LLVM_BIN}:$PATH"
-export LD_LIBRARY_PATH="${LLVM_BIN}/../lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="/opt/LLVM-23/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export CC CXX AR RANLIB
 
 SCRIPT_PATH=$(readlink -f "$0")
@@ -68,8 +67,15 @@ cd "$WS_ROOT" || exit 1
 unset AMENT_PREFIX_PATH
 unset CMAKE_PREFIX_PATH
 
+if [ ! -f "/opt/ros/${ROS_DISTRO}/setup.bash" ]; then
+    echo "[Build] ROS ${ROS_DISTRO} not found at /opt/ros/${ROS_DISTRO}" >&2
+    exit 1
+fi
 source "/opt/ros/${ROS_DISTRO}/setup.bash"
-export CMAKE_PREFIX_PATH="${QT6_PATH}:${CMAKE_PREFIX_PATH}"
+
+# 打印 ROS 2 版本信息
+ROS2_VERSION=$(ros2 --version 2>/dev/null | head -n1 || echo "unknown")
+echo -e "${CYAN}[Build] ${BOLD}▶${NC} ${CYAN}ROS 2: ${ROS_DISTRO} | ${ROS2_VERSION}${NC}"
 
 # =============================================================================
 # Embedded Python Merger (avoids jq -s memory issues + stale entry cleanup)
@@ -171,7 +177,7 @@ build_full() {
     log_info "[Full] Cleaning build/ install/ log/ compile_commands.json ..."
     rm -rf build/ install/ log/ compile_commands.json
 
-    log_info "[Full] Starting bear + colcon (Clang-22, LLD, Ninja)..."
+    log_info "[Full] Starting bear + colcon (Clang-23, LLD, Ninja)..."
     bear --output compile_commands_new.json -- \
         colcon build "${COLCON_BUILD_ARGS[@]}"
 
