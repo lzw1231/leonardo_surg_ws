@@ -25,17 +25,6 @@ controller_interface::CallbackReturn FDLeftEeController::on_init() {
             get_node()->declare_parameter<std::vector<double>>("transform_rotation", std::vector<double>{});
         }
 
-        // 打印实际读到的参数数量（一眼看出 --params-file 有没有生效）
-        const auto joints = get_node()->get_parameter("joints").as_string_array();
-        const auto buttons = get_node()->get_parameter("buttons").as_string_array();
-        const auto tt = get_node()->get_parameter("transform_translation").as_double_array();
-        const auto tr = get_node()->get_parameter("transform_rotation").as_double_array();
-
-        RCLCPP_INFO(get_node()->get_logger(),
-                    "FDLeftEeController::on_init: joints=%zu, buttons=%zu, "
-                    "transform_translation=%zu, transform_rotation=%zu",
-                    joints.size(), buttons.size(), tt.size(), tr.size());
-
     } catch (const std::exception &e) {
         RCLCPP_ERROR(get_node()->get_logger(), "on_init 异常: %s", e.what());
         return controller_interface::CallbackReturn::ERROR;

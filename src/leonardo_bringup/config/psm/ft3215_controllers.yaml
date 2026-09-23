@@ -7,6 +7,5 @@ leonardo/ft3215_controller:
       - joint_ft_14_15
       - joint_ft_15_16
       - joint_ft_16_17
-    upstream_prefix: "fd_left_ee_controller/ee"
+    upstream_prefix: "pedal_mapping_controller/psm_1"
     interface_name: "position"
-    coefficient: 1.0

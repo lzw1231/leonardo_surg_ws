@@ -1,0 +1,7 @@
+<library path="teleop_controllers">
+    <class name="teleop_controllers/PedalMappingController"
+        type="teleop_controllers::PedalMappingController"
+        base_class_type="controller_interface::ChainableControllerInterface">
+        <description>踏板映射控制器（订阅踏板状态，选择上游主手）</description>
+    </class>
+</library>

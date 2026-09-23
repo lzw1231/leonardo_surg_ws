@@ -1,6 +1,7 @@
 #pragma once
 
 #include "psm_controllers/common/visibility_control.hpp"
+#include <array>
 #include <controller_interface/controller_interface.hpp>
 #include <string>
 #include <vector>
@@ -10,17 +11,17 @@ namespace psm_controllers {
 /**
  * FT3215Controller（从手控制器，链末端）
  *
- * 从上游链式控制器读取 6 个参考接口：x, y, z, roll, pitch, yaw，
- * 按 coefficient_ 与从手当前硬件位置插值后，写入 6 个 FT3215 的 command interface。
+ * 从上游读 6 个参考接口（x/y/z/roll/pitch/yaw）+ 1 个 epoch，
+ * 用增量方式累加到从手命令，写到 6 个 FT3215 电机。
  *
- * 本控制器为链末端，不向下游导出引用接口，因此继承 ControllerInterface
+ * 增量逻辑：
+ *   第一帧 / epoch 变化：基准 = 硬件当前位置；last_target = 上游值；不动
+ *   其余每帧：delta = (上游值 - last_target) * kScale；slave_cmd += delta
+ *   上游无效帧：跳过（last_target 不更新，下帧自动补偿）
  *
- * 参数：
- *   joints:           从手 6 个 FT3215 电机名，长度必须为 6
- *   interface_name:   command/state interface 名，默认 "position"
- *   coefficient:      平滑系数，默认 1.0（1.0 = 直接跟随上游）
- *   upstream_prefix:  上游引用接口前缀，如 "fd_left_ee_controller/ee"
- *                     控制器内部拼成 <upstream_prefix>/x, /y, /z, /roll, /pitch, /yaw
+ * 缩放：
+ *   x/y/z 位置轴用 kScalePos 放大，让从手动作更明显；
+ *   roll/pitch/yaw 姿态轴不缩放（保持 1.0）。
  */
 class FT3215Controller : public controller_interface::ControllerInterface {
   public:
@@ -51,17 +52,35 @@ class FT3215Controller : public controller_interface::ControllerInterface {
     PSM_CONTROLLERS_PUBLIC
     controller_interface::return_type update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
-    // 上游 6 个参考接口的相对后缀，顺序固定
     static constexpr const char *kUpstreamSuffixes[6] = {"x", "y", "z", "roll", "pitch", "yaw"};
 
-    // ---- 参数 ----
-    std::vector<std::string> joint_names_; // 6 个 FT3215
-    std::string interface_name_;           // 默认 "position"
-    double coefficient_ = 1.0;             // 平滑系数
-    std::string upstream_prefix_;          // 如 "fd_left_ee_controller/ee"
+  private:
+    static constexpr size_t kN = 6;
 
-    // 上游 6 个接口完整名，on_configure 里拼好后缓存
+    // command_interfaces_ 里的索引
+    static constexpr size_t kEpochCmdIdx = kN;       // 第 7 个：epoch
+    static constexpr size_t kSlaveCmdStart = kN + 1; // 第 8 个起：从手命令
+
+    // x/y/z 增量放大倍数
+    static constexpr double kScalePos = 5.0;
+
+    // 各轴缩放系数：x/y/z 放大，roll/pitch/yaw 保持 1.0
+    static constexpr std::array<double, kN> kScale{kScalePos, kScalePos, kScalePos, // x, y, z
+                                                   1.0,       1.0,       1.0};      // roll, pitch, yaw
+
+    // ---- 参数 ----
+    std::vector<std::string> joint_names_;
+    std::string interface_name_;
+    std::string upstream_prefix_;
+
+    // 上游 6 个数据接口完整名（不含 epoch）
     std::vector<std::string> upstream_interfaces_;
+
+    // ---- 增量状态 ----
+    std::array<double, kN> slave_cmd_;   // 从手命令（自己累加）
+    std::array<double, kN> last_target_; // 上一帧的上游值
+    bool initialized_ = false;           // 第一帧标志
+    double last_epoch_ = -1.0;           // 上一帧的 epoch 值
 };
 
 } // namespace psm_controllers

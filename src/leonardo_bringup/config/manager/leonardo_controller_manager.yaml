@@ -11,5 +11,8 @@ leonardo/controller_manager:
     fd_right_ee_controller:
       type: mtm_controllers/FDRightEeController
 
+    pedal_mapping_controller:
+      type: teleop_controllers/PedalMappingController
+
     ft3215_controller:
       type: psm_controllers/FT3215Controller

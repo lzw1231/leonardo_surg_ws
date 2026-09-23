@@ -1,0 +1,9 @@
+# ==============================================================================
+# 踏板映射控制器参数
+# ==============================================================================
+
+leonardo/pedal_mapping_controller:
+  ros__parameters:
+    pedal_state_topic: /leonardo/pedal_state
+    left_prefix:  "fd_left_ee_controller/ee"
+    right_prefix: "fd_right_ee_controller/ee"

@@ -9,9 +9,9 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra)
 endif ()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wno-c2y-extensions)
-endif ()
+# if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+#     add_compile_options(-Wno-c2y-extensions)
+# endif ()
 
 # ==============================================================================
 # 依赖
@@ -23,20 +23,18 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBEVDEV REQUIRED libevdev)
 
 # ==============================================================================
-# topic_router 可执行文件
+# pedal_publisher 可执行文件
 # ==============================================================================
-add_executable(topic_router
-        src/topic_router.cpp
-)
-target_include_directories(topic_router
+add_executable(pedal_publisher src/pedal_publisher.cpp)
+target_include_directories(pedal_publisher
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
-target_include_directories(topic_router PRIVATE ${LIBEVDEV_INCLUDE_DIRS})
-target_link_directories(topic_router PRIVATE ${LIBEVDEV_LIBRARY_DIRS})
+target_include_directories(pedal_publisher PRIVATE ${LIBEVDEV_INCLUDE_DIRS})
+target_link_directories(pedal_publisher PRIVATE ${LIBEVDEV_LIBRARY_DIRS})
 
-target_link_libraries(topic_router PRIVATE
+target_link_libraries(pedal_publisher PRIVATE
         ${LIBEVDEV_LIBRARIES}
         rclcpp::rclcpp
         ${std_msgs_TARGETS}
@@ -45,7 +43,7 @@ target_link_libraries(topic_router PRIVATE
 # ==============================================================================
 # 安装
 # ==============================================================================
-install(TARGETS topic_router
+install(TARGETS pedal_publisher
         RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 install(DIRECTORY include/

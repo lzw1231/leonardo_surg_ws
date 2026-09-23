@@ -35,7 +35,7 @@ SYM_WARN="⚠"
 
 # Shared colcon build arguments (single source of truth)
 COLCON_BUILD_ARGS=(
-    --event-handlers console_direct+ status+
+    --event-handlers console_cohesion+ status+
     --cmake-args
         -G Ninja
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -46,11 +46,11 @@ COLCON_BUILD_ARGS=(
         -DCMAKE_C_COMPILER_AR="${AR}"
         -DCMAKE_CXX_COMPILER_AR="${AR}"
         -DCMAKE_VERBOSE_MAKEFILE=OFF
+        -DCMAKE_MESSAGE_LOG_LEVEL=WARNING
         -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld"
         -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=lld"
         -DCMAKE_MODULE_LINKER_FLAGS="-fuse-ld=lld"
 )
-
 # -----------------------------------------------------------------------------
 # Prepare environment
 # -----------------------------------------------------------------------------
