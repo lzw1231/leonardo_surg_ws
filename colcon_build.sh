@@ -74,8 +74,7 @@ fi
 source "/opt/ros/${ROS_DISTRO}/setup.bash"
 
 # 打印 ROS 2 版本信息
-ROS2_VERSION=$(ros2 --version 2>/dev/null | head -n1 || echo "unknown")
-echo -e "${CYAN}[Build] ${BOLD}▶${NC} ${CYAN}ROS 2: ${ROS_DISTRO} | ${ROS2_VERSION}${NC}"
+echo -e "${CYAN}[Build] ${BOLD}▶${NC} ${CYAN}ROS 2: ${ROS_DISTRO}${NC}"
 
 # =============================================================================
 # Embedded Python Merger (avoids jq -s memory issues + stale entry cleanup)
@@ -158,11 +157,13 @@ log_info() {
 log_success() {
     local duration=$1
     echo -e "\n${GREEN}${BOLD}[Build] ${SYM_OK} Completed successfully in ${duration}s${NC}"
+    echo -e "${CYAN}[Build] ${BOLD}▶${NC} ${CYAN}ROS 2: ${ROS_DISTRO}${NC}"
 }
 
 log_error() {
     local stage="$1"
     echo -e "\n${RED}${BOLD}[Build] ${SYM_FAIL} ${stage} FAILED.${NC}"
+    echo -e "${CYAN}[Build] ${BOLD}▶${NC} ${CYAN}ROS 2: ${ROS_DISTRO}${NC}"
 }
 
 log_warn() {

@@ -1,7 +1,7 @@
 <library path="psm_controllers">
     <class name="psm_controllers/FT3215Controller"
-           type="psm_controllers::FT3215Controller"
-           base_class_type="controller_interface::ControllerInterface">
+        type="psm_controllers::FT3215Controller"
+        base_class_type="controller_interface::ControllerInterface">
         <description>FT3215 控制器（控制6个关节）</description>
     </class>
 </library>

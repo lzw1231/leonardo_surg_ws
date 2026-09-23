@@ -1,5 +1,15 @@
 {
+    // ============================================================
+    // ROS 2
+    // ============================================================
     "ROS2.distro": "lyrical",
+    "terminal.integrated.env.linux": {
+        "RCUTILS_COLORIZED_OUTPUT": "1",
+        "RCUTILS_CONSOLE_OUTPUT_FORMAT": "[{severity}] {message}"
+    },
+    // ============================================================
+    // Python
+    // ============================================================
     "python.autoComplete.extraPaths": [
         "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
         "/opt/ros/lyrical/lib/python3.14/site-packages"
@@ -8,9 +18,20 @@
         "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
         "/opt/ros/lyrical/lib/python3.14/site-packages"
     ],
+    "ruff.path": [
+        "/home/lzw/.local/bin/ruff"
+    ],
+    "ruff.lineLength": 120,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true
+    },
+    // ============================================================
+    // C/C++（clangd + cpptools）
+    // ============================================================
     "clangd.path": "/opt/LLVM-23/bin/clangd",
     "clangd.arguments": [
-        "--compile-commands-dir=${workspaceFolder}",
+        "--compile-commands-dir=${workspaceFolder}/build",
         "--background-index",
         "--clang-tidy",
         "--header-insertion=iwyu",
@@ -25,17 +46,5 @@
     },
     "[c]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
-    },
-    "ruff.path": [
-        "/home/lzw/.local/bin/ruff"
-    ],
-    "ruff.lineLength": 100,
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnSave": true
-    },
-    "editor.formatOnSave": true,
-    "editor.bracketPairColorization.enabled": true,
-    "editor.guides.bracketPairs": "active",
-    "editor.guides.bracketPairsHorizontal": "active"
+    }
 }

@@ -2,10 +2,10 @@
 # psm_controllers 的 CMake 配置
 # ==============================================================================
 cmake_minimum_required(VERSION 4.2)
-cmake_policy(SET CMP0167 OLD)
+# cmake_policy(SET CMP0167 OLD)
 project(psm_controllers)
 
-# 强制 C++17
+# 强制 C++20
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -27,15 +27,14 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(controller_interface REQUIRED)
-find_package(example_interfaces REQUIRED)
 find_package(pluginlib REQUIRED)
+
 
 # 供 ament_export_dependencies 使用的包名列表
 set(AMENT_DEPENDENCIES
         rclcpp
         rclcpp_lifecycle
         controller_interface
-        example_interfaces
         pluginlib
 )
 
@@ -44,7 +43,6 @@ set(PSM_TARGET_LIBS
         rclcpp::rclcpp
         rclcpp_lifecycle::rclcpp_lifecycle
         controller_interface::controller_interface
-        ${example_interfaces_TARGETS}
         pluginlib::pluginlib
 )
 
@@ -60,8 +58,8 @@ target_include_directories(psm_controllers
         $<INSTALL_INTERFACE:include>
 )
 # 构建 DLL 时使用 dllexport
-target_compile_definitions(psm_controllers PRIVATE PSM_CONTROLLERS_BUILDING_DLL
-)
+# target_compile_definitions(psm_controllers PRIVATE PSM_CONTROLLERS_BUILDING_DLL)
+
 # 让 pluginlib 不再依赖 Boost 的 function/bind
 target_compile_definitions(psm_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
 target_link_libraries(psm_controllers PUBLIC ${PSM_TARGET_LIBS})

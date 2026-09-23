@@ -1,0 +1,35 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/lzw/Projects/leonardo_surg_ws/install/ft3215_hardware/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/install/sts_vendor/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/install/psm_controllers/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/install/mtm_hardware/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/install/mtm_controllers/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/install/leonardo_teleop/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/install/fd_vendor/include/**",
+        "/opt/ros/lyrical/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_controllers/mtm_controllers/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_controllers/psm_controllers/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_hardware/ft3215_hardware/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_hardware/mtm_hardware/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_hardware/psm_hardware/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_teleop/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_vendors/fd_vendor/include/**",
+        "/home/lzw/Projects/leonardo_surg_ws/src/leonardo_vendors/sts_vendor/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ros2",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++17"
+    }
+  ],
+  "version": 4
+}
