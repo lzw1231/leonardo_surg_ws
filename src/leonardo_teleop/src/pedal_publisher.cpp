@@ -19,14 +19,9 @@ PedalPublisher::PedalPublisher() : Node("pedal_publisher") {
         declare_parameter<std::string>("device_path", "/dev/input/by-id/usb-PCsensor_FS20Pro-event-kbd");
 
     // -------------------------------------------------------------------------
-    // QoS
-    // -------------------------------------------------------------------------
-    const auto qos = rclcpp::SystemDefaultsQoS();
-
-    // -------------------------------------------------------------------------
     // 发布者
     // -------------------------------------------------------------------------
-    pedal_state_pub_ = create_publisher<std_msgs::msg::Int32>(pedal_state_topic_, qos);
+    pedal_state_pub_ = create_publisher<std_msgs::msg::Int32>(pedal_state_topic_, rclcpp::SystemDefaultsQoS());
 
     // -------------------------------------------------------------------------
     // 启动 evdev 线程

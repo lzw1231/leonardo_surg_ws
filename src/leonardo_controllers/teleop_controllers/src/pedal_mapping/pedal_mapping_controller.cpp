@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <limits>
 
 namespace teleop_controllers {
@@ -164,21 +165,31 @@ PedalMappingController::update_and_write_commands(const rclcpp::Time & /*time*/,
     // ---- 2. 根据当前 key 决定写什么 ----
     const int key = pedal_key_.load(std::memory_order_relaxed);
 
-    if (key == 1) {
-        // 踏板 1：左手 → psm_1
-        copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_1_IDX);
-        // copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_2_IDX);
-        // copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_3_IDX);
-        // copy_source_to_dest(SRC_LEFT_IDX, DST_ECM_1_IDX);
+    switch (key) {
 
-    } else if (key == 3) {
-        // 踏板 3：右手 → psm_1
+    case 1:
+        copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_1_IDX);
+        break;
+
+    case 2:
+        break;
+
+    case 3:
         copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_1_IDX);
-        // copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_2_IDX);
-        // copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_3_IDX);
-        // copy_source_to_dest(SRC_RIGHT_IDX, DST_ECM_1_IDX);
+        break;
+
+    case 4:
+        break;
+
+    case 5:
+        break;
+
+    case 6:
+        break;
+
+    default:
+        break;
     }
-    // 其他 key：不拷贝数据（但 epoch 已在上面 ++）
 
     return controller_interface::return_type::OK;
 }
