@@ -1,37 +1,14 @@
 {
-    // ============================================================
-    // ROS 2
-    // ============================================================
+    // [ROS 2]
     "ROS2.distro": "lyrical",
     "terminal.integrated.env.linux": {
         "RCUTILS_COLORIZED_OUTPUT": "1",
         "RCUTILS_CONSOLE_OUTPUT_FORMAT": "[{severity}] {message}"
     },
-    // ============================================================
-    // Python
-    // ============================================================
-    "python.autoComplete.extraPaths": [
-        "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
-        "/opt/ros/lyrical/lib/python3.14/site-packages"
-    ],
-    "python.analysis.extraPaths": [
-        "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
-        "/opt/ros/lyrical/lib/python3.14/site-packages"
-    ],
-    "ruff.path": [
-        "/home/lzw/.local/bin/ruff"
-    ],
-    "ruff.lineLength": 120,
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnSave": true
-    },
-    // ============================================================
-    // C/C++（clangd + cpptools）
-    // ============================================================
+    // [C++ / clangd]
     "clangd.path": "/opt/LLVM-23/bin/clangd",
     "clangd.arguments": [
-        "--compile-commands-dir=${workspaceFolder}/build",
+        "--compile-commands-dir=${workspaceFolder}",
         "--background-index",
         "--clang-tidy",
         "--header-insertion=iwyu",
@@ -47,4 +24,41 @@
     "[c]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
     },
+    // [Debugger]
+    "lldb.library": "/opt/LLVM-23/lib/liblldb.so",
+    // [Python]
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
+        "/opt/ros/lyrical/lib/python3.14/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
+        "/opt/ros/lyrical/lib/python3.14/site-packages"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true
+    },
+    // [Ruff]
+    "ruff.path": [
+        "/usr/local/bin/ruff"
+    ],
+    "ruff.lineLength": 120,
+    // [Files]
+    "files.associations": {
+        "*.xacro": "xml",
+        "*.urdf": "xml",
+        "*.sdf": "xml",
+        "*.launch.py": "python"
+    },
+    "search.exclude": {
+        "**/build": true,
+        "**/install": true,
+        "**/log": true
+    },
+    "files.watcherExclude": {
+        "**/build/**": true,
+        "**/install/**": true,
+        "**/log/**": true
+    }
 }

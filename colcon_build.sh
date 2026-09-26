@@ -39,6 +39,7 @@ COLCON_BUILD_ARGS=(
     --cmake-args
         -G Ninja
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        -DCMAKE_BUILD_TYPE=Release   
         -DCMAKE_C_COMPILER="${CC}"
         -DCMAKE_CXX_COMPILER="${CXX}"
         -DCMAKE_AR="${AR}"
@@ -140,11 +141,24 @@ PYTHON_SCRIPT
 # Main entry point
 # =============================================================================
 main() {
-    if [[ "${1:-}" == "--clean" ]]; then
-        build_full
-    else
-        build_incremental
-    fi
+    case "${1:-}" in
+        -c|--clean)
+            build_full
+            ;;
+        -h|--help)
+            cat <<EOF
+用法: ./colcon_build.sh [选项]
+
+选项:
+  (无)        增量编译（bear 捕获 + 合并旧 compile_commands.json）
+  -c, --clean 全量干净重建（清空 build/ install/ log/ 后编译）
+  -h, --help  显示此帮助
+EOF
+            ;;
+        *)
+            build_incremental
+            ;;
+    esac
 }
 
 # -----------------------------------------------------------------------------
