@@ -36,7 +36,8 @@
         "ranch-hand-robotics.rde-pack",
         "eamodio.gitlens",
         "redhat.vscode-xml",
-        "fuzionix.file-tree-extractor"
+        "fuzionix.file-tree-extractor",
+        "ms-azuretools.vscode-docker"
       ]
     }
   }
