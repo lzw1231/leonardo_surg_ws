@@ -55,10 +55,10 @@
                 {
                     "foreground": "yellow",
                     "options": {
-                        "time_format": "15:04:05"
+                        "time_format": "03:04:05 PM"
                     },
                     "style": "plain",
-                    "template": "{{ .CurrentDate | date .Format }} ",
+                    "template": "{{ dateModify \"8h\" .CurrentDate | date .Format }} ",
                     "type": "time"
                 },
                 {
