@@ -17,7 +17,7 @@ namespace teleop_controllers {
 /**
  * PedalMappingController —— 踏板映射控制器（链式）
  *
- * 读左右主手 ee/*，按踏板状态选源，写到 4 组下游接口（psm_1/psm_2/psm_3/ecm_1）。
+ * 读左右主手 ee/，按踏板状态选源，写到 4 组下游接口（psm_1/psm_2/psm_3/ecm_1）。
  * 每组额外导出 1 个 epoch 接口。
  *
  * epoch 语义：

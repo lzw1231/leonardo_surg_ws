@@ -32,6 +32,8 @@ COLCON_BUILD_ARGS=(
     --event-handlers console_cohesion+ status+
     --cmake-args
         -G Ninja
+        -DCMAKE_C_FLAGS="-fcolor-diagnostics"
+        -DCMAKE_CXX_FLAGS="-fcolor-diagnostics"
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_C_COMPILER=clang-23

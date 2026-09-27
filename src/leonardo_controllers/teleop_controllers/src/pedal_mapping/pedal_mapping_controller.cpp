@@ -61,7 +61,7 @@ PedalMappingController::on_configure(const rclcpp_lifecycle::State & /*previous_
 
     // 订阅踏板话题（回调：记录 key + 计数事件）
     pedal_sub_ = node->create_subscription<std_msgs::msg::Int32>(
-        pedal_state_topic_, rclcpp::SystemDefaultsQoS(), [this](const std_msgs::msg::Int32::SharedPtr msg) {
+        pedal_state_topic_, rclcpp::SystemDefaultsQoS(), [this](const std_msgs::msg::Int32::ConstSharedPtr msg) {
             pedal_key_.store(static_cast<int>(msg->data), std::memory_order_relaxed);
             pedal_event_counter_.fetch_add(1, std::memory_order_relaxed);
         });
