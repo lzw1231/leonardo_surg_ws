@@ -13,13 +13,6 @@
 # Configuration
 # -----------------------------------------------------------------------------
 ROS_DISTRO="lyrical"
-LLVM_BIN="/opt/LLVM-23/bin"
-CMAKE_BIN="/usr/bin/cmake"
-
-CC="${LLVM_BIN}/clang"
-CXX="${LLVM_BIN}/clang++"
-AR="${LLVM_BIN}/llvm-ar"
-RANLIB="${LLVM_BIN}/llvm-ranlib"
 
 # Terminal colors & symbols
 GREEN='\033[0;32m'
@@ -34,31 +27,28 @@ SYM_FAIL="✘"
 SYM_WARN="⚠"
 
 # Shared colcon build arguments (single source of truth)
+LD_LLD="$(command -v ld.lld-23)"
 COLCON_BUILD_ARGS=(
     --event-handlers console_cohesion+ status+
     --cmake-args
         -G Ninja
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-        -DCMAKE_BUILD_TYPE=Release   
-        -DCMAKE_C_COMPILER="${CC}"
-        -DCMAKE_CXX_COMPILER="${CXX}"
-        -DCMAKE_AR="${AR}"
-        -DCMAKE_RANLIB="${RANLIB}"
-        -DCMAKE_C_COMPILER_AR="${AR}"
-        -DCMAKE_CXX_COMPILER_AR="${AR}"
-        -DCMAKE_VERBOSE_MAKEFILE=OFF
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_C_COMPILER=clang-23
+        -DCMAKE_CXX_COMPILER=clang++-23
         -DCMAKE_MESSAGE_LOG_LEVEL=WARNING
-        -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld"
-        -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=lld"
-        -DCMAKE_MODULE_LINKER_FLAGS="-fuse-ld=lld"
+        -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=${LD_LLD}"
+        -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=${LD_LLD}"
+        -DCMAKE_MODULE_LINKER_FLAGS="-fuse-ld=${LD_LLD}"
 )
+
 # -----------------------------------------------------------------------------
 # Prepare environment
 # -----------------------------------------------------------------------------
-export PATH="$(dirname "${CMAKE_BIN}"):$PATH"
-export PATH="${LLVM_BIN}:$PATH"
-export LD_LIBRARY_PATH="/opt/LLVM-23/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-export CC CXX AR RANLIB
+export CC=clang-23
+export CXX=clang++-23
+export AR=ar
+export RANLIB=ranlib
 
 SCRIPT_PATH=$(readlink -f "$0")
 WS_ROOT=$(cd "$(dirname "$SCRIPT_PATH")" && pwd)

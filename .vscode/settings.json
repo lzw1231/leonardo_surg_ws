@@ -6,7 +6,7 @@
         "RCUTILS_CONSOLE_OUTPUT_FORMAT": "[{severity}] {message}"
     },
     // [C++ / clangd]
-    "clangd.path": "/opt/LLVM-23/bin/clangd",
+    "clangd.path": "/usr/bin/clangd-23",
     "clangd.arguments": [
         "--compile-commands-dir=${workspaceFolder}",
         "--background-index",
@@ -24,8 +24,6 @@
     "[c]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
     },
-    // [Debugger]
-    "lldb.library": "/opt/LLVM-23/lib/liblldb.so",
     // [Python]
     "python.autoComplete.extraPaths": [
         "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
