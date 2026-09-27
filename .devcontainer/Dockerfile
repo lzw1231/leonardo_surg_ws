@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     iputils-ping \
     net-tools \
+    unzip \
     # ── 构建工具 ──
     ninja-build \
     bear \
@@ -70,13 +71,14 @@ RUN export http_proxy="$HTTP_PROXY" https_proxy="$HTTPS_PROXY" && \
     apt-get update && apt-get install -y --no-install-recommends lld-${CLANG_VERSION} && \
     rm -rf /var/lib/apt/lists/*
 
+# ====================== Install Oh My Posh ======================
+RUN curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin
+RUN echo 'eval "$(oh-my-posh init bash --config /root/omp.json)"' >> /root/.bashrc
+# =================================================================
+
 # ── source ROS ──
 RUN echo "source /opt/ros/lyrical/setup.bash" > /etc/profile.d/ros.sh && chmod +x /etc/profile.d/ros.sh
 RUN echo "source /opt/ros/lyrical/setup.bash" >> /root/.bashrc
 RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
-
-# ── 彩色终端提示符（对所有用户生效）──
-RUN echo "export PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]# '" >> /root/.bashrc \
-    && echo "export PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]# '" >> /etc/bash.bashrc
 
 WORKDIR /workspace
