@@ -3,85 +3,47 @@
     "blocks": [
         {
             "alignment": "left",
+            "newline": true,
             "segments": [
                 {
-                    "foreground": "#00C5C7",
+                    "foreground": "red",
+                    "powerline_symbol": "\ue0b0",
+                    "style": "plain",
+                    "template": "\uf0e7 ",
+                    "type": "root"
+                },
+                {
+                    "foreground": "blue",
                     "options": {
-                        "time_format": "15:04:05"
+                        "folder_icon": "\ue5ff",
+                        "folder_separator_icon": "/",
+                        "home_icon": "\ueb06",
+                        "style": "agnoster"
                     },
                     "style": "plain",
-                    "template": " {{ .CurrentDate | dateModify \"8h\" | date .Format }} \uf017 ",
-                    "type": "time"
+                    "template": "{{ .Path }}",
+                    "type": "path"
                 },
                 {
-                    "foreground": "#26C6DA",
-                    "style": "plain",
-                    "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
-                    "type": "os"
-                },
-                {
-                    "foreground": "#26C6DA",
-                    "style": "diamond",
-                    "template": "{{ .UserName }}@{{ .HostName }} ",
-                    "type": "session"
-                },
-                {
-                    "foreground": "#0fc469",
-                    "style": "powerline",
-                    "template": "\u279c \ue235({{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}{{ end }}) ",
-                    "type": "python"
-                },
-                {
-                    "foreground": "#FFE700",
+                    "foreground": "green",
                     "foreground_templates": [
-                        "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FFCC80{{ end }}",
-                        "{{ if gt .Ahead 0 }}#16c60c{{ end }}",
-                        "{{ if gt .Behind 0 }}#f450de{{ end }}"
+                        "{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}",
+                        "{{ if and (gt .Ahead 0) (gt .Behind 0) }}red{{ end }}",
+                        "{{ if gt .Ahead 0 }}red{{ end }}",
+                        "{{ if gt .Behind 0 }}green{{ end }}"
                     ],
+                    "options": {
+                        "github_icon": "\uf408 "
+                    },
                     "style": "plain",
-                    "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
+                    "template": " on {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<red> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<yellow> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }}",
                     "type": "git"
-                }
-            ],
-            "type": "prompt"
-        },
-        {
-            "alignment": "right",
-            "segments": [
-                {
-                    "background": "#6CA35E",
-                    "foreground": "#ffffff",
-                    "leading_diamond": "\ue0b6",
-                    "style": "diamond",
-                    "template": "\ue718 {{ .Full }} ",
-                    "trailing_diamond": "\ue0b4",
-                    "type": "node"
                 },
                 {
-                    "background": "#4c1f5e",
-                    "foreground": "#ffffff",
-                    "leading_diamond": " \ue0b6",
-                    "style": "diamond",
-                    "template": "\ue738 {{ .Full }} ",
-                    "trailing_diamond": "\ue0b4",
-                    "type": "java"
-                },
-                {
-                    "options": {
-                        "always_enabled": true
-                    },
+                    "foreground": "magenta",
                     "style": "plain",
-                    "template": " {{ if gt .Code 0 }}<#ff0000>\uf00d</>{{ else }}<#23d18b>\uf42e</>{{ end }} ",
-                    "type": "status"
-                },
-                {
-                    "foreground": "#bab02a",
-                    "options": {
-                        "threshold": 10
-                    },
-                    "style": "plain",
-                    "template": "took \uf252 {{ .FormattedMs }} ",
-                    "type": "executiontime"
+                    "template": " [.NET] {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} ",
+                    "type": "dotnet"
                 }
             ],
             "type": "prompt"
@@ -91,23 +53,24 @@
             "newline": true,
             "segments": [
                 {
-                    "foreground": "#77E4F7",
+                    "foreground": "yellow",
                     "options": {
-                        "style": "full"
+                        "time_format": "15:04:05"
                     },
                     "style": "plain",
-                    "template": "{{ .Path }} ",
-                    "type": "path"
+                    "template": "{{ .CurrentDate | date .Format }} ",
+                    "type": "time"
                 },
                 {
-                    "foreground": "#43D426",
+                    "foreground": "green",
                     "style": "plain",
-                    "template": "\u276f ",
+                    "template": "\u276f",
                     "type": "text"
                 }
             ],
             "type": "prompt"
         }
     ],
+    "final_space": true,
     "version": 4
 }
