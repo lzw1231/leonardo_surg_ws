@@ -41,34 +41,42 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libserial-dev \
     libncurses-dev \
     libxcb-cursor0 \
- && pip3 install --no-cache-dir --break-system-packages ruff \
- && rm -rf /var/lib/apt/lists/*
-
-# ── ROS2 包 ──
-RUN apt-get update && apt-get install -y --no-install-recommends \
+    # ── ROS 2 包 ──
     ros-lyrical-ros2-control \
     ros-lyrical-ros2-controllers \
     ros-lyrical-xacro \
- && rm -rf /var/lib/apt/lists/*
+    ros-lyrical-moveit \
+    ros-lyrical-moveit-setup-assistant \
+    ros-lyrical-rmw-cyclonedds-cpp \
+    # ── 系统管理/包管理工具 ──
+    lsb-release \
+    gnupg \
+    software-properties-common \
+    && pip3 install --no-cache-dir --break-system-packages \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    --trusted-host pypi.tuna.tsinghua.edu.cn \
+    ruff \
+    && rm -rf /var/lib/apt/lists/*
 
-# ── 直接 COPY 宿主机上精简好的 LLVM（clang / clang++ / lld / clangd 等）──
-COPY llvm-23-minimal /opt/LLVM-23
-
-# ── 让动态链接器认识 /opt/LLVM-23/lib ──
-RUN echo "/opt/LLVM-23/lib" > /etc/ld.so.conf.d/llvm23.conf && ldconfig
-
-# ── 验证（不含 lldb 相关）──
-RUN /opt/LLVM-23/bin/clang --version | head -1 \
- && /opt/LLVM-23/bin/ld.lld --version | head -1 \
- && /opt/LLVM-23/bin/clangd --version | head -1 \
- && du -sh /opt/LLVM-23
+# ── 安装 LLVM 工具链 ──
+ARG CLANG_VERSION=23
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+RUN export http_proxy="$HTTP_PROXY" https_proxy="$HTTPS_PROXY" && \
+    wget https://apt.llvm.org/llvm.sh && \
+    chmod +x llvm.sh && \
+    ./llvm.sh ${CLANG_VERSION} && \
+    rm -f llvm.sh && \
+    apt-get update && apt-get install -y --no-install-recommends lld-${CLANG_VERSION} && \
+    rm -rf /var/lib/apt/lists/*
 
 # ── source ROS ──
-RUN echo "source /opt/ros/lyrical/setup.bash" >> /root/.bashrc \
- && echo "source /opt/ros/lyrical/setup.bash" >> /etc/bash.bashrc
+RUN echo "source /opt/ros/lyrical/setup.bash" > /etc/profile.d/ros.sh && chmod +x /etc/profile.d/ros.sh
+RUN echo "source /opt/ros/lyrical/setup.bash" >> /root/.bashrc
+RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
 
-# ── 设置彩色终端提示符（对所有用户生效）──
+# ── 彩色终端提示符（对所有用户生效）──
 RUN echo "export PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]# '" >> /root/.bashrc \
- && echo "export PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]# '" >> /etc/bash.bashrc
+    && echo "export PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]# '" >> /etc/bash.bashrc
 
 WORKDIR /workspace
