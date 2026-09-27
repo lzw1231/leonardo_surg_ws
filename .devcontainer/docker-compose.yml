@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        HTTP_PROXY: http://172.17.0.1:7897
+        HTTPS_PROXY: http://172.17.0.1:7897
+    image: ros2-dev:latest
+
+    privileged: true
+    network_mode: host
+    hostname: ros2-dev
+    working_dir: /workspace
+    command: sleep infinity
+
+    volumes:
+      - ..:/workspace:cached
+      - /dev:/dev
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+    environment:
+      DISPLAY: "${DISPLAY}"
+      QT_QPA_PLATFORM: "xcb"
+      QT_ENABLE_HIGHDPI_SCALING: "0"
+      QT_AUTO_SCREEN_SCALE_FACTOR: "0"
+      QT_SCREEN_SCALE_FACTORS: "1.5"
+      ROS_DOMAIN_ID: "0"
+      RCUTILS_COLORIZED_OUTPUT: "1"
