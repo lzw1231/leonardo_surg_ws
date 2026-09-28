@@ -4,8 +4,8 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       args:
-        HTTP_PROXY: http://172.17.0.1:7897
-        HTTPS_PROXY: http://172.17.0.1:7897
+        HTTP_PROXY: http://127.0.0.1:7897
+        HTTPS_PROXY: http://127.0.0.1:7897
     image: ros2-dev:latest
 
     privileged: true
