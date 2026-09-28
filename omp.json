@@ -66,7 +66,7 @@
                         "time_format": "15:04:05"
                     },
                     "style": "diamond",
-                    "template": " {{ .CurrentDate | date .Format }} ",
+                    "template": " {{ dateModify \"8h\" .CurrentDate | date .Format }} ",
                     "trailing_diamond": "\ue0b4",
                     "type": "time"
                 }
@@ -86,8 +86,8 @@
                 {
                     "foreground": "#ffffff",
                     "style": "plain",
-                    "template": "{{ dateModify \"8h\" .CurrentDate | date .Format }} ",
-                    "type": "time"
+                    "template": " {{ .Name }} ",
+                    "type": "shell"
                 },
                 {
                     "foreground": "#ffffff",
