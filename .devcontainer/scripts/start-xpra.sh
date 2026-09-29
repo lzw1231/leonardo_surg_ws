@@ -16,8 +16,11 @@ xpra start :10 \
     --no-pulseaudio \
     --notifications=no \
     --html=no \
+    --tcp-auth=allow \
+    --tcp-verify-username=no \
     --bind-tcp=0.0.0.0:14500 \
-    --tcp-auth=password:changeme \
+    --video-scaling=no \
+    --encodings=rgb \
     >/tmp/xpra-start.log 2>&1
 
 for i in 1 2 3 4 5; do
