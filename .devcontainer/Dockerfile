@@ -42,6 +42,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libserial-dev \
     libncurses-dev \
     libxcb-cursor0 \
+    # ── X11 虚拟显示相关（Xpra 稍后单独装） ──
+    xvfb \
+    xterm \
+    python3-lz4 \
+    python3-pil \
+    x11-apps \
     # ── ROS 2 包 ──
     ros-lyrical-ros2-control \
     ros-lyrical-ros2-controllers \
@@ -58,6 +64,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     --trusted-host pypi.tuna.tsinghua.edu.cn \
     ruff \
     && rm -rf /var/lib/apt/lists/*
+
+# ====================== Xpra 官方源安装 ======================
+# 通过 Xpra 官方 APT 仓库安装，避免 Ubuntu 26.04 源里缺失/版本过旧
+# xpra-x11: seamless 服务器; dbus-x11: dbus-launch; python3-paramiko: SSH socket upgrade
+RUN curl -fsSL https://xpra.org/xpra.asc | gpg --dearmor -o /usr/share/keyrings/xpra.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/xpra.gpg] https://xpra.org/ $(lsb_release -cs) main" \
+    > /etc/apt/sources.list.d/xpra.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    xpra \
+    xpra-x11 \
+    dbus-x11 \
+    python3-paramiko \
+    && rm -rf /var/lib/apt/lists/*
+# ==========================================================
+COPY .devcontainer/scripts/start-xpra.sh /usr/local/bin/start-xpra.sh
+RUN chmod +x /usr/local/bin/start-xpra.sh
 
 # ── 安装 LLVM 工具链 ──
 ARG CLANG_VERSION=23

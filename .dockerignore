@@ -19,8 +19,10 @@ __pycache__/
 # ── VS Code 本地配置 ──
 .vscode/
 
-# ── Dev Container 自身的配置（避免递归复制）──
-.devcontainer/
+# ── Dev Container 配置 ──
+.devcontainer/*
+!.devcontainer/scripts
+!.devcontainer/scripts/**
 
 # ── 系统/编辑器临时文件 ──
 *.log
