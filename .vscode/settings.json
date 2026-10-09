@@ -58,5 +58,13 @@
         "**/build/**": true,
         "**/install/**": true,
         "**/log/**": true
-    }
+    },
+    //是否在插入目录树后自动打开README文件默认为true
+    "directoryTree.openREADME": true,
+    //是否忽略.git目录，默认为true
+    "directoryTree.ignoreGit": true,
+    //是否在目录中添加文件夹和文件的Emoji，默认为false
+    "directoryTree.supportEmoji": false,
+    //支持两种主题，Linux-Tree和Markdown-List-Nesting，Linux-Tree是类似于linux下tree命令生成的树形结构，Markdown-List-Nesting是markdown的列表嵌套格式，默认是Linux-Tree
+    "directoryTree.theme": "Linux-Tree"
 }

@@ -78,7 +78,7 @@ RUN curl -fsSL https://xpra.org/xpra.asc | gpg --dearmor -o /usr/share/keyrings/
     python3-paramiko \
     && rm -rf /var/lib/apt/lists/*
 # ==========================================================
-COPY .devcontainer/scripts/start-xpra.sh /usr/local/bin/start-xpra.sh
+COPY scripts/start-xpra.sh /usr/local/bin/start-xpra.sh
 RUN chmod +x /usr/local/bin/start-xpra.sh
 
 # ── 安装 LLVM 工具链 ──

@@ -1,11 +1,14 @@
 services:
-  app:
-    image: ros2-dev:latest
+  ros2_dev_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ros2_dev:latest
+    command: [ "/bin/bash", "-c", "/usr/local/bin/start-xpra.sh; exec sleep infinity" ]
     privileged: true
     network_mode: host
-    hostname: ros2-dev
+    hostname: ros2_dev
     working_dir: /workspace
-    command: bash -c "/usr/local/bin/start-xpra.sh && exec sleep infinity"
     volumes:
       - ..:/workspace:cached
       - /dev:/dev

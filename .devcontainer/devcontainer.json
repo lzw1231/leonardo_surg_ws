@@ -1,8 +1,9 @@
 {
   "name": "leonardo_surg_ws",
   "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
+  "service": "ros2_dev_app",
   "workspaceFolder": "/workspace",
+  "overrideCommand": false,
   "customizations": {
     "vscode": {
       "extensions": [
@@ -18,7 +19,8 @@
         "eamodio.gitlens",
         "redhat.vscode-xml",
         "fuzionix.file-tree-extractor",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "yzhang.markdown-all-in-one"
       ]
     }
   }
