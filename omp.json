@@ -56,7 +56,7 @@
             "type": "prompt"
         },
         {
-            "alignment": "right",
+            "alignment": "left",
             "segments": [
                 {
                     "background": "#2e9599",
