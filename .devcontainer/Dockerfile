@@ -71,9 +71,9 @@ RUN curl -fsSL https://xpra.org/xpra.asc | gpg --dearmor -o /usr/share/keyrings/
     dbus-x11 \
     python3-paramiko \
     && rm -rf /var/lib/apt/lists/*
+COPY scripts/start_xpra.sh /usr/local/bin/start_xpra.sh
+RUN chmod +x /usr/local/bin/start_xpra.sh
 # =================================================================================
-COPY scripts/start-xpra.sh /usr/local/bin/start-xpra.sh
-RUN chmod +x /usr/local/bin/start-xpra.sh
 # ── 安装 LLVM 工具链 ──
 ARG CLANG_VERSION=23
 ARG HTTP_PROXY
@@ -91,7 +91,7 @@ RUN curl -fsSL https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/down
     -o /usr/local/bin/oh-my-posh && \
     chmod +x /usr/local/bin/oh-my-posh && \
     oh-my-posh version
-RUN echo 'eval "$(oh-my-posh init bash --config /root/omp.json)"' >> /root/.bashrc
+RUN echo 'eval "$(oh-my-posh init bash --config /root/oh_my_posh.json)"' >> /root/.bashrc
 # =================================================================
 # ── source ROS 基础环境 ──
 RUN echo "source /opt/ros/jazzy/setup.bash" > /etc/profile.d/ros.sh && chmod +x /etc/profile.d/ros.sh
