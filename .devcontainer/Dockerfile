@@ -1,17 +1,14 @@
 FROM osrf/ros:jazzy-desktop
-
 # ========== 清华 Ubuntu 源：先删旧源文件，再写新源 ==========
 RUN rm -f /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources && \
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse" > /etc/apt/sources.list && \
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted universe multiverse" >> /etc/apt/sources.list
-
 # ========== 清华 ROS2 源：sed 替换 URL + 关掉 deb-src ==========
 RUN sed -i 's|http://packages.ros.org/ros2/ubuntu|https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu|g' \
     /usr/share/ros-apt-source/ros2.sources && \
     sed -i '/^Types:/ s/deb-src//' /usr/share/ros-apt-source/ros2.sources
-
 # ── 系统工具 + 系统库 + ROS2 包 + ruff ──
 RUN apt-get update && apt-get install -y --no-install-recommends \
     # ── 基础工具 ──
@@ -63,21 +60,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     --trusted-host pypi.tuna.tsinghua.edu.cn \
     ruff \
     && rm -rf /var/lib/apt/lists/*
-
-# ====================== Xpra 官方源安装 ======================
+# ====================== Xpra 官方源安装（Qt6客户端，替代GTK3） ======================
 RUN curl -fsSL https://xpra.org/xpra.asc | gpg --dearmor -o /usr/share/keyrings/xpra.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/xpra.gpg] https://xpra.org/ $(lsb_release -cs) main" \
     > /etc/apt/sources.list.d/xpra.list && \
     apt-get update && apt-get install -y --no-install-recommends \
-    xpra \
+    xpra-server \
     xpra-x11 \
+    xpra-codecs \
     dbus-x11 \
     python3-paramiko \
     && rm -rf /var/lib/apt/lists/*
-# ==========================================================
+# =================================================================================
 COPY scripts/start-xpra.sh /usr/local/bin/start-xpra.sh
 RUN chmod +x /usr/local/bin/start-xpra.sh
-
 # ── 安装 LLVM 工具链 ──
 ARG CLANG_VERSION=23
 ARG HTTP_PROXY
@@ -89,7 +85,6 @@ RUN export http_proxy="$HTTP_PROXY" https_proxy="$HTTPS_PROXY" && \
     rm -f llvm.sh && \
     apt-get update && apt-get install -y --no-install-recommends lld-${CLANG_VERSION} && \
     rm -rf /var/lib/apt/lists/*
-
 # ====================== Install Oh My Posh ======================
 # 直接下载 GitHub Release 二进制，避免安装脚本带来的段错误
 RUN curl -fsSL https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 \
@@ -98,12 +93,9 @@ RUN curl -fsSL https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/down
     oh-my-posh version
 RUN echo 'eval "$(oh-my-posh init bash --config /root/omp.json)"' >> /root/.bashrc
 # =================================================================
-
 # ── source ROS 基础环境 ──
 RUN echo "source /opt/ros/jazzy/setup.bash" > /etc/profile.d/ros.sh && chmod +x /etc/profile.d/ros.sh
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
-
 # 设置 RMW
 RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
-
 WORKDIR /workspace

@@ -4,13 +4,13 @@
 
 1. **SSH 端口转发（保持窗口常驻）**
 ```bash
-ssh -L 14500:127.0.0.1:14500 lzw@192.168.10.23
+ssh -N -L 14501:127.0.0.1:14500 lzw@192.168.10.23
 ```
 
 2. **Xpra 客户端连接**
 
 ```
-conda activate xpra-client && xpra attach --username=root tcp://127.0.0.1:14500/
+GDK_BACKEND=x11 xpra attach --username=root tcp://127.0.0.1:14501/
 ```
 
 ## 二、远程主机 Buildx 构建报错修复
