@@ -25,6 +25,8 @@ def spawner(controller, param_file=None, ns="leonardo", cm_name=None):
         executable="spawner",
         namespace=ns,
         arguments=args,
+        emulate_tty=True,  # 新增
+        output="screen",  # 新增
     )
 
 

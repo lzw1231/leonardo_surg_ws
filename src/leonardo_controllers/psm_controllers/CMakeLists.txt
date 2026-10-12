@@ -1,8 +1,7 @@
 # ==============================================================================
 # psm_controllers 的 CMake 配置
 # ==============================================================================
-cmake_minimum_required(VERSION 4.2)
-# cmake_policy(SET CMP0167 OLD)
+cmake_minimum_required(VERSION 3.28)
 project(psm_controllers)
 
 # 强制 C++20

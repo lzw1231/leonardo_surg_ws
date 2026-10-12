@@ -1,11 +1,11 @@
-FROM osrf/ros:lyrical-desktop
+FROM osrf/ros:jazzy-desktop
 
 # ========== 清华 Ubuntu 源：先删旧源文件，再写新源 ==========
 RUN rm -f /etc/apt/sources.list /etc/apt/sources.list.d/ubuntu.sources && \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ resolute main restricted universe multiverse" > /etc/apt/sources.list && \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ resolute-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ resolute-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ resolute-security main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse" > /etc/apt/sources.list && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-backports main restricted universe multiverse" >> /etc/apt/sources.list && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-security main restricted universe multiverse" >> /etc/apt/sources.list
 
 # ========== 清华 ROS2 源：sed 替换 URL + 关掉 deb-src ==========
 RUN sed -i 's|http://packages.ros.org/ros2/ubuntu|https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu|g' \
@@ -31,7 +31,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bear \
     pkg-config \
     g++ \
-    libstdc++-16-dev \
     # ── 系统开发库 ──
     libusb-1.0-0-dev \
     libeigen3-dev \
@@ -49,12 +48,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pil \
     x11-apps \
     # ── ROS 2 包 ──
-    ros-lyrical-ros2-control \
-    ros-lyrical-ros2-controllers \
-    ros-lyrical-xacro \
-    ros-lyrical-moveit \
-    ros-lyrical-moveit-setup-assistant \
-    ros-lyrical-rmw-cyclonedds-cpp \
+    ros-jazzy-ros2-control \
+    ros-jazzy-ros2-controllers \
+    ros-jazzy-xacro \
+    ros-jazzy-moveit \
+    ros-jazzy-moveit-setup-assistant \
+    ros-jazzy-rmw-cyclonedds-cpp \
     # ── 系统管理/包管理工具 ──
     lsb-release \
     gnupg \
@@ -66,8 +65,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # ====================== Xpra 官方源安装 ======================
-# 通过 Xpra 官方 APT 仓库安装，避免 Ubuntu 26.04 源里缺失/版本过旧
-# xpra-x11: seamless 服务器; dbus-x11: dbus-launch; python3-paramiko: SSH socket upgrade
 RUN curl -fsSL https://xpra.org/xpra.asc | gpg --dearmor -o /usr/share/keyrings/xpra.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/xpra.gpg] https://xpra.org/ $(lsb_release -cs) main" \
     > /etc/apt/sources.list.d/xpra.list && \
@@ -94,13 +91,19 @@ RUN export http_proxy="$HTTP_PROXY" https_proxy="$HTTPS_PROXY" && \
     rm -rf /var/lib/apt/lists/*
 
 # ====================== Install Oh My Posh ======================
-RUN curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin
+# 直接下载 GitHub Release 二进制，避免安装脚本带来的段错误
+RUN curl -fsSL https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 \
+    -o /usr/local/bin/oh-my-posh && \
+    chmod +x /usr/local/bin/oh-my-posh && \
+    oh-my-posh version
 RUN echo 'eval "$(oh-my-posh init bash --config /root/omp.json)"' >> /root/.bashrc
 # =================================================================
 
-# ── source ROS ──
-RUN echo "source /opt/ros/lyrical/setup.bash" > /etc/profile.d/ros.sh && chmod +x /etc/profile.d/ros.sh
-RUN echo "source /opt/ros/lyrical/setup.bash" >> /root/.bashrc
+# ── source ROS 基础环境 ──
+RUN echo "source /opt/ros/jazzy/setup.bash" > /etc/profile.d/ros.sh && chmod +x /etc/profile.d/ros.sh
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
+
+# 设置 RMW
 RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
 
 WORKDIR /workspace

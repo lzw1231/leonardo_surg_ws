@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.2)
+cmake_minimum_required(VERSION 3.28)
 project(fd_vendor)
 
 # 启用 compile_commands.json 导出，以支持 IDE 代码索引

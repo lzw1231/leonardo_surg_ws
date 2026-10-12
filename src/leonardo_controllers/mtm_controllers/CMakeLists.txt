@@ -1,11 +1,10 @@
 # ==============================================================================
 # mtm_controllers 的 CMake 配置
 # ==============================================================================
-cmake_minimum_required(VERSION 4.2)
-cmake_policy(SET CMP0167 OLD)
+cmake_minimum_required(VERSION 3.28)
 project(mtm_controllers)
 
-# 使用 C++17
+# 使用 C++20
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)

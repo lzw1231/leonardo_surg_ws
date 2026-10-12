@@ -40,6 +40,8 @@ def generate_launch_description():
         namespace=ns,
         parameters=[{"robot_description": ParameterValue(Command(["xacro ", robot_desc_file_path]), value_type=str)}],
         remappings=[("/tf", f"/{ns}/tf"), ("/tf_static", f"/{ns}/tf_static")],
+        emulate_tty=True,  # 新增
+        output="screen",  # 新增：确保输出到屏幕
     )
 
     controller_manager_node = Node(
@@ -47,10 +49,12 @@ def generate_launch_description():
         executable="ros2_control_node",
         namespace=ns,
         parameters=[controller_manager_yaml_path],
+        emulate_tty=True,  # 新增
+        output="screen",  # 新增
     )
 
     # ==========================================================================
-    # Spawner 节点
+    # Spawner 节点（spawner 函数内部已处理，见下）
     # ==========================================================================
     spawner_jsb = spawner("joint_state_broadcaster", ns=ns)
     spawner_fd_left = spawner("fd_left_ee_controller", mtm_controllers_yaml_path, ns=ns)
@@ -73,6 +77,7 @@ def generate_launch_description():
         namespace=ns,
         parameters=[teleop_params_yaml_path],
         output="screen",
+        emulate_tty=True,  # 新增
     )
 
     # ==========================================================================
@@ -88,6 +93,8 @@ def generate_launch_description():
             ("/tf_static", f"/{ns}/tf_static"),
             ("robot_description", f"/{ns}/robot_description"),
         ],
+        emulate_tty=True,  # 新增
+        output="screen",  # 新增
     )
 
     # ==========================================================================

@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
-ROS_DISTRO="lyrical"
+ROS_DISTRO="jazzy"
 
 # Terminal colors & symbols
 GREEN='\033[0;32m'
@@ -32,6 +32,8 @@ COLCON_BUILD_ARGS=(
     --event-handlers console_cohesion+ status+
     --cmake-args
         -G Ninja
+        -DCMAKE_CXX_STANDARD=20
+        -DCMAKE_CXX_STANDARD_REQUIRED=ON
         -DCMAKE_C_FLAGS="-fcolor-diagnostics"
         -DCMAKE_CXX_FLAGS="-fcolor-diagnostics"
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
