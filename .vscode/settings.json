@@ -42,7 +42,6 @@
     "ruff.path": [
         "/usr/local/bin/ruff"
     ],
-    "ruff.lineLength": 120,
     // [Files]
     "files.associations": {
         "*.xacro": "xml",

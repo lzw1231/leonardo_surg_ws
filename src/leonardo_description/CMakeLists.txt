@@ -17,6 +17,7 @@ find_package(ament_cmake REQUIRED)
 install(
         DIRECTORY
         urdf
+        psm_description
         mtm_description
         ft3215_description
         DESTINATION share/${PROJECT_NAME}

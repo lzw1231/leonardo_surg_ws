@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: ros2_dev:latest
-    command: [ "/bin/bash", "-c", "/usr/local/bin/start_xpra.sh > /tmp/start.log 2>&1; exec sleep infinity" ]
+    command: [ "/bin/bash", "-c", "exec sleep infinity" ]
     privileged: true
     network_mode: host
     hostname: ros2_dev
@@ -13,14 +13,12 @@ services:
       - ..:/workspace:cached
       - /dev:/dev
       - ./scripts/oh_my_posh.json:/root/oh_my_posh.json
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
-      DISPLAY: ":10"
+      DISPLAY: "${DISPLAY:-:0}"
       QT_QPA_PLATFORM: "xcb"
       QT_X11_NO_MITSHM: "1"
       LIBGL_ALWAYS_SOFTWARE: "1"
       OGRE_RTT_MODE: "Copy"
-      QT_ENABLE_HIGHDPI_SCALING: "0"
-      QT_AUTO_SCREEN_SCALE_FACTOR: "0"
-      QT_SCREEN_SCALE_FACTORS: "1"
       ROS_DOMAIN_ID: "0"
       RCUTILS_COLORIZED_OUTPUT: "1"

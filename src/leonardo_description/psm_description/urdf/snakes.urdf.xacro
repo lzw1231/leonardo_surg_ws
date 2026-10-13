@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<robot name="snake_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- 导入snake_robot -->
+    <xacro:include
+        filename="$(find leonardo_description)/psm_description/10_snake/99_snake_robot.urdf.xacro" />
+
+
+    <!-- 蛇形臂的总装基点-->
+    <link name="snakes_footprint" />
+
+    <joint name="base_tricycle_snake_joints" type="fixed">
+        <parent link="snakes_footprint" />
+        <child link="base_footprint_snake" />
+        <origin xyz="0 0 0.033" rpy="0 0 0" />
+    </joint>
+
+
+</robot>
