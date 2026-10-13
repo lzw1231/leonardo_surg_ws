@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 全局材质库  -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="alpha" value="1"/>
+
+    <!-- ================================================== -->
+    <!-- S1 色系：红 → 橙 → 黄（色相 0° → 60°）饱和 1  -->
+    <!-- ================================================== -->
+    <material name="s1_color_0">
+        <color rgba="0.850 0.150 0.150 ${alpha}"/>
+    </material>
+    <material name="s1_color_1">
+        <color rgba="0.869 0.262 0.100 ${alpha}"/>
+    </material>
+    <material name="s1_color_2">
+        <color rgba="0.878 0.373 0.063 ${alpha}"/>
+    </material>
+    <material name="s1_color_3">
+        <color rgba="0.876 0.483 0.040 ${alpha}"/>
+    </material>
+    <material name="s1_color_4">
+        <color rgba="0.863 0.591 0.032 ${alpha}"/>
+    </material>
+    <material name="s1_color_5">
+        <color rgba="0.840 0.696 0.040 ${alpha}"/>
+    </material>
+    <material name="s1_color_6">
+        <color rgba="0.807 0.796 0.064 ${alpha}"/>
+    </material>
+    <material name="s1_color_7">
+        <color rgba="0.765 0.887 0.104 ${alpha}"/>
+    </material>
+    <material name="s1_color_8">
+        <color rgba="0.714 0.958 0.160 ${alpha}"/>
+    </material>
+    <material name="s1_color_9">
+        <color rgba="0.655 0.994 0.231 ${alpha}"/>
+    </material>
+    <material name="s1_color_9b">
+        <color rgba="0.592 0.974 0.315 ${alpha}"/>
+    </material>
+    <material name="s1_color_10">
+        <color rgba="0.529 0.896 0.410 ${alpha}"/>
+    </material>
+    <material name="s1_color_11">
+        <color rgba="0.470 0.770 0.516 ${alpha}"/>
+    </material>
+    <material name="s1_color_12">
+        <color rgba="0.420 0.608 0.628 ${alpha}"/>
+    </material>
+
+    <!-- ================================================== -->
+    <!-- S2 色系：青 → 蓝 → 紫（色相 180° → 240°）饱和 1  -->
+    <!-- ================================================== -->
+    <material name="s2_color_0">
+        <color rgba="0.150 0.700 0.700 ${alpha}"/>
+    </material>
+    <material name="s2_color_1">
+        <color rgba="0.123 0.633 0.760 ${alpha}"/>
+    </material>
+    <material name="s2_color_2">
+        <color rgba="0.121 0.544 0.816 ${alpha}"/>
+    </material>
+    <material name="s2_color_3">
+        <color rgba="0.144 0.446 0.861 ${alpha}"/>
+    </material>
+    <material name="s2_color_4">
+        <color rgba="0.190 0.349 0.887 ${alpha}"/>
+    </material>
+    <material name="s2_color_5">
+        <color rgba="0.256 0.261 0.888 ${alpha}"/>
+    </material>
+    <material name="s2_color_6">
+        <color rgba="0.338 0.189 0.859 ${alpha}"/>
+    </material>
+    <material name="s2_color_7">
+        <color rgba="0.429 0.136 0.803 ${alpha}"/>
+    </material>
+    <material name="s2_color_8">
+        <color rgba="0.524 0.101 0.723 ${alpha}"/>
+    </material>
+    <material name="s2_color_9">
+        <color rgba="0.615 0.083 0.628 ${alpha}"/>
+    </material>
+    <material name="s2_color_9b">
+        <color rgba="0.694 0.081 0.526 ${alpha}"/>
+    </material>
+    <material name="s2_color_10">
+        <color rgba="0.754 0.096 0.423 ${alpha}"/>
+    </material>
+    <material name="s2_color_11">
+        <color rgba="0.792 0.126 0.326 ${alpha}"/>
+    </material>
+    <material name="s2_color_12">
+        <color rgba="0.806 0.170 0.241 ${alpha}"/>
+    </material>
+
+    <!-- ================================================== -->
+    <!-- S3 色系：绿 → 青（色相 120° → 180°）饱和 1  -->
+    <!-- ================================================== -->
+    <material name="s3_color_0">
+        <color rgba="0.150 0.700 0.150 ${alpha}"/>
+    </material>
+    <material name="s3_color_1">
+        <color rgba="0.117 0.722 0.236 ${alpha}"/>
+    </material>
+    <material name="s3_color_2">
+        <color rgba="0.100 0.726 0.333 ${alpha}"/>
+    </material>
+    <material name="s3_color_3">
+        <color rgba="0.099 0.714 0.438 ${alpha}"/>
+    </material>
+    <material name="s3_color_4">
+        <color rgba="0.115 0.688 0.547 ${alpha}"/>
+    </material>
+    <material name="s3_color_5">
+        <color rgba="0.148 0.651 0.655 ${alpha}"/>
+    </material>
+    <material name="s3_color_6">
+        <color rgba="0.196 0.604 0.758 ${alpha}"/>
+    </material>
+    <material name="s3_color_7">
+        <color rgba="0.259 0.550 0.846 ${alpha}"/>
+    </material>
+    <material name="s3_color_8">
+        <color rgba="0.333 0.491 0.912 ${alpha}"/>
+    </material>
+    <material name="s3_color_9">
+        <color rgba="0.416 0.430 0.946 ${alpha}"/>
+    </material>
+    <material name="s3_color_9b">
+        <color rgba="0.503 0.369 0.940 ${alpha}"/>
+    </material>
+    <material name="s3_color_10">
+        <color rgba="0.588 0.313 0.893 ${alpha}"/>
+    </material>
+    <material name="s3_color_11">
+        <color rgba="0.662 0.264 0.810 ${alpha}"/>
+    </material>
+    <material name="s3_color_12">
+        <color rgba="0.720 0.226 0.703 ${alpha}"/>
+    </material>
+
+
+</robot>

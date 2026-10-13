@@ -62,5 +62,6 @@
     },
     // [GitLens]
     "gitlens.currentLine.enabled": false,
-    "gitlens.codeLens.enabled": false
+    "gitlens.codeLens.enabled": false,
+    "cmake.ignoreCMakeListsMissing": true
 }

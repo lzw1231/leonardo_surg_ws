@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- 长方体惯性宏           params: m质量(kg), x/y/z长宽高(m), o_xyz重心偏移, o_rpy重心姿态 -->
+    <xacro:macro name="snake_box_inertia" params="m x y z o_xyz o_rpy">
+        <inertial>
+            <mass value="${m}"/>
+            <origin xyz="${o_xyz}" rpy="${o_rpy}"/>
+            <inertia ixx="${(m/12) * (y*y + z*z)}" ixy="0.0" ixz="0.0"
+                     iyy="${(m/12) * (x*x + z*z)}" iyz="0.0"
+                     izz="${(m/12) * (x*x + y*y)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <!-- 实心圆柱惯性宏（杆轴线沿Z）params: m质量(kg), r外半径(m), l杆长(m), o_xyz重心偏移, o_rpy重心姿态   -->
+    <xacro:macro name="snake_cylinder_inertia" params="m r l o_xyz o_rpy">
+        <inertial>
+            <mass value="${m}"/>
+            <origin xyz="${o_xyz}" rpy="${o_rpy}"/>
+            <inertia ixx="${(m/12) * (3*r*r + l*l)}" ixy="0.0" ixz="0.0"
+                     iyy="${(m/12) * (3*r*r + l*l)}" iyz="0.0"
+                     izz="${(m/2) * (r*r)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <!-- 实心球体惯性宏  params: m质量(kg), r球半径(m), o_xyz重心偏移, o_rpy重心姿态  -->
+    <xacro:macro name="snake_sphere_inertia" params="m r o_xyz o_rpy">
+        <inertial>
+            <mass value="${m}"/>
+            <origin xyz="${o_xyz}" rpy="${o_rpy}"/>
+            <inertia ixx="${2*m*r*r/5}" ixy="0.0" ixz="0.0"
+                     iyy="${2*m*r*r/5}" iyz="0.0"
+                     izz="${2*m*r*r/5}"/>
+        </inertial>
+    </xacro:macro>
+
+    <!-- 空心圆筒惯性宏（轴线沿Z） params: m总质量(kg), r_out外半径(m), r_in内孔半径(m), l杆长(m), o_xyz重心偏移, o_rpy重心姿态 -->
+    <xacro:macro name="snake_hollow_cylinder_inertia" params="m r_out r_in l o_xyz o_rpy">
+        <inertial>
+            <mass value="${m}"/>
+            <origin xyz="${o_xyz}" rpy="${o_rpy}"/>
+            <inertia
+                    ixx="${(m/12) * (3*(r_out*r_out + r_in*r_in) + l*l)}" ixy="0.0" ixz="0.0"
+                    iyy="${(m/12) * (3*(r_out*r_out + r_in*r_in) + l*l)}" iyz="0.0"
+                    izz="${0.5 * m * (r_out*r_out + r_in*r_in)}"/>
+        </inertial>
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,247 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="get_snake_links" params="prefix">
+
+        <link name="${prefix}_link00">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan00.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 ${pi} 0"/>
+                <material name="${prefix}_color_0"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan00.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 ${pi} 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link00_m}" r="${link00_r}" l="${link00_l}" o_xyz="0 0 0" o_rpy="0 ${pi} 0"/>
+        </link>
+
+        <link name="${prefix}_link01">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan01.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_1"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan01.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link01_m}" r="${link01_r}" l="${link01_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link02">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan02.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_2"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan02.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link02_m}" r="${link02_r}" l="${link02_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link03">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan03.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_3"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan03.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link03_m}" r="${link03_r}" l="${link03_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link04">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan04.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_4"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan04.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link04_m}" r="${link04_r}" l="${link04_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link05">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan05.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_5"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan05.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link05_m}" r="${link05_r}" l="${link05_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link06">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan06.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_6"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan06.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link06_m}" r="${link06_r}" l="${link06_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link07">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan07.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_7"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan07.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link07_m}" r="${link07_r}" l="${link07_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link08">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan08.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_8"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan08.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link08_m}" r="${link08_r}" l="${link08_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link09">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan09.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_9"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan09.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link09_m}" r="${link09_r}" l="${link09_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link09b">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan09b.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_9b"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan09b.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link09b_m}" r="${link09b_r}" l="${link09b_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link10">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan10.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_10"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan10.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link10_m}" r="${link10_r}" l="${link10_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link11">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan11.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_11"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan11.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link11_m}" r="${link11_r}" l="${link11_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+        <link name="${prefix}_link12">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/duan12.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <material name="${prefix}_color_12"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/duan12.stl" scale="${mesh_scale}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link12_m}" r="${link12_r}" l="${link12_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+        </link>
+
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="69_snake_robot.xacro"/>
+    <xacro:include filename="89_snake_robot.ros2_control.xacro"/>
+
+</robot>
