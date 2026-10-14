@@ -1,247 +1,425 @@
 <?xml version="1.0"?>
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:macro name="get_snake_links" params="prefix">
 
-        <link name="${prefix}_link00">
+        <!-- ==================== Link 01 ==================== -->
+        <link name="${prefix}_01">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan00.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/01.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 ${pi} 0"/>
-                <material name="${prefix}_color_0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link01" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan00.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/01.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 ${pi} 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link00_m}" r="${link00_r}" l="${link00_l}" o_xyz="0 0 0" o_rpy="0 ${pi} 0"/>
+            <xacro:snake_cylinder_inertia m="${link01_m}" r="${link01_r}" l="${link01_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link01">
+        <!-- ==================== Link 02 ==================== -->
+        <link name="${prefix}_02">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan01.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/02.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_1"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link02" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan01.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/02.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link01_m}" r="${link01_r}" l="${link01_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link02_m}" r="${link02_r}" l="${link02_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link02">
+        <!-- ==================== Link 03 ==================== -->
+        <link name="${prefix}_03">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan02.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/03.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_2"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link03" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan02.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/03.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link02_m}" r="${link02_r}" l="${link02_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link03_m}" r="${link03_r}" l="${link03_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link03">
+        <!-- ==================== Link 04 ==================== -->
+        <link name="${prefix}_04">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan03.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/04.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_3"/>
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+                <material name="${prefix}_link04" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan03.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/04.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link03_m}" r="${link03_r}" l="${link03_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link04_m}" r="${link04_r}" l="${link04_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link04">
+        <!-- ==================== Link 05 ==================== -->
+        <link name="${prefix}_05">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan04.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/05.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_4"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link05" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan04.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/05.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link04_m}" r="${link04_r}" l="${link04_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link05_m}" r="${link05_r}" l="${link05_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link05">
+        <!-- ==================== Link 06 ==================== -->
+        <link name="${prefix}_06">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan05.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/06.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_5"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link06" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan05.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/06.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link05_m}" r="${link05_r}" l="${link05_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link06_m}" r="${link06_r}" l="${link06_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link06">
+        <!-- ==================== Link 07 ==================== -->
+        <link name="${prefix}_07">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan06.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/07.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_6"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link07" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan06.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/07.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link06_m}" r="${link06_r}" l="${link06_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link07_m}" r="${link07_r}" l="${link07_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link07">
+        <!-- ==================== Link 08 ==================== -->
+        <link name="${prefix}_08">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan07.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/08.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_7"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link08" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan07.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/08.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link07_m}" r="${link07_r}" l="${link07_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link08_m}" r="${link08_r}" l="${link08_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link08">
+        <!-- ==================== Link 09 ==================== -->
+        <link name="${prefix}_09">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan08.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/09.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_8"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link09" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan08.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/09.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link08_m}" r="${link08_r}" l="${link08_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link09_m}" r="${link09_r}" l="${link09_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link09">
+        <!-- ==================== Link 10 ==================== -->
+        <link name="${prefix}_10">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan09.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/10.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_9"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link10" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan09.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/10.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link09_m}" r="${link09_r}" l="${link09_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link10_m}" r="${link10_r}" l="${link10_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link09b">
+        <!-- ==================== Link 11 ==================== -->
+        <link name="${prefix}_11">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan09b.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/11.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_9b"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link11" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan09b.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/11.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link09b_m}" r="${link09b_r}" l="${link09b_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link11_m}" r="${link11_r}" l="${link11_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link10">
+        <!-- ==================== Link 12 ==================== -->
+        <link name="${prefix}_12">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan10.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/12.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_10"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link12" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan10.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/12.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link10_m}" r="${link10_r}" l="${link10_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link12_m}" r="${link12_r}" l="${link12_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link11">
+        <!-- ==================== Link 13 ==================== -->
+        <link name="${prefix}_13">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan11.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/13.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_11"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link13" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan11.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/13.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link11_m}" r="${link11_r}" l="${link11_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link13_m}" r="${link13_r}" l="${link13_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
-        <link name="${prefix}_link12">
+        <!-- ==================== Link 14 ==================== -->
+        <link name="${prefix}_14">
             <visual>
                 <geometry>
-                    <mesh filename="${stl_path}/duan12.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/14.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <material name="${prefix}_color_12"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link14" />
             </visual>
             <collision>
                 <geometry>
-                    <mesh filename="${stl_path}/duan12.stl" scale="${mesh_scale}"/>
+                    <mesh filename="${stl_path}/14.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <origin xyz="0 0 0" rpy="0 0 0" />
             </collision>
-            <xacro:snake_cylinder_inertia m="${link12_m}" r="${link12_r}" l="${link12_l}" o_xyz="0 0 0" o_rpy="0 0 0"/>
+            <xacro:snake_cylinder_inertia m="${link14_m}" r="${link14_r}" l="${link14_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 15 ==================== -->
+        <link name="${prefix}_15">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/15.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link15" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/15.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link15_m}" r="${link15_r}" l="${link15_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 16 ==================== -->
+        <link name="${prefix}_16">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/16.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link16" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/16.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link16_m}" r="${link16_r}" l="${link16_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 17 ==================== -->
+        <link name="${prefix}_17">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/17.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link17" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/17.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link17_m}" r="${link17_r}" l="${link17_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 18 ==================== -->
+        <link name="${prefix}_18">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/18.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link18" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/18.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link18_m}" r="${link18_r}" l="${link18_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 19 ==================== -->
+        <link name="${prefix}_19">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/19.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link19" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/19.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link19_m}" r="${link19_r}" l="${link19_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 20 ==================== -->
+        <link name="${prefix}_20">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/20.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link20" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/20.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link20_m}" r="${link20_r}" l="${link20_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 21 ==================== -->
+        <link name="${prefix}_21">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/21.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link21" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/21.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link21_m}" r="${link21_r}" l="${link21_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
+        <!-- ==================== Link 22 ==================== -->
+        <link name="${prefix}_22">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/22.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <material name="${prefix}_link22" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/22.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link22_m}" r="${link22_r}" l="${link22_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
         </link>
 
     </xacro:macro>
-
 </robot>

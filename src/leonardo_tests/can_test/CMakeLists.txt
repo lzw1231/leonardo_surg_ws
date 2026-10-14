@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 # create executable
 add_executable(can_receiver src/can_receiver.cpp)
 
-# link libraries (replace the old ament_target_dependencies)
+# link libraries 
 target_link_libraries(can_receiver
   ${rclcpp_TARGETS}
 )

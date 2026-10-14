@@ -1,147 +1,234 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 蛇形机械臂关节定义 -->
+<!-- 蛇形机械臂关节定义：适配 22 个 link，统一关节命名 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- ==========  X 轴偏移量  ========== -->
-    <xacro:property name="x_offset_00_01" value="0.050"/>
-    <xacro:property name="x_offset_01_02" value="0.0033"/>
-    <xacro:property name="x_offset_02_03" value="0.0033"/>
-    <xacro:property name="x_offset_03_04" value="0.0238"/>
-    <xacro:property name="x_offset_04_05" value="0.0033"/>
-    <xacro:property name="x_offset_05_06" value="0.0123"/>
-    <xacro:property name="x_offset_06_07" value="0.0033"/>
-    <xacro:property name="x_offset_07_08" value="0.0033"/>
-    <xacro:property name="x_offset_08_09" value="0.0033"/>
-    <xacro:property name="x_offset_09_09b" value="0.0133"/>
-    <xacro:property name="x_offset_09b_10" value="0.0013"/>
-    <xacro:property name="x_offset_10_11" value="0.012"/>
-    <xacro:property name="x_offset_10_12" value="0.012"/>
+    <xacro:property name="x_offset_01_02" value="0.001" />
+    <xacro:property name="x_offset_02_03" value="0.05" />
+    <xacro:property name="x_offset_03_04" value="0.004" />
+    <xacro:property name="x_offset_04_05" value="0.004" />
+
+    <xacro:property name="x_offset_05_06" value="0.01" />
+    <xacro:property name="x_offset_06_07" value="0.03" />
+    <xacro:property name="x_offset_07_08" value="0.01" />
+    <xacro:property name="x_offset_08_09" value="0.01" />
+    <xacro:property name="x_offset_09_10" value="0.01" />
+    <xacro:property name="x_offset_10_11" value="0.01" />
+    <xacro:property name="x_offset_10_12" value="0.01" />
+    <xacro:property name="x_offset_12_13" value="0.01" />
+    <xacro:property name="x_offset_13_14" value="0.02" />
+    <xacro:property name="x_offset_14_15" value="0.02" />
+    <xacro:property name="x_offset_15_16" value="0.02" />
+    <xacro:property name="x_offset_16_17" value="0.02" />
+    <xacro:property name="x_offset_17_18" value="0.02" />
+    <xacro:property name="x_offset_18_19" value="0.02" />
+    <xacro:property name="x_offset_19_20" value="0.01" />
+    <xacro:property name="x_offset_20_21" value="0.01" />
+    <xacro:property name="x_offset_21_22" value="0.01" />
 
     <!-- ========= 最大力矩 ======== -->
-    <xacro:property name="effort" value="1000"/>
+    <xacro:property name="effort" value="1000" />
 
     <!-- ========= 最大速度 rad/s ======== -->
-    <xacro:property name="velocity" value="6"/>
+    <xacro:property name="velocity" value="${4.0 * pi}" />
 
     <!-- ========= 旋转角度 /度 ======== -->
-    <xacro:property name="rad_30" value="${30 * pi / 180.0}"/>
-    <xacro:property name="rad_135" value="${135 * pi /180.0}"/>
-    <xacro:property name="rad_fork" value="${30 * pi /180.0}"/>
+    <xacro:property name="rad_30" value="${30 * pi / 180.0}" />
+    <xacro:property name="rad_135" value="${135 * pi / 180.0}" />
+    <xacro:property name="rad_fork" value="${30 * pi / 180.0}" />
 
     <!-- ========== 宏定义：生成所有关节 ========== -->
     <xacro:macro name="get_snake_joints" params="prefix">
-        <!-- link00 -> link01 -->
-        <joint name="${prefix}_link00_link01_joint" type="fixed">
-            <parent link="${prefix}_link00"/>
-            <child link="${prefix}_link01"/>
-            <origin xyz="${x_offset_00_01} 0 0" rpy="0 0 0"/>
-        </joint>
 
         <!-- link01 -> link02 -->
-        <joint name="${prefix}_link01_link02_joint" type="revolute">
-            <parent link="${prefix}_link01"/>
-            <child link="${prefix}_link02"/>
-            <origin xyz="${x_offset_01_02} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 1 0"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_01_02" type="revolute">
+            <parent link="${prefix}_01" />
+            <child link="${prefix}_02" />
+            <origin xyz="0 ${x_offset_01_02} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
         <!-- link02 -> link03 -->
-        <joint name="${prefix}_link02_link03_joint" type="revolute">
-            <parent link="${prefix}_link02"/>
-            <child link="${prefix}_link03"/>
-            <origin xyz="${x_offset_02_03} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 0 1"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_02_03" type="revolute">
+            <parent link="${prefix}_02" />
+            <child link="${prefix}_03" />
+            <origin xyz="0 ${x_offset_02_03} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
         <!-- link03 -> link04 -->
-        <joint name="${prefix}_link03_link04_joint" type="revolute">
-            <parent link="${prefix}_link03"/>
-            <child link="${prefix}_link04"/>
-            <origin xyz="${x_offset_03_04} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 0 1"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_03_04" type="revolute">
+            <parent link="${prefix}_03" />
+            <child link="${prefix}_04" />
+            <origin xyz="0 ${x_offset_03_04} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
         <!-- link04 -> link05 -->
-        <joint name="${prefix}_link04_link05_joint" type="revolute">
-            <parent link="${prefix}_link04"/>
-            <child link="${prefix}_link05"/>
-            <origin xyz="${x_offset_04_05} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 1 0"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_04_05" type="revolute">
+            <parent link="${prefix}_04" />
+            <child link="${prefix}_05" />
+            <origin xyz="0 ${x_offset_04_05} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
         <!-- link05 -> link06 -->
-        <joint name="${prefix}_link05_link06_joint" type="revolute">
-            <parent link="${prefix}_link05"/>
-            <child link="${prefix}_link06"/>
-            <origin xyz="${x_offset_05_06} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 1 0"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_05_06" type="revolute">
+            <parent link="${prefix}_05" />
+            <child link="${prefix}_06" />
+            <origin xyz="0 ${x_offset_05_06} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
         <!-- link06 -> link07 -->
-        <joint name="${prefix}_link06_link07_joint" type="revolute">
-            <parent link="${prefix}_link06"/>
-            <child link="${prefix}_link07"/>
-            <origin xyz="${x_offset_06_07} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 0 1"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_06_07" type="revolute">
+            <parent link="${prefix}_06" />
+            <child link="${prefix}_07" />
+            <origin xyz="0 ${x_offset_06_07} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
         <!-- link07 -> link08 -->
-        <joint name="${prefix}_link07_link08_joint" type="revolute">
-            <parent link="${prefix}_link07"/>
-            <child link="${prefix}_link08"/>
-            <origin xyz="${x_offset_07_08} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 1 0"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_07_08" type="revolute">
+            <parent link="${prefix}_07" />
+            <child link="${prefix}_08" />
+            <origin xyz="0 ${x_offset_07_08} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
         <!-- link08 -> link09 -->
-        <joint name="${prefix}_link08_link09_joint" type="revolute">
-            <parent link="${prefix}_link08"/>
-            <child link="${prefix}_link09"/>
-            <origin xyz="${x_offset_08_09} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 0 1"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}"/>
+        <joint name="${prefix}_joint_08_09" type="revolute">
+            <parent link="${prefix}_08" />
+            <child link="${prefix}_09" />
+            <origin xyz="0 ${x_offset_08_09} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
         </joint>
 
-        <!-- link09 -> link09b -->
-        <joint name="${prefix}_link09_link09b_joint" type="fixed">
-            <parent link="${prefix}_link09"/>
-            <child link="${prefix}_link09b"/>
-            <origin xyz="${x_offset_09_09b} 0 0" rpy="0 0 0"/>
-        </joint>
-
-        <!-- link09b -> link10 -->
-        <joint name="${prefix}_link09b_link10_joint" type="revolute">
-            <parent link="${prefix}_link09b"/>
-            <child link="${prefix}_link10"/>
-            <origin xyz="${x_offset_09b_10} 0 0" rpy="0 0 0"/>
-            <axis xyz="1 0 0"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_135}" upper="${rad_135}"/>
+        <!-- link09 -> link10 （合并原 link09b 固定关节与旋转关节） -->
+        <joint name="${prefix}_joint_09_10" type="revolute">
+            <parent link="${prefix}_09" />
+            <child link="${prefix}_10" />
+            <origin xyz="0 ${x_offset_09_10} 0" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_135}" upper="${rad_135}" />
         </joint>
 
         <!-- link10 -> link11 【主动驱动关节，电机驱动】 -->
-        <joint name="${prefix}_link10_link11_joint" type="revolute">
-            <parent link="${prefix}_link10"/>
-            <child link="${prefix}_link11"/>
-            <origin xyz="${x_offset_10_11} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 1 0"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_fork}" upper="0"/>
+        <joint name="${prefix}_joint_10_11" type="revolute">
+            <parent link="${prefix}_10" />
+            <child link="${prefix}_11" />
+            <origin xyz="0 ${x_offset_10_11} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_fork}" upper="0" />
         </joint>
 
         <!-- link10 -> link12 【mimic镜像跟随，剪刀另一侧刀片】 -->
-        <joint name="${prefix}_link10_link12_joint" type="revolute">
-            <parent link="${prefix}_link10"/>
-            <child link="${prefix}_link12"/>
-            <origin xyz="${x_offset_10_12} 0 0" rpy="0 0 0"/>
-            <axis xyz="0 1 0"/>
-            <limit effort="${effort}" velocity="${velocity}" lower="0" upper="${rad_fork}"/>
-            <mimic joint="${prefix}_link10_link11_joint" multiplier="-1.0" offset="0.0"/>
+        <joint name="${prefix}_joint_10_12" type="revolute">
+            <parent link="${prefix}_10" />
+            <child link="${prefix}_12" />
+            <origin xyz="0 ${x_offset_10_12} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="0" upper="${rad_fork}" />
+            <mimic joint="${prefix}_joint_10_11" multiplier="-1.0" offset="0.0" />
+        </joint>
+
+        <!-- link12 -> link13 -->
+        <joint name="${prefix}_joint_12_13" type="revolute">
+            <parent link="${prefix}_12" />
+            <child link="${prefix}_13" />
+            <origin xyz="0 ${x_offset_12_13} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
+        </joint>
+
+        <!-- link13 -> link14 -->
+        <joint name="${prefix}_joint_13_14" type="revolute">
+            <parent link="${prefix}_13" />
+            <child link="${prefix}_14" />
+            <origin xyz="0 ${x_offset_13_14} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
+        </joint>
+
+        <!-- link14 -> link15 -->
+        <joint name="${prefix}_joint_14_15" type="revolute">
+            <parent link="${prefix}_14" />
+            <child link="${prefix}_15" />
+            <origin xyz="0 ${x_offset_14_15} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
+        </joint>
+
+        <!-- link15 -> link16 -->
+        <joint name="${prefix}_joint_15_16" type="revolute">
+            <parent link="${prefix}_15" />
+            <child link="${prefix}_16" />
+            <origin xyz="0 ${x_offset_15_16} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
+        </joint>
+
+        <!-- link16 -> link17 -->
+        <joint name="${prefix}_joint_16_17" type="revolute">
+            <parent link="${prefix}_16" />
+            <child link="${prefix}_17" />
+            <origin xyz="0 ${x_offset_16_17} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
+        </joint>
+
+        <!-- link17 -> link18 -->
+        <joint name="${prefix}_joint_17_18" type="revolute">
+            <parent link="${prefix}_17" />
+            <child link="${prefix}_18" />
+            <origin xyz="0 ${x_offset_17_18} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
+        </joint>
+
+        <!-- link18 -> link19 -->
+        <joint name="${prefix}_joint_18_19" type="revolute">
+            <parent link="${prefix}_18" />
+            <child link="${prefix}_19" />
+            <origin xyz="0 ${x_offset_18_19} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_30}" upper="${rad_30}" />
+        </joint>
+
+        <!-- link19 -> link20 -->
+        <joint name="${prefix}_joint_19_20" type="revolute">
+            <parent link="${prefix}_19" />
+            <child link="${prefix}_20" />
+            <origin xyz="0 ${x_offset_19_20} 0" rpy="0 0 0" />
+            <axis xyz="1 0 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_135}" upper="${rad_135}" />
+        </joint>
+
+        <!-- link20 -> link21 【主动驱动关节】 -->
+        <joint name="${prefix}_joint_20_21" type="revolute">
+            <parent link="${prefix}_20" />
+            <child link="${prefix}_21" />
+            <origin xyz="0 ${x_offset_20_21} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-rad_fork}" upper="0" />
+        </joint>
+
+        <!-- link21 -> link22 【mimic镜像跟随】 -->
+        <joint name="${prefix}_joint_21_22" type="revolute">
+            <parent link="${prefix}_21" />
+            <child link="${prefix}_22" />
+            <origin xyz="0 ${x_offset_21_22} 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" />
+            <limit effort="${effort}" velocity="${velocity}" lower="0" upper="${rad_fork}" />
+            <mimic joint="${prefix}_joint_20_21" multiplier="-1.0" offset="0.0" />
         </joint>
 
     </xacro:macro>
