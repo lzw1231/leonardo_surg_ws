@@ -22,22 +22,35 @@
     <!-- 15 创建关节的函数 -->
     <xacro:include filename="11_snake_joints.xacro" />
 
-    <!-- 16 调用宏生成snake -->
+    <!-- 16 调用宏生成3条snake和jonints -->
     <xacro:get_snake_links prefix="s1" />
+    <xacro:get_snake_links prefix="s2" />
+    <xacro:get_snake_links prefix="s3" />
 
     <xacro:get_snake_joints prefix="s1" />
+    <xacro:get_snake_joints prefix="s2" />
+    <xacro:get_snake_joints prefix="s3" />
 
 
     <!-- 17 生成 base_footprint_snake 固定基座 -->
     <link name="base_footprint_snake" />
 
-    <joint name="base_s1_link01" type="prismatic">
+    <joint name="base_s1_link01" type="fixed">
         <parent link="base_footprint_snake" />
         <child link="s1_01" />
         <origin xyz="0 0 0" rpy="0 0 0" />
-        <axis xyz="1 0 0" />
-        <limit lower="-0.1" upper="0.1" effort="1000" velocity="10" />
     </joint>
 
+    <joint name="base_s2_link01" type="fixed">
+        <parent link="base_footprint_snake" />
+        <child link="s2_01" />
+        <origin xyz="0.05 0 0" rpy="0 0 0" />
+    </joint>
+
+    <joint name="base_s3_link01" type="fixed">
+        <parent link="base_footprint_snake" />
+        <child link="s3_01" />
+        <origin xyz="-0.05 0 0" rpy="0 0 0" />
+    </joint>
 
 </robot>

@@ -26,6 +26,7 @@
     <xacro:property name="link21_m" value="0.001" />
     <xacro:property name="link22_m" value="0.001" />
 
+
     <!-- ====================== 各连杆外半径 r(m) ====================== -->
     <xacro:property name="link01_r" value="0.005" />
     <xacro:property name="link02_r" value="0.005" />
@@ -71,7 +72,8 @@
     <xacro:property name="link17_l" value="0.0033" />
     <xacro:property name="link18_l" value="0.0033" />
     <xacro:property name="link19_l" value="0.0133" />
-    <xacro:property name="link20_l" value="0.012" />
-    <xacro:property name="link21_l" value="0.013" />
-    <xacro:property name="link22_l" value="0.013" />
+    <xacro:property name="link20_l" value="0.0033" />
+    <xacro:property name="link21_l" value="0.0033" />
+    <xacro:property name="link22_l" value="0.0133" />
+
 </robot>

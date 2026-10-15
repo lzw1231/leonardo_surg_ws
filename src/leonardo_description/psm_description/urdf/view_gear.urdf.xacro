@@ -1,0 +1,61 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="coin_paradox_gear">
+
+    <!-- 两个完全一样齿轮 -->
+    <xacro:property name="r" value="0.1" />
+    <xacro:property name="width" value="0.08" />
+    <xacro:property name="orbit_radius" value="${r + r}" />
+
+    <link name="base_link" />
+
+    <!-- ========== 固定齿轮1（红色） ========== -->
+    <link name="gear1_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${r}" length="${width}" />
+            </geometry>
+            <material name="red">
+                <color rgba="1 0.2 0.2 1" />
+            </material>
+        </visual>
+    </link>
+
+    <joint name="gear1_fixed" type="fixed">
+        <parent link="base_link" />
+        <child link="gear1_link" />
+        <origin xyz="0 0 0" />
+    </joint>
+
+    <!-- ========== 公转载体 orbit_carrier ========== -->
+    <link name="orbit_carrier" />
+
+    <joint name="orbit_joint" type="continuous">
+        <parent link="base_link" />
+        <child link="orbit_carrier" />
+        <origin xyz="0 0 0" />
+        <axis xyz="0 0 1" />
+    </joint>
+
+    <!-- ========== 滚动齿轮2（蓝色） ========== -->
+    <link name="gear2_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${r}" length="${width}" />
+            </geometry>
+            <material name="blue">
+                <color rgba="0.2 0.2 1 1" />
+            </material>
+        </visual>
+    </link>
+
+    <joint name="spin_joint" type="continuous">
+        <parent link="orbit_carrier" />
+        <child link="gear2_link" />
+        <origin xyz="${orbit_radius} 0 0" />
+        <axis xyz="0 0 1" />
+        <!-- ★ 关键：让 spin_joint 跟随 orbit_joint，比例 1:1 -->
+        <mimic joint="orbit_joint" multiplier="1" offset="0" />
+    </joint>
+
+</robot>

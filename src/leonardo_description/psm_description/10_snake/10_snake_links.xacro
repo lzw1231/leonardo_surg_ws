@@ -28,7 +28,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/02.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="${pi} 0 0" />
                 <material name="${prefix}_link02" />
             </visual>
             <collision>
@@ -123,7 +123,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/07.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="${pi} 0 0" />
                 <material name="${prefix}_link07" />
             </visual>
             <collision>
@@ -142,7 +142,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/08.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
                 <material name="${prefix}_link08" />
             </visual>
             <collision>
@@ -161,7 +161,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/09.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="${pi} 0 0" />
                 <material name="${prefix}_link09" />
             </visual>
             <collision>
@@ -218,7 +218,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/12.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
                 <material name="${prefix}_link12" />
             </visual>
             <collision>
@@ -256,7 +256,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/14.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
                 <material name="${prefix}_link14" />
             </visual>
             <collision>
@@ -313,7 +313,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/17.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2.0}" />
                 <material name="${prefix}_link17" />
             </visual>
             <collision>
@@ -332,7 +332,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/18.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi}" />
                 <material name="${prefix}_link18" />
             </visual>
             <collision>
@@ -351,7 +351,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/19.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="${pi/2.0} 0 0" />
                 <material name="${prefix}_link19" />
             </visual>
             <collision>
@@ -370,7 +370,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/20.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 -0.004" rpy="${pi/2.0} 0 0" />
                 <material name="${prefix}_link20" />
             </visual>
             <collision>
@@ -389,7 +389,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/21.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="${pi/2.0} 0 0" />
                 <material name="${prefix}_link21" />
             </visual>
             <collision>
@@ -408,7 +408,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/22.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="${pi/2.0} ${pi} 0" />
                 <material name="${prefix}_link22" />
             </visual>
             <collision>
