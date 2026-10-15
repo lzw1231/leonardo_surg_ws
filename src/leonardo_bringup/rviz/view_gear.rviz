@@ -32,7 +32,7 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 0.20000000298023224
+      Cell Size: 0.10000000149011612
       Class: rviz_default_plugins/Grid
       Color: 160; 160; 164
       Enabled: true
@@ -67,21 +67,365 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
+        base_footprint_snake:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        gear1_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        gear2_link:
+        s1_01:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orbit_carrier:
+        s1_02:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_04:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_05:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_06:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_07:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_08:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_09:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_10:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_11:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_12:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_13:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_14:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_15:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_16:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_17:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_18:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_19:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_20:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_21:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_22:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s1_gear_center_04:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        s1_orbit_carrier_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        s2_01:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_02:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_04:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_05:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_06:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_07:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_08:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_09:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_10:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_11:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_12:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_13:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_14:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_15:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_16:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_17:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_18:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_19:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_20:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_21:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_22:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s2_gear_center_04:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        s2_orbit_carrier_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        s3_01:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_02:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_04:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_05:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_06:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_07:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_08:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_09:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_10:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_11:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_12:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_13:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_14:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_15:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_16:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_17:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_18:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_19:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_20:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_21:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_22:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        s3_gear_center_04:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        s3_orbit_carrier_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        snakes_footprint:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -100,32 +444,246 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
+        base_footprint_snake:
           Value: true
-        gear1_link:
+        s1_01:
           Value: true
-        gear2_link:
+        s1_02:
           Value: true
-        orbit_carrier:
+        s1_03:
           Value: true
-      Marker Scale: 1
+        s1_04:
+          Value: true
+        s1_05:
+          Value: true
+        s1_06:
+          Value: true
+        s1_07:
+          Value: true
+        s1_08:
+          Value: true
+        s1_09:
+          Value: true
+        s1_10:
+          Value: true
+        s1_11:
+          Value: true
+        s1_12:
+          Value: true
+        s1_13:
+          Value: true
+        s1_14:
+          Value: true
+        s1_15:
+          Value: true
+        s1_16:
+          Value: true
+        s1_17:
+          Value: true
+        s1_18:
+          Value: true
+        s1_19:
+          Value: true
+        s1_20:
+          Value: true
+        s1_21:
+          Value: true
+        s1_22:
+          Value: true
+        s1_gear_center_04:
+          Value: true
+        s1_orbit_carrier_03:
+          Value: true
+        s2_01:
+          Value: true
+        s2_02:
+          Value: true
+        s2_03:
+          Value: true
+        s2_04:
+          Value: true
+        s2_05:
+          Value: true
+        s2_06:
+          Value: true
+        s2_07:
+          Value: true
+        s2_08:
+          Value: true
+        s2_09:
+          Value: true
+        s2_10:
+          Value: true
+        s2_11:
+          Value: true
+        s2_12:
+          Value: true
+        s2_13:
+          Value: true
+        s2_14:
+          Value: true
+        s2_15:
+          Value: true
+        s2_16:
+          Value: true
+        s2_17:
+          Value: true
+        s2_18:
+          Value: true
+        s2_19:
+          Value: true
+        s2_20:
+          Value: true
+        s2_21:
+          Value: true
+        s2_22:
+          Value: true
+        s2_gear_center_04:
+          Value: true
+        s2_orbit_carrier_03:
+          Value: true
+        s3_01:
+          Value: true
+        s3_02:
+          Value: true
+        s3_03:
+          Value: true
+        s3_04:
+          Value: true
+        s3_05:
+          Value: true
+        s3_06:
+          Value: true
+        s3_07:
+          Value: true
+        s3_08:
+          Value: true
+        s3_09:
+          Value: true
+        s3_10:
+          Value: true
+        s3_11:
+          Value: true
+        s3_12:
+          Value: true
+        s3_13:
+          Value: true
+        s3_14:
+          Value: true
+        s3_15:
+          Value: true
+        s3_16:
+          Value: true
+        s3_17:
+          Value: true
+        s3_18:
+          Value: true
+        s3_19:
+          Value: true
+        s3_20:
+          Value: true
+        s3_21:
+          Value: true
+        s3_22:
+          Value: true
+        s3_gear_center_04:
+          Value: true
+        s3_orbit_carrier_03:
+          Value: true
+        snakes_footprint:
+          Value: true
+      Marker Scale: 0.019999999552965164
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        base_link:
-          gear1_link:
-            {}
-          orbit_carrier:
-            gear2_link:
-              {}
+        snakes_footprint:
+          base_footprint_snake:
+            s1_01:
+              s1_02:
+                s1_03:
+                  s1_orbit_carrier_03:
+                    s1_gear_center_04:
+                      s1_04:
+                        s1_05:
+                          s1_06:
+                            s1_07:
+                              s1_08:
+                                s1_09:
+                                  s1_10:
+                                    s1_11:
+                                      s1_12:
+                                        s1_13:
+                                          s1_14:
+                                            s1_15:
+                                              s1_16:
+                                                s1_17:
+                                                  s1_18:
+                                                    s1_19:
+                                                      s1_20:
+                                                        s1_21:
+                                                          {}
+                                                        s1_22:
+                                                          {}
+            s2_01:
+              s2_02:
+                s2_03:
+                  s2_orbit_carrier_03:
+                    s2_gear_center_04:
+                      s2_04:
+                        s2_05:
+                          s2_06:
+                            s2_07:
+                              s2_08:
+                                s2_09:
+                                  s2_10:
+                                    s2_11:
+                                      s2_12:
+                                        s2_13:
+                                          s2_14:
+                                            s2_15:
+                                              s2_16:
+                                                s2_17:
+                                                  s2_18:
+                                                    s2_19:
+                                                      s2_20:
+                                                        s2_21:
+                                                          {}
+                                                        s2_22:
+                                                          {}
+            s3_01:
+              s3_02:
+                s3_03:
+                  s3_orbit_carrier_03:
+                    s3_gear_center_04:
+                      s3_04:
+                        s3_05:
+                          s3_06:
+                            s3_07:
+                              s3_08:
+                                s3_09:
+                                  s3_10:
+                                    s3_11:
+                                      s3_12:
+                                        s3_13:
+                                          s3_14:
+                                            s3_15:
+                                              s3_16:
+                                                s3_17:
+                                                  s3_18:
+                                                    s3_19:
+                                                      s3_20:
+                                                        s3_21:
+                                                          {}
+                                                        s3_22:
+                                                          {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: base_footprint_snake
     Frame Rate: 30
   Name: root
   Tools:
@@ -168,25 +726,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.7641867399215698
+      Distance: 0.2760200798511505
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.11826391518115997
-        Y: 0.07264529168605804
-        Z: -0.042218439280986786
+        X: 0.10130107402801514
+        Y: 0.01775425300002098
+        Z: -0.04305478557944298
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6853979229927063
+      Pitch: 0.3653984069824219
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.8053958415985107
+      Yaw: 2.665398359298706
     Saved: ~
 Window Geometry:
   Displays:

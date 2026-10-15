@@ -25,6 +25,15 @@
     <xacro:property name="y_offset_20_21" value="0.0" />
     <xacro:property name="y_offset_20_22" value="0.0" />
 
+    <!-- 公转半径：两齿轮中心距（两齿轮半径之和） -->
+    <xacro:property name="orbit_r" value="0.0025" />
+
+    <!-- 公转角度限位（±45°） -->
+    <xacro:property name="orbit_lower" value="${-pi/8.0}" />
+    <xacro:property name="orbit_upper" value="${pi/8.0}" />
+
+    <!-- 原点相对齿轮中心的偏移 -->
+    <xacro:property name="origin_gear_center" value="0.00145" />
 
     <!-- ========= 最大力矩 ======== -->
     <xacro:property name="effort" value="1000" />
@@ -35,30 +44,52 @@
     <!-- ========== 宏定义：生成所有关节 ========== -->
     <xacro:macro name="get_snake_joints" params="prefix">
 
-        <!-- link01 -> link02 -->
+        <!-- **************************  link01 -> link02  ************************** -->
         <joint name="${prefix}_joint_01_02" type="fixed">
             <parent link="${prefix}_01" />
             <child link="${prefix}_02" />
             <origin xyz="0 ${y_offset_01_02} 0" rpy="0 0 0" />
         </joint>
 
-        <!-- link02 -> link03 -->
+        <!-- **************************  link02 -> link03  ************************** -->
         <joint name="${prefix}_joint_02_03" type="fixed">
             <parent link="${prefix}_02" />
             <child link="${prefix}_03" />
             <origin xyz="0 ${y_offset_02_03} 0" rpy="0 0 0" />
         </joint>
 
-        <!-- link03 -> link04 -->
-        <joint name="${prefix}_joint_03_04" type="revolute">
+        <!-- **************************  link03 -> link04  ************************** -->
+        <link name="${prefix}_orbit_carrier_03" />
+        <link name="${prefix}_gear_center_04" />
+
+        <!-- 公转关节：link03 -> 公转载体 -->
+        <joint name="${prefix}_joint_03_orbit_carrier" type="revolute">
             <parent link="${prefix}_03" />
-            <child link="${prefix}_04" />
-            <origin xyz="0 ${y_offset_03_04} 0" rpy="0 0 0" />
+            <child link="${prefix}_orbit_carrier_03" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
-            <limit effort="${effort}" velocity="${velocity}" lower="${-pi}" upper="${pi}" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${orbit_lower}" upper="${orbit_upper}" />
         </joint>
 
-        <!-- link04 -> link05 -->
+        <!-- 自转关节：公转载体 -> link04 齿轮中心 -->
+        <!-- 公转半径 orbit_r；mimic 公转 1:1 实现自转 -->
+        <joint name="${prefix}_joint_04_spin" type="continuous">
+            <parent link="${prefix}_orbit_carrier_03" />
+            <child link="${prefix}_gear_center_04" />
+            <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" />
+            <mimic joint="${prefix}_joint_03_orbit_carrier" multiplier="1" offset="0" />
+        </joint>
+
+        <!-- 固定关节：link04 齿轮中心 -> link04 原点 -->
+        <joint name="${prefix}_joint_04_mount" type="fixed">
+            <parent link="${prefix}_gear_center_04" />
+            <child link="${prefix}_04" />
+            <origin xyz="0 ${origin_gear_center} 0" rpy="0 0 0" />
+        </joint>
+
+        <!-- **************************  link04 -> link05  ************************** -->
         <joint name="${prefix}_joint_04_05" type="revolute">
             <parent link="${prefix}_04" />
             <child link="${prefix}_05" />
