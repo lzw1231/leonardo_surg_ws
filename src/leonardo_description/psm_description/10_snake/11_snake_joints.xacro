@@ -20,7 +20,7 @@
     <!-- 蛇骨公转半径：两齿轮中心距（两齿轮半径之和） -->
     <xacro:property name="orbit_r" value="0.0025" />
 
-    <!-- 蛇骨公转角度限位（±45°） -->
+    <!-- 蛇骨公转角度限位（±22.5°） -->
     <xacro:property name="orbit_lower" value="${-pi/8.0}" />
     <xacro:property name="orbit_upper" value="${pi/8.0}" />
 

@@ -1,29 +1,81 @@
+# ==============================================================================
+# 项目配置
+# ==============================================================================
 cmake_minimum_required(VERSION 3.28)
+
 project(psm_hardware)
 
-# 启用 compile_commands.json 导出，以支持 IDE 代码索引
-set(_dummy ${CMAKE_EXPORT_COMPILE_COMMANDS})
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif ()
-
-# find dependencies
+# ==============================================================================
+# 依赖查找
+# ==============================================================================
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(hardware_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 
-if (BUILD_TESTING)
-    find_package(ament_lint_auto REQUIRED)
-    # the following line skips the linter which checks for copyrights
-    # comment the line when a copyright and license is added to all source files
-    set(ament_cmake_copyright_FOUND TRUE)
-    # the following line skips cpplint (only works in a git repo)
-    # comment the line when this package is in a git repo and when
-    # a copyright and license is added to all source files
-    set(ament_cmake_cpplint_FOUND TRUE)
-    ament_lint_auto_find_test_dependencies()
-endif ()
+# ==============================================================================
+# 库构建
+# ==============================================================================
+add_library(${PROJECT_NAME} SHARED
+        src/psm_can0_hardware_interface.cpp
+        src/psm_can1_hardware_interface.cpp
+)
+
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
+
+# 供 ament_export_dependencies 使用的包名列表
+set(DEPENDENCIES
+        hardware_interface
+        pluginlib
+        rclcpp
+        rclcpp_lifecycle
+)
+
+# 供 target_link_libraries 使用的目标列表
+set(PSM_HARDWARE_TARGET_LIBS
+        hardware_interface::hardware_interface
+        pluginlib::pluginlib
+        rclcpp::rclcpp
+        rclcpp_lifecycle::rclcpp_lifecycle
+)
+
+# 定义编译宏 PSM_HARDWARE_BUILDING_DLL，用于控制动态链接库符号的导出可见性
+target_compile_definitions(${PROJECT_NAME} PRIVATE PSM_HARDWARE_BUILDING_DLL)
+
+# 链接依赖
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PSM_HARDWARE_TARGET_LIBS})
+
+# ==============================================================================
+# 插件导出
+# ==============================================================================
+pluginlib_export_plugin_description_file(hardware_interface psm_hardware_plugin.xml)
+
+# ==============================================================================
+# 安装规则
+# ==============================================================================
+install(TARGETS ${PROJECT_NAME}
+        EXPORT export_${PROJECT_NAME}
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
+)
+
+install(DIRECTORY include/
+        DESTINATION include
+)
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_include_directories(include)
+ament_export_dependencies(${DEPENDENCIES})
 
 ament_package()
