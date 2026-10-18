@@ -2,8 +2,7 @@
 #include "mtm_hardware/common/math_utils.hpp"
 
 namespace fd_hardware_base {
-hardware_interface::CallbackReturn
-FDHardwareBase::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
+hardware_interface::CallbackReturn FDHardwareBase::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
     auto based_logger = rclcpp::get_logger(logger_name_);
 
     auto ret = hardware_interface::SystemInterface::on_init(params);
@@ -36,6 +35,7 @@ FDHardwareBase::on_init(const hardware_interface::HardwareComponentInterfacePara
     hw_math::resize_and_fill(hw_commands_effort_, info_.joints.size(), BUF_INIT_NAN);
     hw_math::resize_and_fill(hw_states_inertia_, INERTIA_MATRIX_FLATTEN_SIZE, BUF_INIT_NAN);
     hw_math::resize_and_fill(hw_button_state_, info_.gpios.size(), BUF_INIT_NAN);
+    hw_grip_position_ = BUF_INIT_NAN;
 
     if (emulate_button_ && (info_.joints.size() == 4 || info_.joints.size() > 6)) {
         hw_commands_effort_[info_.joints.size() - 1U] = 0.0;
@@ -67,26 +67,22 @@ std::vector<hardware_interface::StateInterface::ConstSharedPtr> FDHardwareBase::
     for (size_t i = 0; i < info_.joints.size(); ++i) {
         const auto &joint_name = info_.joints[i].name;
 
-        auto if_pos = std::make_shared<hardware_interface::StateInterface>(
-            joint_name, hardware_interface::HW_IF_POSITION, &hw_states_position_[i]);
+        auto if_pos = std::make_shared<hardware_interface::StateInterface>(joint_name, hardware_interface::HW_IF_POSITION, &hw_states_position_[i]);
         state_if_storage_.push_back(if_pos);
         state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_pos));
 
-        auto if_vel = std::make_shared<hardware_interface::StateInterface>(
-            joint_name, hardware_interface::HW_IF_VELOCITY, &hw_states_velocity_[i]);
+        auto if_vel = std::make_shared<hardware_interface::StateInterface>(joint_name, hardware_interface::HW_IF_VELOCITY, &hw_states_velocity_[i]);
         state_if_storage_.push_back(if_vel);
         state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_vel));
 
-        auto if_eff = std::make_shared<hardware_interface::StateInterface>(joint_name, hardware_interface::HW_IF_EFFORT,
-                                                                           &hw_states_effort_[i]);
+        auto if_eff = std::make_shared<hardware_interface::StateInterface>(joint_name, hardware_interface::HW_IF_EFFORT, &hw_states_effort_[i]);
         state_if_storage_.push_back(if_eff);
         state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_eff));
     }
 
     for (size_t i = 0; i < info_.gpios.size(); ++i) {
         const auto &gpio_name = info_.gpios[i].name;
-        auto if_btn = std::make_shared<hardware_interface::StateInterface>(
-            gpio_name, hardware_interface::HW_IF_POSITION, &hw_button_state_[i]);
+        auto if_btn = std::make_shared<hardware_interface::StateInterface>(gpio_name, hardware_interface::HW_IF_POSITION, &hw_button_state_[i]);
         state_if_storage_.push_back(if_btn);
         state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_btn));
     }
@@ -95,8 +91,7 @@ std::vector<hardware_interface::StateInterface::ConstSharedPtr> FDHardwareBase::
         for (uint col = row; col < 6; ++col) {
             size_t idx = hw_math::flattened_index_from_triangular_index(row, col);
             std::string iname = inertia_interface_name_ + "_" + std::to_string(row) + "_" + std::to_string(col);
-            auto if_inert = std::make_shared<hardware_interface::StateInterface>(inertia_interface_name_, iname,
-                                                                                 &hw_states_inertia_[idx]);
+            auto if_inert = std::make_shared<hardware_interface::StateInterface>(inertia_interface_name_, iname, &hw_states_inertia_[idx]);
             state_if_storage_.push_back(if_inert);
             state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_inert));
         }
@@ -109,8 +104,8 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> FDHardwareBase::on_
     command_storage_.clear();
     cmds.reserve(info_.joints.size());
     for (uint i = 0; i < info_.joints.size(); ++i) {
-        auto c = std::make_shared<hardware_interface::CommandInterface>(
-            info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_commands_effort_[i]);
+        auto c =
+            std::make_shared<hardware_interface::CommandInterface>(info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_commands_effort_[i]);
         command_storage_.push_back(c);
         cmds.push_back(c);
     }
@@ -290,33 +285,31 @@ bool FDHardwareBase::disconnectFromDevice() {
 bool FDHardwareBase::validateJointInterfaces(const hardware_interface::ComponentInfo &joint) {
     auto logger = rclcpp::get_logger(logger_name_);
     if (joint.command_interfaces.size() != 1U) {
-        RCLCPP_FATAL(logger, "Joint '%s' 期望 1 个命令接口，实际获取 %zu 个", joint.name.c_str(),
-                     joint.command_interfaces.size());
+        RCLCPP_FATAL(logger, "Joint '%s' 期望 1 个命令接口，实际获取 %zu 个", joint.name.c_str(), joint.command_interfaces.size());
         return false;
     }
     if (joint.command_interfaces[0].name != hardware_interface::HW_IF_EFFORT) {
-        RCLCPP_FATAL(logger, "Joint '%s' 命令接口类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(),
-                     hardware_interface::HW_IF_EFFORT, joint.command_interfaces[0].name.c_str());
+        RCLCPP_FATAL(logger, "Joint '%s' 命令接口类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(), hardware_interface::HW_IF_EFFORT,
+                     joint.command_interfaces[0].name.c_str());
         return false;
     }
     if (joint.state_interfaces.size() != 3U) {
-        RCLCPP_FATAL(logger, "Joint '%s' 期望 3 个状态接口，实际获取 %zu 个", joint.name.c_str(),
-                     joint.state_interfaces.size());
+        RCLCPP_FATAL(logger, "Joint '%s' 期望 3 个状态接口，实际获取 %zu 个", joint.name.c_str(), joint.state_interfaces.size());
         return false;
     }
     if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
-        RCLCPP_FATAL(logger, "Joint '%s' 状态接口[0]类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(),
-                     hardware_interface::HW_IF_POSITION, joint.state_interfaces[0].name.c_str());
+        RCLCPP_FATAL(logger, "Joint '%s' 状态接口[0]类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(), hardware_interface::HW_IF_POSITION,
+                     joint.state_interfaces[0].name.c_str());
         return false;
     }
     if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY) {
-        RCLCPP_FATAL(logger, "Joint '%s' 状态接口[1]类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(),
-                     hardware_interface::HW_IF_VELOCITY, joint.state_interfaces[1].name.c_str());
+        RCLCPP_FATAL(logger, "Joint '%s' 状态接口[1]类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(), hardware_interface::HW_IF_VELOCITY,
+                     joint.state_interfaces[1].name.c_str());
         return false;
     }
     if (joint.state_interfaces[2].name != hardware_interface::HW_IF_EFFORT) {
-        RCLCPP_FATAL(logger, "Joint '%s' 状态接口[2]类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(),
-                     hardware_interface::HW_IF_EFFORT, joint.state_interfaces[2].name.c_str());
+        RCLCPP_FATAL(logger, "Joint '%s' 状态接口[2]类型错误: 期望 '%s', 实际 '%s'", joint.name.c_str(), hardware_interface::HW_IF_EFFORT,
+                     joint.state_interfaces[2].name.c_str());
         return false;
     }
     return true;
@@ -325,13 +318,12 @@ bool FDHardwareBase::validateJointInterfaces(const hardware_interface::Component
 bool FDHardwareBase::validateGpioInterfaces(const hardware_interface::ComponentInfo &button) {
     auto logger = rclcpp::get_logger(logger_name_);
     if (button.state_interfaces.size() != 1U) {
-        RCLCPP_FATAL(logger, "GPIO '%s' 拥有 %zu 个 State 接口，期望值为 1", button.name.c_str(),
-                     button.state_interfaces.size());
+        RCLCPP_FATAL(logger, "GPIO '%s' 拥有 %zu 个 State 接口，期望值为 1", button.name.c_str(), button.state_interfaces.size());
         return false;
     }
     if (button.state_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
-        RCLCPP_FATAL(logger, "GPIO '%s' State 类型为 [%s]，期望值为 [%s]", button.name.c_str(),
-                     button.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
+        RCLCPP_FATAL(logger, "GPIO '%s' State 类型为 [%s]，期望值为 [%s]", button.name.c_str(), button.state_interfaces[0].name.c_str(),
+                     hardware_interface::HW_IF_POSITION);
         return false;
     }
     return true;

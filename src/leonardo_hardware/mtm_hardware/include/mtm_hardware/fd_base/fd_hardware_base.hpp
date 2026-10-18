@@ -20,8 +20,7 @@ class FDHardwareBase : public hardware_interface::SystemInterface {
 
     // 生命周期回调
     MTM_HARDWARE_PUBLIC
-    hardware_interface::CallbackReturn
-    on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
+    hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
     MTM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state) override;
     MTM_HARDWARE_PUBLIC
@@ -53,6 +52,7 @@ class FDHardwareBase : public hardware_interface::SystemInterface {
     std::vector<double> hw_states_effort_;   // 力/力矩反馈
     std::vector<double> hw_states_inertia_;  // 惯性矩阵（上三角扁平化存储）
     std::vector<double> hw_button_state_;    // 按钮/GPIO 状态
+    double hw_grip_position_{0.0};           // 存储夹子的真实弧度
 
     // 设备标识与配置参数
     char interface_id_{-1};              // 设备内部ID

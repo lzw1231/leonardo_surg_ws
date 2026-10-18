@@ -12,8 +12,7 @@ FDRightHardwareInterface::~FDRightHardwareInterface() {
  *
  * 从 DHD 设备获取位置、速度、力、惯性矩阵及按钮状态，并更新至状态缓冲区。
  */
-hardware_interface::return_type FDRightHardwareInterface::read(const rclcpp::Time & /*time*/,
-                                                               const rclcpp::Duration & /*period*/) {
+hardware_interface::return_type FDRightHardwareInterface::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
 
     auto logger = rclcpp::get_logger(logger_name_);
     int flag = 0; // 用于累计 API 调用错误码
@@ -21,8 +20,7 @@ hardware_interface::return_type FDRightHardwareInterface::read(const rclcpp::Tim
     // 1. 读取位置与姿态
     flag += dhdGetPosition(&hw_states_position_[0], &hw_states_position_[1], &hw_states_position_[2], interface_id_);
     if (!ignore_orientation_ && hw_states_position_.size() > 3) {
-        flag += dhdGetOrientationRad(&hw_states_position_[3], &hw_states_position_[4], &hw_states_position_[5],
-                                     interface_id_);
+        flag += dhdGetOrientationRad(&hw_states_position_[3], &hw_states_position_[4], &hw_states_position_[5], interface_id_);
     } else if (ignore_orientation_ && hw_states_position_.size() > 3) {
         hw_states_position_[3] = 0.0;
         hw_states_position_[4] = 0.0;
@@ -39,11 +37,9 @@ hardware_interface::return_type FDRightHardwareInterface::read(const rclcpp::Tim
     }
 
     // 2. 读取线速度与角速度
-    flag +=
-        dhdGetLinearVelocity(&hw_states_velocity_[0], &hw_states_velocity_[1], &hw_states_velocity_[2], interface_id_);
+    flag += dhdGetLinearVelocity(&hw_states_velocity_[0], &hw_states_velocity_[1], &hw_states_velocity_[2], interface_id_);
     if (!ignore_orientation_ && hw_states_velocity_.size() > 3) {
-        flag += dhdGetAngularVelocityRad(&hw_states_velocity_[3], &hw_states_velocity_[4], &hw_states_velocity_[5],
-                                         interface_id_);
+        flag += dhdGetAngularVelocityRad(&hw_states_velocity_[3], &hw_states_velocity_[4], &hw_states_velocity_[5], interface_id_);
     } else if (ignore_orientation_ && hw_states_velocity_.size() > 3) {
         hw_states_velocity_[3] = 0.0;
         hw_states_velocity_[4] = 0.0;
@@ -62,8 +58,8 @@ hardware_interface::return_type FDRightHardwareInterface::read(const rclcpp::Tim
     // 3. 读取力、力矩及夹爪力
     double torque[3];
     double gripper_force;
-    flag += dhdGetForceAndTorqueAndGripperForce(&hw_states_effort_[0], &hw_states_effort_[1], &hw_states_effort_[2],
-                                                &torque[0], &torque[1], &torque[2], &gripper_force, interface_id_);
+    flag += dhdGetForceAndTorqueAndGripperForce(&hw_states_effort_[0], &hw_states_effort_[1], &hw_states_effort_[2], &torque[0], &torque[1],
+                                                &torque[2], &gripper_force, interface_id_);
 
     // 处理力矩数据
     if (!ignore_orientation_ && hw_states_effort_.size() > 3) {
@@ -102,15 +98,24 @@ hardware_interface::return_type FDRightHardwareInterface::read(const rclcpp::Tim
         }
     }
 
-    // 5. 读取按钮状态
-    int button_status = dhdGetButton(0, interface_id_);
-    if (button_status == 1) {
-        hw_button_state_[0] = 1.0;
-    } else if (button_status == 0) {
-        hw_button_state_[0] = 0.0;
+    // 5. 读取夹爪角度 / 按钮状态
+    if (dhdHasGripper(interface_id_)) {
+        // 如果设备带有夹爪，直接读取真实弧度存入基类变量
+        flag += dhdGetGripperAngleRad(&hw_grip_position_, interface_id_);
+
+        // 核心黑魔法：把夹爪的连续弧度直接塞给按钮状态接口
+        hw_button_state_[0] = hw_grip_position_;
     } else {
-        RCLCPP_ERROR(logger, "按键状态读取异常");
-        flag += -1;
+        // 如果没有夹爪，退回传统的 0/1 按键读取逻辑
+        int button_status = dhdGetButton(0, interface_id_);
+        if (button_status == 1) {
+            hw_button_state_[0] = 1.0;
+        } else if (button_status == 0) {
+            hw_button_state_[0] = 0.0;
+        } else {
+            RCLCPP_ERROR(logger, "按键状态读取异常");
+            flag += -1;
+        }
     }
 
     // 检查整体执行状态
@@ -127,8 +132,7 @@ hardware_interface::return_type FDRightHardwareInterface::read(const rclcpp::Tim
  *
  * 将计算得到的力/力矩命令发送至 DHD 设备。若命令包含 NaN，则发送零力以确保安全。
  */
-hardware_interface::return_type FDRightHardwareInterface::write(const rclcpp::Time & /*time*/,
-                                                                const rclcpp::Duration & /*period*/) {
+hardware_interface::return_type FDRightHardwareInterface::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
 
     // 检查命令中是否存在 NaN
     bool isNan = false;
@@ -143,22 +147,19 @@ hardware_interface::return_type FDRightHardwareInterface::write(const rclcpp::Ti
         // 根据设备配置（是否有夹爪、腕部）选择对应的 SDK 调用参数
         if (dhdHasGripper(interface_id_) && hw_states_effort_.size() > 6) {
             // 7-DOF 设备 (带夹爪)
-            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
-                                                hw_commands_effort_[3], hw_commands_effort_[4], hw_commands_effort_[5],
-                                                hw_commands_effort_[6], interface_id_);
+            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2], hw_commands_effort_[3],
+                                                hw_commands_effort_[4], hw_commands_effort_[5], hw_commands_effort_[6], interface_id_);
         } else if (dhdHasWrist(interface_id_) && hw_states_effort_.size() == 4) {
             // 4-DOF 设备 (带夹爪，无力矩)
-            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
-                                                0.0, 0.0, 0.0, hw_commands_effort_[3], interface_id_);
+            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2], 0.0, 0.0, 0.0,
+                                                hw_commands_effort_[3], interface_id_);
         } else if (dhdHasWrist(interface_id_) && hw_states_effort_.size() > 3) {
             // 6-DOF 设备 (带腕部，无夹爪)
-            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
-                                                hw_commands_effort_[3], hw_commands_effort_[4], hw_commands_effort_[5],
-                                                0, interface_id_);
+            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2], hw_commands_effort_[3],
+                                                hw_commands_effort_[4], hw_commands_effort_[5], 0, interface_id_);
         } else {
             // 3-DOF 设备 (仅平移)
-            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2],
-                                                0, 0, 0, 0, interface_id_);
+            dhdSetForceAndTorqueAndGripperForce(hw_commands_effort_[0], hw_commands_effort_[1], hw_commands_effort_[2], 0, 0, 0, 0, interface_id_);
         }
     } else {
         // 安全模式：发送零力

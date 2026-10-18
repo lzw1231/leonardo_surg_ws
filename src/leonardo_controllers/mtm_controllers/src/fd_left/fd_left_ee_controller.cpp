@@ -35,8 +35,7 @@ controller_interface::CallbackReturn FDLeftEeController::on_init() {
 // ============================================================================
 // on_configure：读参数 → 算固定变换
 // ============================================================================
-controller_interface::CallbackReturn
-FDLeftEeController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn FDLeftEeController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
     joints_name_ = get_node()->get_parameter("joints").as_string_array();
     buttons_name_ = get_node()->get_parameter("buttons").as_string_array();
 
@@ -71,8 +70,8 @@ FDLeftEeController::on_configure(const rclcpp_lifecycle::State & /*previous_stat
         Eigen::AngleAxisd yaw_angle(yaw, Eigen::Vector3d::UnitZ());
         q = roll_angle * pitch_angle * yaw_angle;
     } else if (transform_rotation_param.size() == 4) {
-        q = Eigen::Quaternion<double>(transform_rotation_param[0], transform_rotation_param[1],
-                                      transform_rotation_param[2], transform_rotation_param[3]);
+        q = Eigen::Quaternion<double>(transform_rotation_param[0], transform_rotation_param[1], transform_rotation_param[2],
+                                      transform_rotation_param[3]);
     } else {
         RCLCPP_ERROR(get_node()->get_logger(), "旋转格式错误：仅支持 RPY 或四元数");
         return controller_interface::CallbackReturn::ERROR;
@@ -112,11 +111,10 @@ controller_interface::InterfaceConfiguration FDLeftEeController::state_interface
 // ============================================================================
 // 生命周期
 // ============================================================================
-controller_interface::CallbackReturn
-FDLeftEeController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn FDLeftEeController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
     if (state_interfaces_.size() != (joints_name_.size() + buttons_name_.size())) {
-        RCLCPP_ERROR(get_node()->get_logger(), "状态接口数量不符：期望 %zu，实际 %zu",
-                     joints_name_.size() + buttons_name_.size(), state_interfaces_.size());
+        RCLCPP_ERROR(get_node()->get_logger(), "状态接口数量不符：期望 %zu，实际 %zu", joints_name_.size() + buttons_name_.size(),
+                     state_interfaces_.size());
         return controller_interface::CallbackReturn::ERROR;
     }
 
@@ -125,14 +123,12 @@ FDLeftEeController::on_activate(const rclcpp_lifecycle::State & /*previous_state
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn
-FDLeftEeController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn FDLeftEeController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
     std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), std::numeric_limits<double>::quiet_NaN());
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn
-FDLeftEeController::on_cleanup(const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn FDLeftEeController::on_cleanup(const rclcpp_lifecycle::State & /*previous_state*/) {
     joints_name_.clear();
     buttons_name_.clear();
     transform_ = Eigen::Matrix4d::Identity();
@@ -144,30 +140,25 @@ FDLeftEeController::on_cleanup(const rclcpp_lifecycle::State & /*previous_state*
 // ============================================================================
 // update
 // ============================================================================
-controller_interface::return_type
-FDLeftEeController::update_reference_from_subscribers(const rclcpp::Time & /*time*/,
-                                                      const rclcpp::Duration & /*period*/) {
+controller_interface::return_type FDLeftEeController::update_reference_from_subscribers(const rclcpp::Time & /*time*/,
+                                                                                        const rclcpp::Duration & /*period*/) {
     return controller_interface::return_type::OK;
 }
 
-controller_interface::return_type FDLeftEeController::update_and_write_commands(const rclcpp::Time & /*time*/,
-                                                                                const rclcpp::Duration & /*period*/) {
+controller_interface::return_type FDLeftEeController::update_and_write_commands(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     // ---- 缓存状态接口值 ----
     for (const auto &state_interface : state_interfaces_) {
         auto val_opt = state_interface.get_optional();
         if (val_opt.has_value()) {
-            name_if_value_mapping_[state_interface.get_prefix_name()][state_interface.get_interface_name()] =
-                val_opt.value();
+            name_if_value_mapping_[state_interface.get_prefix_name()][state_interface.get_interface_name()] = val_opt.value();
         }
     }
 
     // ---- 读 rpy ----
     double roll = 0.0, pitch = 0.0, yaw = 0.0;
     if (joints_name_.size() >= 6) {
-        roll =
-            lookup_state_interface_value(name_if_value_mapping_, joints_name_[3], hardware_interface::HW_IF_POSITION);
-        pitch =
-            lookup_state_interface_value(name_if_value_mapping_, joints_name_[4], hardware_interface::HW_IF_POSITION);
+        roll = lookup_state_interface_value(name_if_value_mapping_, joints_name_[3], hardware_interface::HW_IF_POSITION);
+        pitch = lookup_state_interface_value(name_if_value_mapping_, joints_name_[4], hardware_interface::HW_IF_POSITION);
         yaw = lookup_state_interface_value(name_if_value_mapping_, joints_name_[5], hardware_interface::HW_IF_POSITION);
 
         if (std::isnan(roll) || std::isnan(pitch) || std::isnan(yaw)) {
@@ -181,12 +172,9 @@ controller_interface::return_type FDLeftEeController::update_and_write_commands(
     pose_ = Eigen::Matrix4d::Identity();
 
     if (joints_name_.size() >= 3) {
-        double p_x =
-            lookup_state_interface_value(name_if_value_mapping_, joints_name_[0], hardware_interface::HW_IF_POSITION);
-        double p_y =
-            lookup_state_interface_value(name_if_value_mapping_, joints_name_[1], hardware_interface::HW_IF_POSITION);
-        double p_z =
-            lookup_state_interface_value(name_if_value_mapping_, joints_name_[2], hardware_interface::HW_IF_POSITION);
+        double p_x = lookup_state_interface_value(name_if_value_mapping_, joints_name_[0], hardware_interface::HW_IF_POSITION);
+        double p_y = lookup_state_interface_value(name_if_value_mapping_, joints_name_[1], hardware_interface::HW_IF_POSITION);
+        double p_z = lookup_state_interface_value(name_if_value_mapping_, joints_name_[2], hardware_interface::HW_IF_POSITION);
 
         if (std::isnan(p_x) || std::isnan(p_y) || std::isnan(p_z)) {
             RCLCPP_DEBUG_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
@@ -224,9 +212,10 @@ controller_interface::return_type FDLeftEeController::update_and_write_commands(
     reference_interfaces_[EE_YAW] = yaw;
 
     if (!buttons_name_.empty()) {
-        double button_status =
-            lookup_state_interface_value(name_if_value_mapping_, buttons_name_[0], hardware_interface::HW_IF_POSITION);
+        double button_status = lookup_state_interface_value(name_if_value_mapping_, buttons_name_[0], hardware_interface::HW_IF_POSITION);
         reference_interfaces_[EE_BUTTON] = (button_status > 0.5) ? 1.0 : 0.0;
+        // 连续的原始值透传给 EE_GRIPPER
+        reference_interfaces_[EE_GRIPPER] = button_status;
     }
 
     return controller_interface::return_type::OK;
@@ -256,6 +245,7 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> FDLeftEeController:
     reference_interfaces.push_back(make_ci("ee/pitch", &reference_interfaces_[EE_PITCH]));
     reference_interfaces.push_back(make_ci("ee/yaw", &reference_interfaces_[EE_YAW]));
     reference_interfaces.push_back(make_ci("ee/button", &reference_interfaces_[EE_BUTTON]));
+    reference_interfaces.push_back(make_ci("ee/gripper", &reference_interfaces_[EE_GRIPPER]));
 
     return reference_interfaces;
 }

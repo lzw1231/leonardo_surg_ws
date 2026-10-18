@@ -57,12 +57,10 @@ class FDLeftEeController : public controller_interface::ChainableControllerInter
     std::vector<hardware_interface::CommandInterface::SharedPtr> on_export_reference_interfaces_list() override;
 
     MTM_CONTROLLERS_PUBLIC
-    controller_interface::return_type update_reference_from_subscribers(const rclcpp::Time &time,
-                                                                        const rclcpp::Duration &period) override;
+    controller_interface::return_type update_reference_from_subscribers(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     MTM_CONTROLLERS_PUBLIC
-    controller_interface::return_type update_and_write_commands(const rclcpp::Time &time,
-                                                                const rclcpp::Duration &period) override;
+    controller_interface::return_type update_and_write_commands(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     // 引用接口索引
     enum RefIdx : size_t {
@@ -77,7 +75,8 @@ class FDLeftEeController : public controller_interface::ChainableControllerInter
         EE_PITCH = 8,
         EE_YAW = 9,
         EE_BUTTON = 10,
-        REF_SIZE = 11,
+        EE_GRIPPER = 11,
+        REF_SIZE = 12,
     };
 
     // ---- 参数 ----
