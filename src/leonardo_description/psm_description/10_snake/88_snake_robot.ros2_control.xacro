@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <ros2_control name="PSMCan0Hardware" type="system">
+    <ros2_control name="IntelligentCan0Ros2Control" type="system">
 
         <hardware>
-            <plugin>psm_can_hardware/PSMCan0HardwareInterface</plugin>
+            <plugin>psm_hardware_interface/IntelligentCan0HardwareInterface</plugin>
             <!-- CAN 通道 -->
             <param name="can_interface">can0</param>
 
@@ -16,6 +16,28 @@
             <param name="max_current">100</param>   <!-- 0.01 A 单位，100 → 1.00 A -->
             <param name="speed_level">3</param>     <!-- 1/2/3 对应 30%/60%/100% -->
         </hardware>
+
+
+        <!-- ****************** 1号从臂的电机 ****************** -->
+        <joint name="s1__joint_motor_01">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s1__joint_motor_02">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s1__joint_motor_03">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s1__joint_motor_04">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
 
         <!-- ****************** 1号从臂的转动关节 ****************** -->
         <joint name="s1_j03_oc">
@@ -64,6 +86,27 @@
         </joint>
 
         <joint name="s1_j20_21">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <!-- ****************** 1号从臂的电机 ****************** -->
+        <joint name="s2__joint_motor_01">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s2__joint_motor_02">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s2__joint_motor_03">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s2__joint_motor_04">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
@@ -121,10 +164,10 @@
 
     </ros2_control>
 
-    <ros2_control name="PSMCan1Hardware" type="system">
+    <ros2_control name="IntelligentCan1Ros2Control" type="system">
 
         <hardware>
-            <plugin>psm_can_hardware/PSMCan1HardwareInterface</plugin>
+            <plugin>psm_hardware_interface/IntelligentCan1HardwareInterface</plugin>
             <!-- CAN 通道 -->
             <param name="can_interface">can1</param>
 
@@ -135,6 +178,27 @@
             <param name="max_current">100</param>   <!-- 0.01 A 单位，100 → 1.00 A -->
             <param name="speed_level">3</param>     <!-- 1/2/3 对应 30%/60%/100% -->
         </hardware>
+
+        <!-- ****************** 3号从臂的电机 ****************** -->
+        <joint name="s3__joint_motor_01">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s3__joint_motor_02">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s3__joint_motor_03">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s3__joint_motor_04">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
 
         <!-- ****************** 3号从臂的转动关节 ****************** -->
         <joint name="s3_j03_oc">

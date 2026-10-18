@@ -3,6 +3,12 @@
 
     <xacro:macro name="get_snake_links" params="prefix">
 
+        <!-- ==================== 4个虚拟link，用来生成4个虚拟旋转joint ==================== -->
+        <link name="${prefix}_link_for_motor_01" />
+        <link name="${prefix}_link_for_motor_02" />
+        <link name="${prefix}_link_for_motor_03" />
+        <link name="${prefix}_link_for_motor_04" />
+
         <!-- ==================== Link 01 ==================== -->
         <link name="${prefix}_01">
             <visual>

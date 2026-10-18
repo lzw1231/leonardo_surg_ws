@@ -50,6 +50,8 @@ set(PSM_TARGET_LIBS
 # ==============================================================================
 add_library(psm_controllers SHARED
         src/ft3215/ft3215_controller.cpp
+        src/intelligent_can/intelligent_can0_controller.cpp
+        src/intelligent_can/intelligent_can1_controller.cpp
 )
 target_include_directories(psm_controllers
         PUBLIC

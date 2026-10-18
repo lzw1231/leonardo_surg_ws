@@ -51,6 +51,39 @@
     <!-- ========== 宏定义：生成所有关节 ========== -->
     <xacro:macro name="get_snake_joints" params="prefix">
 
+        <!-- ****************************************  4个虚拟旋转joint  **************************************** -->
+        <joint name="${prefix}_joint_motor_01" type="revolute">
+            <parent link="${prefix}_01" />
+            <child link="${prefix}_link_for_motor_01" />
+            <origin xyz="0 0 0.01" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-pi/2.0}" upper="${pi/2.0}" />
+        </joint>
+
+        <joint name="${prefix}_joint_motor_02" type="revolute">
+            <parent link="${prefix}_01" />
+            <child link="${prefix}_link_for_motor_02" />
+            <origin xyz="0.005 0 0.01" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-pi/2.0}" upper="${pi/2.0}" />
+        </joint>
+
+        <joint name="${prefix}_joint_motor_03" type="revolute">
+            <parent link="${prefix}_01" />
+            <child link="${prefix}_link_for_motor_03" />
+            <origin xyz="0.01 0 0.01" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-pi/2.0}" upper="${pi/2.0}" />
+        </joint>
+
+        <joint name="${prefix}_joint_motor_04" type="revolute">
+            <parent link="${prefix}_01" />
+            <child link="${prefix}_link_for_motor_04" />
+            <origin xyz="0.015 0 0.01" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+            <limit effort="${effort}" velocity="${velocity}" lower="${-pi/2.0}" upper="${pi/2.0}" />
+        </joint>
+
         <!-- ****************************************  link01 -> link02  **************************************** -->
         <joint name="${prefix}_joint_01_02" type="fixed">
             <parent link="${prefix}_01" />

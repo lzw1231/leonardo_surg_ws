@@ -4,4 +4,16 @@
         base_class_type="controller_interface::ControllerInterface">
         <description>FT3215 控制器（控制6个关节）</description>
     </class>
+
+    <class name="psm_controllers/IntelligentCan0Controller"
+        type="psm_controllers::IntelligentCan0Controller"
+        base_class_type="controller_interface::ControllerInterface">
+        <description>Intelligent CAN0 控制器</description>
+    </class>
+
+    <class name="psm_controllers/IntelligentCan1Controller"
+        type="psm_controllers::IntelligentCan1Controller"
+        base_class_type="controller_interface::ControllerInterface">
+        <description>Intelligent CAN1 控制器</description>
+    </class>
 </library>

@@ -22,8 +22,8 @@ find_package(rclcpp_lifecycle REQUIRED)
 # 库构建
 # ==============================================================================
 add_library(${PROJECT_NAME} SHARED
-        src/psm_can0_hardware_interface.cpp
-        src/psm_can1_hardware_interface.cpp
+        src/intelligent_can/intelligent_can0_hardware_interface.cpp
+        src/intelligent_can/intelligent_can1_hardware_interface.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

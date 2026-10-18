@@ -1,11 +1,11 @@
-#include "psm_hardware/psm_can/psm_can1_hardware_interface.hpp"
+#include "psm_hardware/intelligent_can/intelligent_can1_hardware_interface.hpp"
 
-namespace psm_can_hardware {
+namespace psm_hardware_interface {
 
 // ---------------------------------------------------------------------------
 // 生命周期回调
 // ---------------------------------------------------------------------------
-hardware_interface::CallbackReturn PSMCan1HardwareInterface::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
+hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
     if (hardware_interface::SystemInterface::on_init(params) != hardware_interface::CallbackReturn::SUCCESS) {
         return hardware_interface::CallbackReturn::ERROR;
     }
@@ -19,17 +19,17 @@ hardware_interface::CallbackReturn PSMCan1HardwareInterface::on_init(const hardw
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn PSMCan1HardwareInterface::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
     // TODO
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn PSMCan1HardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
     // TODO
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn PSMCan1HardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
     // TODO
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -37,7 +37,7 @@ hardware_interface::CallbackReturn PSMCan1HardwareInterface::on_deactivate(const
 // ---------------------------------------------------------------------------
 // 接口导出
 // ---------------------------------------------------------------------------
-std::vector<hardware_interface::StateInterface::ConstSharedPtr> PSMCan1HardwareInterface::on_export_state_interfaces() {
+std::vector<hardware_interface::StateInterface::ConstSharedPtr> IntelligentCan1HardwareInterface::on_export_state_interfaces() {
     return {
         // 3 号从臂
         std::make_shared<hardware_interface::StateInterface>("s3_j03_oc", "position", &s3_j03_oc.state),
@@ -53,7 +53,7 @@ std::vector<hardware_interface::StateInterface::ConstSharedPtr> PSMCan1HardwareI
     };
 }
 
-std::vector<hardware_interface::CommandInterface::SharedPtr> PSMCan1HardwareInterface::on_export_command_interfaces() {
+std::vector<hardware_interface::CommandInterface::SharedPtr> IntelligentCan1HardwareInterface::on_export_command_interfaces() {
     return {
         // 3 号从臂
         std::make_shared<hardware_interface::CommandInterface>("s3_j03_oc", "position", &s3_j03_oc.command),
@@ -72,17 +72,17 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> PSMCan1HardwareInte
 // ---------------------------------------------------------------------------
 // 数据读写
 // ---------------------------------------------------------------------------
-hardware_interface::return_type PSMCan1HardwareInterface::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
+hardware_interface::return_type IntelligentCan1HardwareInterface::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     // TODO
     return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type PSMCan1HardwareInterface::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
+hardware_interface::return_type IntelligentCan1HardwareInterface::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     // TODO
     return hardware_interface::return_type::OK;
 }
 
-} // namespace psm_can_hardware
+} // namespace psm_hardware_interface
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(psm_can_hardware::PSMCan1HardwareInterface, hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(psm_hardware_interface::IntelligentCan1HardwareInterface, hardware_interface::SystemInterface)

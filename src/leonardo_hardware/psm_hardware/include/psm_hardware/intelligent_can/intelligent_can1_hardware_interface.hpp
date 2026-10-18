@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace psm_can_hardware {
+namespace psm_hardware_interface {
 
 /**
  * @brief PSM can1 硬件接口
@@ -18,12 +18,12 @@ namespace psm_can_hardware {
  * PSM（患者侧机械臂）系自主研制的从端机械臂。
  * 本类绑定 Linux SocketCAN 接口 can1，控制 3 号从臂。
  */
-class PSMCan1HardwareInterface : public hardware_interface::SystemInterface {
+class IntelligentCan1HardwareInterface : public hardware_interface::SystemInterface {
   public:
-    RCLCPP_SHARED_PTR_DEFINITIONS(PSMCan1HardwareInterface);
+    RCLCPP_SHARED_PTR_DEFINITIONS(IntelligentCan1HardwareInterface);
 
     PSM_HARDWARE_PUBLIC
-    ~PSMCan1HardwareInterface() override = default;
+    ~IntelligentCan1HardwareInterface() override = default;
 
     // 生命周期回调
     PSM_HARDWARE_PUBLIC
@@ -77,4 +77,4 @@ class PSMCan1HardwareInterface : public hardware_interface::SystemInterface {
     int speed_level_{0};
 };
 
-} // namespace psm_can_hardware
+} // namespace psm_hardware_interface
