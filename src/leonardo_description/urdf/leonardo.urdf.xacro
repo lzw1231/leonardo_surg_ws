@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="leonardo">
 
-    <!-- ==================== 引入 MTM 双臂 ==================== -->
+    <!-- ==================== 引入 MTM 主手 ==================== -->
     <xacro:include
         filename="$(find leonardo_description)/mtm_description/urdf/fd_bimanual.config.xacro" />
 
-    <!-- ==================== 引入 FT3215  ==================== -->
-    <xacro:include filename="$(find leonardo_description)/ft3215_description/ft3215.urdf.xacro" />
+    <!-- ==================== 引入 PSM 从手  ==================== -->
+    <xacro:include filename="$(find leonardo_description)/psm_description/urdf/snakes.urdf.xacro" />
 
-    <!-- ==================== 把 FT3215 挂到 fd_left_base 上 ==================== -->
-    <joint name="fd_left_base_to_ft3215" type="fixed">
+    <!-- ==================== 把 PSM 从手 挂到 MTM 双手 上 ==================== -->
+    <joint name="MTM_PSM_base" type="fixed">
         <origin xyz="0 0 0" rpy="0 0 0" />
         <parent link="fd_left_base" />
-        <child link="link_ft_11" />
+        <child link="snakes_footprint" />
     </joint>
 
 </robot>

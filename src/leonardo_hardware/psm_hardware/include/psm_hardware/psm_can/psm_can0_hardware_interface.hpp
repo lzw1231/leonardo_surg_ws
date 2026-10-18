@@ -6,6 +6,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/state.hpp>
 
+#include <cstdint>
+#include <string>
 #include <vector>
 
 namespace psm_can_hardware {
@@ -14,8 +16,7 @@ namespace psm_can_hardware {
  * @brief PSM can0 硬件接口
  *
  * PSM（患者侧机械臂）系自主研制的从端机械臂。
- * 本类绑定 Linux SocketCAN 接口 can0，实现使能/去使能
- * 生命周期管理与 V6 协议数据收发。
+ * 本类绑定 Linux SocketCAN 接口 can0，控制 1、2 号从臂。
  */
 class PSMCan0HardwareInterface : public hardware_interface::SystemInterface {
   public:
@@ -50,6 +51,44 @@ class PSMCan0HardwareInterface : public hardware_interface::SystemInterface {
 
     PSM_HARDWARE_PUBLIC
     hardware_interface::return_type write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+
+  private:
+    // 每个关节的状态与命令成对存放
+    struct Joint {
+        double state{0.0};
+        double command{0.0};
+    };
+
+    // ---------------- 1 号从臂（s1，CAN ID 0x441）----------------
+    Joint s1_j03_oc;
+    Joint s1_j04_oc;
+    Joint s1_j07_oc;
+    Joint s1_j08_oc;
+    Joint s1_j11_oc;
+    Joint s1_j12_oc;
+    Joint s1_j13_oc;
+    Joint s1_j14_oc;
+    Joint s1_j17_18;
+    Joint s1_j20_21;
+
+    // ---------------- 2 号从臂（s2，CAN ID 0x442）----------------
+    Joint s2_j03_oc;
+    Joint s2_j04_oc;
+    Joint s2_j07_oc;
+    Joint s2_j08_oc;
+    Joint s2_j11_oc;
+    Joint s2_j12_oc;
+    Joint s2_j13_oc;
+    Joint s2_j14_oc;
+    Joint s2_j17_18;
+    Joint s2_j20_21;
+
+    // ---------------- CAN 运行参数 ----------------
+    std::string can_interface_;
+    uint32_t slave_1_id_{0};
+    uint32_t slave_2_id_{0};
+    int max_current_{0};
+    int speed_level_{0};
 };
 
 } // namespace psm_can_hardware

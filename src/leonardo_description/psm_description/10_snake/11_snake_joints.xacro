@@ -70,7 +70,7 @@
         <link name="${prefix}_gear_center_04" />
 
         <!-- 公转关节：link03 -> 公转载体 -->
-        <joint name="${prefix}_joint_03_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j03_oc" type="revolute">
             <parent link="${prefix}_03" />
             <child link="${prefix}_orbit_carrier_03" />
             <origin xyz="0 ${origin_gear_center_03_L} 0" rpy="0 0 0" />
@@ -87,7 +87,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_03_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j03_oc" multiplier="1" offset="0" />
         </joint>
 
         <!-- 固定关节：link04 齿轮中心 -> link04 原点 -->
@@ -102,7 +102,7 @@
         <link name="${prefix}_orbit_carrier_04" />
         <link name="${prefix}_gear_center_05" />
 
-        <joint name="${prefix}_joint_04_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j04_oc" type="revolute">
             <parent link="${prefix}_04" />
             <child link="${prefix}_orbit_carrier_04" />
             <origin xyz="0 ${origin_gear_center_04_L} 0" rpy="0 0 0" />
@@ -116,7 +116,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="1 0 0" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_04_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j04_oc" multiplier="1" offset="0" />
         </joint>
 
         <joint name="${prefix}_joint_05_mount" type="fixed">
@@ -143,7 +143,7 @@
         <link name="${prefix}_orbit_carrier_07" />
         <link name="${prefix}_gear_center_08" />
 
-        <joint name="${prefix}_joint_07_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j07_oc" type="revolute">
             <parent link="${prefix}_07" />
             <child link="${prefix}_orbit_carrier_07" />
             <origin xyz="0 ${origin_gear_center_07_L} 0" rpy="0 0 0" />
@@ -157,7 +157,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="1 0 0" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_07_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j07_oc" multiplier="1" offset="0" />
         </joint>
 
         <joint name="${prefix}_joint_08_mount" type="fixed">
@@ -170,7 +170,7 @@
         <link name="${prefix}_orbit_carrier_08" />
         <link name="${prefix}_gear_center_09" />
 
-        <joint name="${prefix}_joint_08_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j08_oc" type="revolute">
             <parent link="${prefix}_08" />
             <child link="${prefix}_orbit_carrier_08" />
             <origin xyz="0 ${origin_gear_center_08_L} 0" rpy="0 0 0" />
@@ -184,7 +184,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_08_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j08_oc" multiplier="1" offset="0" />
         </joint>
 
         <joint name="${prefix}_joint_09_mount" type="fixed">
@@ -211,7 +211,7 @@
         <link name="${prefix}_orbit_carrier_11" />
         <link name="${prefix}_gear_center_12" />
 
-        <joint name="${prefix}_joint_11_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j11_oc" type="revolute">
             <parent link="${prefix}_11" />
             <child link="${prefix}_orbit_carrier_11" />
             <origin xyz="0 ${origin_gear_center_11_L} 0" rpy="0 0 0" />
@@ -225,7 +225,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_11_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j11_oc" multiplier="1" offset="0" />
         </joint>
 
         <joint name="${prefix}_joint_12_mount" type="fixed">
@@ -238,7 +238,7 @@
         <link name="${prefix}_orbit_carrier_12" />
         <link name="${prefix}_gear_center_13" />
 
-        <joint name="${prefix}_joint_12_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j12_oc" type="revolute">
             <parent link="${prefix}_12" />
             <child link="${prefix}_orbit_carrier_12" />
             <origin xyz="0 ${origin_gear_center_12_L} 0" rpy="0 0 0" />
@@ -252,7 +252,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="1 0 0" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_12_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j12_oc" multiplier="1" offset="0" />
         </joint>
 
         <joint name="${prefix}_joint_13_mount" type="fixed">
@@ -265,7 +265,7 @@
         <link name="${prefix}_orbit_carrier_13" />
         <link name="${prefix}_gear_center_14" />
 
-        <joint name="${prefix}_joint_13_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j13_oc" type="revolute">
             <parent link="${prefix}_13" />
             <child link="${prefix}_orbit_carrier_13" />
             <origin xyz="0 ${origin_gear_center_13_L} 0" rpy="0 0 0" />
@@ -279,7 +279,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_13_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j13_oc" multiplier="1" offset="0" />
         </joint>
 
         <joint name="${prefix}_joint_14_mount" type="fixed">
@@ -292,7 +292,7 @@
         <link name="${prefix}_orbit_carrier_14" />
         <link name="${prefix}_gear_center_15" />
 
-        <joint name="${prefix}_joint_14_orbit_carrier" type="revolute">
+        <joint name="${prefix}_j14_oc" type="revolute">
             <parent link="${prefix}_14" />
             <child link="${prefix}_orbit_carrier_14" />
             <origin xyz="0 ${origin_gear_center_14_L} 0" rpy="0 0 0" />
@@ -306,7 +306,7 @@
             <origin xyz="0 ${orbit_r} 0" rpy="0 0 0" />
             <axis xyz="1 0 0" />
             <limit effort="${effort}" velocity="${velocity}" />
-            <mimic joint="${prefix}_joint_14_orbit_carrier" multiplier="1" offset="0" />
+            <mimic joint="${prefix}_j14_oc" multiplier="1" offset="0" />
         </joint>
 
         <joint name="${prefix}_joint_15_mount" type="fixed">
@@ -330,7 +330,7 @@
         </joint>
 
         <!-- ****************************************  link17 -> link18  **************************************** -->
-        <joint name="${prefix}_joint_17_18" type="revolute">
+        <joint name="${prefix}_j17_18" type="revolute">
             <parent link="${prefix}_17" />
             <child link="${prefix}_18" />
             <origin xyz="0 ${y_offset_17_18} 0" rpy="0 0 0" />
@@ -353,7 +353,7 @@
         </joint>
 
         <!-- link20 -> link21 （主动钳） -->
-        <joint name="${prefix}_joint_20_21" type="revolute">
+        <joint name="${prefix}_j20_21" type="revolute">
             <parent link="${prefix}_20" />
             <child link="${prefix}_21" />
             <origin xyz="0 ${y_offset_20_21} 0" rpy="0 0 0" />
@@ -368,7 +368,7 @@
             <origin xyz="0 ${y_offset_20_22} 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" lower="${-pi/3.0}" upper="${0}" />
-            <mimic joint="${prefix}_joint_20_21" multiplier="-1.0" offset="0.0" />
+            <mimic joint="${prefix}_j20_21" multiplier="-1.0" offset="0.0" />
         </joint>
 
     </xacro:macro>

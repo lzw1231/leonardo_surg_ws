@@ -1,7 +1,7 @@
 <library path="psm_hardware">
     <class
-        name="psm_can_hardware/PSMCan0Hardware"
-        type="psm_can_hardware::PSMCan0Hardware"
+        name="psm_can_hardware/PSMCan0HardwareInterface"
+        type="psm_can_hardware::PSMCan0HardwareInterface"
         base_class_type="hardware_interface::SystemInterface">
         <description>
             PSM can0 硬件接口，绑定 Linux SocketCAN 接口 can0。
@@ -9,8 +9,8 @@
     </class>
 
     <class
-        name="psm_can_hardware/PSMCan1Hardware"
-        type="psm_can_hardware::PSMCan1Hardware"
+        name="psm_can_hardware/PSMCan1HardwareInterface"
+        type="psm_can_hardware::PSMCan1HardwareInterface"
         base_class_type="hardware_interface::SystemInterface">
         <description>
             PSM can1 硬件接口，绑定 Linux SocketCAN 接口 can1。

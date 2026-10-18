@@ -4,7 +4,7 @@
     <ros2_control name="PSMCan0Hardware" type="system">
 
         <hardware>
-            <plugin>psm_can_hardware/PSMCan0Hardware</plugin>
+            <plugin>psm_can_hardware/PSMCan0HardwareInterface</plugin>
             <!-- CAN 通道 -->
             <param name="can_interface">can0</param>
 
@@ -18,103 +18,103 @@
         </hardware>
 
         <!-- ****************** 1号从臂的转动关节 ****************** -->
-        <joint name="s1_joint_03_orbit_carrier">
+        <joint name="s1_j03_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_04_orbit_carrier">
+        <joint name="s1_j04_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_07_orbit_carrier">
+        <joint name="s1_j07_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_08_orbit_carrier">
+        <joint name="s1_j08_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_11_orbit_carrier">
+        <joint name="s1_j11_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_12_orbit_carrier">
+        <joint name="s1_j12_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_13_orbit_carrier">
+        <joint name="s1_j13_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_14_orbit_carrier">
+        <joint name="s1_j14_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_17_18">
+        <joint name="s1_j17_18">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1_joint_20_21">
+        <joint name="s1_j20_21">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
         <!-- ****************** 2号从臂的转动关节 ****************** -->
-        <joint name="s2_joint_03_orbit_carrier">
+        <joint name="s2_j03_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_04_orbit_carrier">
+        <joint name="s2_j04_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_07_orbit_carrier">
+        <joint name="s2_j07_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_08_orbit_carrier">
+        <joint name="s2_j08_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_11_orbit_carrier">
+        <joint name="s2_j11_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_12_orbit_carrier">
+        <joint name="s2_j12_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_13_orbit_carrier">
+        <joint name="s2_j13_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_14_orbit_carrier">
+        <joint name="s2_j14_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_17_18">
+        <joint name="s2_j17_18">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2_joint_20_21">
+        <joint name="s2_j20_21">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
@@ -124,7 +124,7 @@
     <ros2_control name="PSMCan1Hardware" type="system">
 
         <hardware>
-            <plugin>psm_can_hardware/PSMCan1Hardware</plugin>
+            <plugin>psm_can_hardware/PSMCan1HardwareInterface</plugin>
             <!-- CAN 通道 -->
             <param name="can_interface">can1</param>
 
@@ -137,57 +137,56 @@
         </hardware>
 
         <!-- ****************** 3号从臂的转动关节 ****************** -->
-        <joint name="s3_joint_03_orbit_carrier">
+        <joint name="s3_j03_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_04_orbit_carrier">
+        <joint name="s3_j04_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_07_orbit_carrier">
+        <joint name="s3_j07_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_08_orbit_carrier">
+        <joint name="s3_j08_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_11_orbit_carrier">
+        <joint name="s3_j11_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_12_orbit_carrier">
+        <joint name="s3_j12_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_13_orbit_carrier">
+        <joint name="s3_j13_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_14_orbit_carrier">
+        <joint name="s3_j14_oc">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_17_18">
+        <joint name="s3_j17_18">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3_joint_20_21">
+        <joint name="s3_j20_21">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
     </ros2_control>
-
 
 </robot>
