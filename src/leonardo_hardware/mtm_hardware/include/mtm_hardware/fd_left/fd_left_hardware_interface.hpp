@@ -1,17 +1,17 @@
 #pragma once
-#include "mtm_hardware/fd_base/fd_hardware_base.hpp"
+#include "mtm_hardware/fd_base/fd_base_hardware_interface.hpp"
 
-namespace fd_right_hardware {
+namespace mtm_hardware_interface {
 /**
- * @brief Force Dimension Right 硬件接口实现
+ * @brief Force Dimension Left 硬件接口实现
  *
- * 继承自 FDHardwareBase，具体实现了右侧力反馈设备的 read() 和 write() 逻辑。
+ * 继承自 FDHardwareBase，具体实现了左侧力反馈设备的 read() 和 write() 逻辑。
  */
-class FDRightHardwareInterface : public fd_hardware_base::FDHardwareBase {
+class FDLeftHardwareInterface : public FDBaseHardwareInterface {
   public:
-    RCLCPP_SHARED_PTR_DEFINITIONS(FDRightHardwareInterface);
+    RCLCPP_SHARED_PTR_DEFINITIONS(FDLeftHardwareInterface);
 
-    ~FDRightHardwareInterface() override;
+    ~FDLeftHardwareInterface() override;
 
     /**
      * @brief 读取设备状态
@@ -33,4 +33,4 @@ class FDRightHardwareInterface : public fd_hardware_base::FDHardwareBase {
      */
     hardware_interface::return_type write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 };
-} // namespace fd_right_hardware
+} // namespace mtm_hardware_interface

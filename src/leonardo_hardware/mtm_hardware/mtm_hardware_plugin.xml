@@ -1,13 +1,13 @@
 <library path="mtm_hardware">
-    <class name="fd_left_hardware/FDLeftHardwareInterface"
-           type="fd_left_hardware::FDLeftHardwareInterface"
-           base_class_type="hardware_interface::SystemInterface">
+    <class name="mtm_hardware_interface/FDLeftHardwareInterface"
+        type="mtm_hardware_interface::FDLeftHardwareInterface"
+        base_class_type="hardware_interface::SystemInterface">
         <description>Force Dimension 左手omega硬件接口</description>
     </class>
 
-    <class name="fd_right_hardware/FDRightHardwareInterface"
-           type="fd_right_hardware::FDRightHardwareInterface"
-           base_class_type="hardware_interface::SystemInterface">
+    <class name="mtm_hardware_interface/FDRightHardwareInterface"
+        type="mtm_hardware_interface::FDRightHardwareInterface"
+        base_class_type="hardware_interface::SystemInterface">
         <description>Force Dimension 右手omega硬件接口</description>
     </class>
 </library>

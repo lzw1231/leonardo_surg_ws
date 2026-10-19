@@ -24,9 +24,9 @@ find_package(fd_vendor REQUIRED)
 # 库构建
 # ==============================================================================
 add_library(${PROJECT_NAME} SHARED
-        src/fd_base/fd_hardware_base.cpp
-        src/fd_left/fd_left_hardware.cpp
-        src/fd_right/fd_right_hardware.cpp
+        src/fd_base/fd_base_hardware_interface.cpp
+        src/fd_left/fd_left_hardware_interface.cpp
+        src/fd_right/fd_right_hardware_interface.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

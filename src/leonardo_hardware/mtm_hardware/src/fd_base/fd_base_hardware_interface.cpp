@@ -1,8 +1,8 @@
-#include "mtm_hardware/fd_base/fd_hardware_base.hpp"
+#include "mtm_hardware/fd_base/fd_base_hardware_interface.hpp"
 #include "mtm_hardware/common/math_utils.hpp"
 
-namespace fd_hardware_base {
-hardware_interface::CallbackReturn FDHardwareBase::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
+namespace mtm_hardware_interface {
+hardware_interface::CallbackReturn FDBaseHardwareInterface::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
     auto based_logger = rclcpp::get_logger(logger_name_);
 
     auto ret = hardware_interface::SystemInterface::on_init(params);
@@ -11,18 +11,8 @@ hardware_interface::CallbackReturn FDHardwareBase::on_init(const hardware_interf
         return ret;
     }
 
-    info_ = get_hardware_info();
-    logger_name_ = info_.name;
-    auto logger = rclcpp::get_logger(logger_name_);
-
     for (const auto &joint : info_.joints) {
         if (!validateJointInterfaces(joint)) {
-            return hardware_interface::CallbackReturn::ERROR;
-        }
-    }
-
-    for (const auto &gpio : info_.gpios) {
-        if (!validateGpioInterfaces(gpio)) {
             return hardware_interface::CallbackReturn::ERROR;
         }
     }
@@ -34,17 +24,11 @@ hardware_interface::CallbackReturn FDHardwareBase::on_init(const hardware_interf
     hw_math::resize_and_fill(hw_states_effort_, info_.joints.size(), BUF_INIT_NAN);
     hw_math::resize_and_fill(hw_commands_effort_, info_.joints.size(), BUF_INIT_NAN);
     hw_math::resize_and_fill(hw_states_inertia_, INERTIA_MATRIX_FLATTEN_SIZE, BUF_INIT_NAN);
-    hw_math::resize_and_fill(hw_button_state_, info_.gpios.size(), BUF_INIT_NAN);
-    hw_grip_position_ = BUF_INIT_NAN;
-
-    if (emulate_button_ && (info_.joints.size() == 4 || info_.joints.size() > 6)) {
-        hw_commands_effort_[info_.joints.size() - 1U] = 0.0;
-    }
 
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn FDHardwareBase::on_configure(const rclcpp_lifecycle::State &previous_state) {
+hardware_interface::CallbackReturn FDBaseHardwareInterface::on_configure(const rclcpp_lifecycle::State &previous_state) {
     auto logger = rclcpp::get_logger(logger_name_);
     auto ret = hardware_interface::SystemInterface::on_configure(previous_state);
     if (ret != hardware_interface::CallbackReturn::SUCCESS) {
@@ -55,12 +39,12 @@ hardware_interface::CallbackReturn FDHardwareBase::on_configure(const rclcpp_lif
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::StateInterface::ConstSharedPtr> FDHardwareBase::on_export_state_interfaces() {
+std::vector<hardware_interface::StateInterface::ConstSharedPtr> FDBaseHardwareInterface::on_export_state_interfaces() {
     std::vector<hardware_interface::StateInterface::ConstSharedPtr> state_interfaces;
     state_if_storage_.clear();
 
     const size_t inertia_elements = INERTIA_MATRIX_FLATTEN_SIZE;
-    size_t total_size = info_.joints.size() * 3 + info_.gpios.size() + inertia_elements;
+    size_t total_size = info_.joints.size() * 3 + inertia_elements;
     state_interfaces.reserve(total_size);
     state_if_storage_.reserve(total_size);
 
@@ -80,13 +64,6 @@ std::vector<hardware_interface::StateInterface::ConstSharedPtr> FDHardwareBase::
         state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_eff));
     }
 
-    for (size_t i = 0; i < info_.gpios.size(); ++i) {
-        const auto &gpio_name = info_.gpios[i].name;
-        auto if_btn = std::make_shared<hardware_interface::StateInterface>(gpio_name, hardware_interface::HW_IF_POSITION, &hw_button_state_[i]);
-        state_if_storage_.push_back(if_btn);
-        state_interfaces.push_back(std::const_pointer_cast<const hardware_interface::StateInterface>(if_btn));
-    }
-
     for (uint row = 0; row < 6; ++row) {
         for (uint col = row; col < 6; ++col) {
             size_t idx = hw_math::flattened_index_from_triangular_index(row, col);
@@ -99,7 +76,7 @@ std::vector<hardware_interface::StateInterface::ConstSharedPtr> FDHardwareBase::
     return state_interfaces;
 }
 
-std::vector<hardware_interface::CommandInterface::SharedPtr> FDHardwareBase::on_export_command_interfaces() {
+std::vector<hardware_interface::CommandInterface::SharedPtr> FDBaseHardwareInterface::on_export_command_interfaces() {
     std::vector<hardware_interface::CommandInterface::SharedPtr> cmds;
     command_storage_.clear();
     cmds.reserve(info_.joints.size());
@@ -112,7 +89,7 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> FDHardwareBase::on_
     return cmds;
 }
 
-hardware_interface::CallbackReturn FDHardwareBase::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn FDBaseHardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
     auto logger = rclcpp::get_logger(logger_name_);
 
     RCLCPP_INFO(logger, "正在激活硬件接口...");
@@ -140,7 +117,7 @@ hardware_interface::CallbackReturn FDHardwareBase::on_activate(const rclcpp_life
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn FDHardwareBase::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn FDBaseHardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
     auto logger = rclcpp::get_logger(logger_name_);
     RCLCPP_INFO(logger, "正在停用硬件接口...");
 
@@ -153,7 +130,7 @@ hardware_interface::CallbackReturn FDHardwareBase::on_deactivate(const rclcpp_li
     }
 }
 
-bool FDHardwareBase::connectToDevice() {
+bool FDBaseHardwareInterface::connectToDevice() {
     auto logger = rclcpp::get_logger(logger_name_);
 
     int major, minor, release, revision;
@@ -235,16 +212,10 @@ bool FDHardwareBase::connectToDevice() {
     }
     RCLCPP_INFO(logger, "重力补偿已开启");
 
-    if (emulate_button_ && !dhdHasGripper(interface_id_)) {
-        RCLCPP_ERROR(logger, "启用按键模拟但设备无夹爪");
-    } else if (emulate_button_ && dhdHasGripper(interface_id_)) {
-        RCLCPP_INFO(logger, "设备带有夹爪，启用按键模拟");
-        if (dhdEmulateButton(DHD_ON, interface_id_) < DHD_NO_ERROR) {
-            RCLCPP_ERROR(logger, "启用按键模拟失败");
-            disconnectFromDevice();
-            return false;
-        }
-        RCLCPP_INFO(logger, "按键模拟功能已激活");
+    if (!dhdHasGripper(interface_id_)) {
+        RCLCPP_WARN(logger, "设备无夹爪，gripper 接口将保持无效值");
+    } else {
+        RCLCPP_INFO(logger, "设备带有夹爪，gripper 角度/力可用");
     }
 
     if (dhdSetForceAndTorqueAndGripperForce(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, interface_id_) < DHD_NO_ERROR) {
@@ -253,8 +224,7 @@ bool FDHardwareBase::connectToDevice() {
         return false;
     }
 
-    ignore_orientation_ |= !dhdHasWrist(interface_id_);
-    if (ignore_orientation_) {
+    if (!dhdHasWrist(interface_id_)) {
         RCLCPP_INFO(logger, "因硬件限制，忽略姿态读数");
     }
 
@@ -265,7 +235,7 @@ bool FDHardwareBase::connectToDevice() {
 }
 
 // 用 DRD 关闭设备（设备已归 DRD 接管）
-bool FDHardwareBase::disconnectFromDevice() {
+bool FDBaseHardwareInterface::disconnectFromDevice() {
     auto logger = rclcpp::get_logger(logger_name_);
     if (!isConnected_) {
         return true;
@@ -282,7 +252,7 @@ bool FDHardwareBase::disconnectFromDevice() {
     return true;
 }
 
-bool FDHardwareBase::validateJointInterfaces(const hardware_interface::ComponentInfo &joint) {
+bool FDBaseHardwareInterface::validateJointInterfaces(const hardware_interface::ComponentInfo &joint) {
     auto logger = rclcpp::get_logger(logger_name_);
     if (joint.command_interfaces.size() != 1U) {
         RCLCPP_FATAL(logger, "Joint '%s' 期望 1 个命令接口，实际获取 %zu 个", joint.name.c_str(), joint.command_interfaces.size());
@@ -315,21 +285,7 @@ bool FDHardwareBase::validateJointInterfaces(const hardware_interface::Component
     return true;
 }
 
-bool FDHardwareBase::validateGpioInterfaces(const hardware_interface::ComponentInfo &button) {
-    auto logger = rclcpp::get_logger(logger_name_);
-    if (button.state_interfaces.size() != 1U) {
-        RCLCPP_FATAL(logger, "GPIO '%s' 拥有 %zu 个 State 接口，期望值为 1", button.name.c_str(), button.state_interfaces.size());
-        return false;
-    }
-    if (button.state_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
-        RCLCPP_FATAL(logger, "GPIO '%s' State 类型为 [%s]，期望值为 [%s]", button.name.c_str(), button.state_interfaces[0].name.c_str(),
-                     hardware_interface::HW_IF_POSITION);
-        return false;
-    }
-    return true;
-}
-
-void FDHardwareBase::parseHardwareParameters() {
+void FDBaseHardwareInterface::parseHardwareParameters() {
     auto logger = rclcpp::get_logger(logger_name_);
 
     auto it_id = info_.hardware_parameters.find("interface_id");
@@ -349,14 +305,6 @@ void FDHardwareBase::parseHardwareParameters() {
         RCLCPP_WARN(logger, "hardware_parameters 中未找到 interface_serial_number");
     }
 
-    auto it_emu_btn = info_.hardware_parameters.find("emulate_button");
-    if (it_emu_btn != info_.hardware_parameters.end()) {
-        emulate_button_ = hardware_interface::parse_bool(it_emu_btn->second);
-    } else {
-        emulate_button_ = false;
-    }
-    RCLCPP_INFO(logger, "按键模拟开启: %s", emulate_button_ ? "true" : "false");
-
     auto it_inertia_name = info_.hardware_parameters.find("inertia_interface_name");
     if (it_inertia_name != info_.hardware_parameters.end()) {
         inertia_interface_name_ = it_inertia_name->second;
@@ -372,14 +320,6 @@ void FDHardwareBase::parseHardwareParameters() {
     } else {
         effector_mass_ = -1.0;
     }
-
-    auto it_ignore_ori = info_.hardware_parameters.find("ignore_orientation_readings");
-    if (it_ignore_ori != info_.hardware_parameters.end()) {
-        ignore_orientation_ = hardware_interface::parse_bool(it_ignore_ori->second);
-    } else {
-        ignore_orientation_ = false;
-    }
-    RCLCPP_INFO(logger, "忽略姿态读数: %s", ignore_orientation_ ? "true" : "false");
 }
 
-} // namespace fd_hardware_base
+} // namespace mtm_hardware_interface

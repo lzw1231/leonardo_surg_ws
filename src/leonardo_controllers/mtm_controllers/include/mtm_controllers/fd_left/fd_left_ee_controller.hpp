@@ -22,7 +22,7 @@ namespace mtm_controllers {
  *   ee/x, ee/y, ee/z
  *   ee/qw, ee/qx, ee/qy, ee/qz
  *   ee/roll, ee/pitch, ee/yaw
- *   ee/button
+ *   ee/button, ee/gripper_rad
  */
 class FDLeftEeController : public controller_interface::ChainableControllerInterface {
   public:
@@ -75,7 +75,7 @@ class FDLeftEeController : public controller_interface::ChainableControllerInter
         EE_PITCH = 8,
         EE_YAW = 9,
         EE_BUTTON = 10,
-        EE_GRIPPER = 11,
+        EE_GRIPPER_RAD = 11,
         REF_SIZE = 12,
     };
 

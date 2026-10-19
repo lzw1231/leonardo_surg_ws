@@ -1,0 +1,269 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fd_bimanual">
+
+    <!-- ============================================================ -->
+    <!-- 左侧主手                                                      -->
+    <!-- ============================================================ -->
+    <link name="fd_left_base" />
+    <link name="fd_left_x_link" />
+    <link name="fd_left_y_link" />
+    <link name="fd_left_z_link" />
+    <link name="fd_left_roll_link" />
+    <link name="fd_left_pitch_link" />
+    <link name="fd_left_yaw_link" />
+    <link name="fd_left_ee" />
+    <link name="fd_left_gripper_link" />
+
+    <joint name="fd_left_x" type="prismatic">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_base" />
+        <child link="fd_left_x_link" />
+        <axis xyz="1 0 0" />
+        <limit effort="12" velocity="1.0" lower="-2" upper="2" />
+    </joint>
+    <joint name="fd_left_y" type="prismatic">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_x_link" />
+        <child link="fd_left_y_link" />
+        <axis xyz="0 1 0" />
+        <limit effort="12" velocity="1.0" lower="-2" upper="2" />
+    </joint>
+    <joint name="fd_left_z" type="prismatic">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_y_link" />
+        <child link="fd_left_z_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="12" velocity="1.0" lower="-2" upper="2" />
+    </joint>
+
+    <joint name="fd_left_roll" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_z_link" />
+        <child link="fd_left_roll_link" />
+        <axis xyz="1 0 0" />
+        <limit effort="0.4" velocity="10.0" lower="${-pi}" upper="${pi}" />
+    </joint>
+    <joint name="fd_left_pitch" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_roll_link" />
+        <child link="fd_left_pitch_link" />
+        <axis xyz="0 1 0" />
+        <limit effort="0.4" velocity="10.0" lower="${-pi}" upper="${pi}" />
+    </joint>
+    <joint name="fd_left_yaw" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_pitch_link" />
+        <child link="fd_left_yaw_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="0.4" velocity="10.0" lower="${-pi}" upper="${pi}" />
+    </joint>
+
+    <joint name="fd_left_tool" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_yaw_link" />
+        <child link="fd_left_ee" />
+    </joint>
+
+    <joint name="fd_left_gripper" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_left_ee" />
+        <child link="fd_left_gripper_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="5.0" velocity="10.0" lower="0.0" upper="${pi/2}" />
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- 右侧主手                                                      -->
+    <!-- ============================================================ -->
+    <link name="fd_right_base" />
+    <link name="fd_right_x_link" />
+    <link name="fd_right_y_link" />
+    <link name="fd_right_z_link" />
+    <link name="fd_right_roll_link" />
+    <link name="fd_right_pitch_link" />
+    <link name="fd_right_yaw_link" />
+    <link name="fd_right_ee" />
+    <link name="fd_right_gripper_link" />
+
+    <joint name="fd_right_x" type="prismatic">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_base" />
+        <child link="fd_right_x_link" />
+        <axis xyz="1 0 0" />
+        <limit effort="12" velocity="1.0" lower="-2" upper="2" />
+    </joint>
+    <joint name="fd_right_y" type="prismatic">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_x_link" />
+        <child link="fd_right_y_link" />
+        <axis xyz="0 1 0" />
+        <limit effort="12" velocity="1.0" lower="-2" upper="2" />
+    </joint>
+    <joint name="fd_right_z" type="prismatic">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_y_link" />
+        <child link="fd_right_z_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="12" velocity="1.0" lower="-2" upper="2" />
+    </joint>
+
+    <joint name="fd_right_roll" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_z_link" />
+        <child link="fd_right_roll_link" />
+        <axis xyz="1 0 0" />
+        <limit effort="0.4" velocity="10.0" lower="${-pi}" upper="${pi}" />
+    </joint>
+    <joint name="fd_right_pitch" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_roll_link" />
+        <child link="fd_right_pitch_link" />
+        <axis xyz="0 1 0" />
+        <limit effort="0.4" velocity="10.0" lower="${-pi}" upper="${pi}" />
+    </joint>
+    <joint name="fd_right_yaw" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_pitch_link" />
+        <child link="fd_right_yaw_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="0.4" velocity="10.0" lower="${-pi}" upper="${pi}" />
+    </joint>
+
+    <joint name="fd_right_tool" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_yaw_link" />
+        <child link="fd_right_ee" />
+    </joint>
+
+    <joint name="fd_right_gripper" type="revolute">
+        <origin rpy="0 0 0" xyz="0 0 0" />
+        <parent link="fd_right_ee" />
+        <child link="fd_right_gripper_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="5.0" velocity="10.0" lower="0.0" upper="${pi/2}" />
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- 左右手连接                                                    -->
+    <!-- ============================================================ -->
+    <joint name="fd_left_to_right_base" type="fixed">
+        <origin rpy="0 0 0" xyz="0.1 0.0 0.0" />
+        <parent link="fd_left_base" />
+        <child link="fd_right_base" />
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- ros2_control：左侧                                            -->
+    <!-- ============================================================ -->
+    <ros2_control name="FDLeftHardware" type="system">
+        <hardware>
+            <plugin>fd_left_hardware/FDLeftHardwareInterface</plugin>
+            <param name="interface_id">-1</param>
+            <param name="interface_serial_number">40819</param>
+            <param name="inertia_interface_name">fd_left_inertia</param>
+            <param name="effector_mass">-0.71</param>
+        </hardware>
+
+
+        <joint name="fd_left_x">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+        <joint name="fd_left_y">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+        <joint name="fd_left_z">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+        <joint name="fd_left_roll">
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <command_interface name="effort" />
+        </joint>
+        <joint name="fd_left_pitch">
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <command_interface name="effort" />
+        </joint>
+        <joint name="fd_left_yaw">
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <command_interface name="effort" />
+        </joint>
+        <joint name="fd_left_gripper">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+    </ros2_control>
+
+    <!-- ============================================================ -->
+    <!-- ros2_control：右侧                                            -->
+    <!-- ============================================================ -->
+    <ros2_control name="FDRightHardware" type="system">
+        <hardware>
+            <plugin>fd_right_hardware/FDRightHardwareInterface</plugin>
+            <param name="interface_id">-1</param>
+            <param name="interface_serial_number">40619</param>
+            <param name="inertia_interface_name">fd_right_inertia</param>
+            <param name="effector_mass">-0.71</param>
+        </hardware>
+
+
+        <joint name="fd_right_x">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+        <joint name="fd_right_y">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+        <joint name="fd_right_z">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+        <joint name="fd_right_roll">
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <command_interface name="effort" />
+        </joint>
+        <joint name="fd_right_pitch">
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <command_interface name="effort" />
+        </joint>
+        <joint name="fd_right_yaw">
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+            <command_interface name="effort" />
+        </joint>
+        <joint name="fd_right_gripper">
+            <command_interface name="effort" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+    </ros2_control>
+
+</robot>

@@ -4,19 +4,19 @@
 #include <fd_vendor/fd_sdk.hpp>
 #include <hardware_interface/system_interface.hpp>
 
-namespace fd_hardware_base {
+namespace mtm_hardware_interface {
 /**
  * @brief Force Dimension 硬件接口基类
  *
  * 封装了 DHD SDK 的通用连接、配置、状态导出及生命周期管理逻辑。
  * 子类需实现具体的 read() 和 write() 方法以适配不同型号设备。
  */
-class FDHardwareBase : public hardware_interface::SystemInterface {
+class FDBaseHardwareInterface : public hardware_interface::SystemInterface {
   public:
-    RCLCPP_SHARED_PTR_DEFINITIONS(FDHardwareBase);
+    RCLCPP_SHARED_PTR_DEFINITIONS(FDBaseHardwareInterface);
 
     MTM_HARDWARE_PUBLIC
-    ~FDHardwareBase() override = default;
+    ~FDBaseHardwareInterface() override = default;
 
     // 生命周期回调
     MTM_HARDWARE_PUBLIC
@@ -41,7 +41,6 @@ class FDHardwareBase : public hardware_interface::SystemInterface {
     hardware_interface::return_type write(const rclcpp::Time &time, const rclcpp::Duration &period) override = 0;
 
   protected:
-    // 设备连接与断开
     bool connectToDevice();
     bool disconnectFromDevice();
 
@@ -51,16 +50,12 @@ class FDHardwareBase : public hardware_interface::SystemInterface {
     std::vector<double> hw_states_velocity_; // 速度状态
     std::vector<double> hw_states_effort_;   // 力/力矩反馈
     std::vector<double> hw_states_inertia_;  // 惯性矩阵（上三角扁平化存储）
-    std::vector<double> hw_button_state_;    // 按钮/GPIO 状态
-    double hw_grip_position_{0.0};           // 存储夹子的真实弧度
 
     // 设备标识与配置参数
     char interface_id_{-1};              // 设备内部ID
     int interface_sn_{-1};               // 设备序列号
-    bool emulate_button_{false};         // 是否启用夹爪按键模拟
     std::string inertia_interface_name_; // 惯性矩阵接口名称前缀
     double effector_mass_{-1.0};         // 末端执行器质量 (kg)
-    bool ignore_orientation_{false};     // 是否忽略姿态读数
     bool isConnected_{false};            // 连接状态标志
 
     // 常量定义
@@ -77,7 +72,6 @@ class FDHardwareBase : public hardware_interface::SystemInterface {
   private:
     // 辅助验证与解析函数
     bool validateJointInterfaces(const hardware_interface::ComponentInfo &joint);
-    bool validateGpioInterfaces(const hardware_interface::ComponentInfo &button);
     void parseHardwareParameters();
 };
-} // namespace fd_hardware_base
+} // namespace mtm_hardware_interface

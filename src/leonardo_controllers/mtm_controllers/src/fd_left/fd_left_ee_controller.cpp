@@ -39,8 +39,11 @@ controller_interface::CallbackReturn FDLeftEeController::on_configure(const rclc
     joints_name_ = get_node()->get_parameter("joints").as_string_array();
     buttons_name_ = get_node()->get_parameter("buttons").as_string_array();
 
-    if (joints_name_.empty()) {
-        RCLCPP_ERROR(get_node()->get_logger(), "请在配置中提供关节列表！");
+    if (joints_name_.size() < 7) {
+        RCLCPP_ERROR(get_node()->get_logger(),
+                     "YAML 参数 joints 项数不足：需要 7 项（依次为 x,y,z,roll,pitch,yaw,gripper_rad），"
+                     "当前只有 %zu 项。请检查控制器 YAML 中 ros__parameters.joints 的配置",
+                     joints_name_.size());
         return controller_interface::CallbackReturn::ERROR;
     }
 
@@ -215,7 +218,7 @@ controller_interface::return_type FDLeftEeController::update_and_write_commands(
         double button_status = lookup_state_interface_value(name_if_value_mapping_, buttons_name_[0], hardware_interface::HW_IF_POSITION);
         reference_interfaces_[EE_BUTTON] = (button_status > 0.5) ? 1.0 : 0.0;
         // 连续的原始值透传给 EE_GRIPPER
-        reference_interfaces_[EE_GRIPPER] = button_status;
+        reference_interfaces_[EE_GRIPPER_RAD] = button_status;
     }
 
     return controller_interface::return_type::OK;
@@ -245,7 +248,7 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> FDLeftEeController:
     reference_interfaces.push_back(make_ci("ee/pitch", &reference_interfaces_[EE_PITCH]));
     reference_interfaces.push_back(make_ci("ee/yaw", &reference_interfaces_[EE_YAW]));
     reference_interfaces.push_back(make_ci("ee/button", &reference_interfaces_[EE_BUTTON]));
-    reference_interfaces.push_back(make_ci("ee/gripper", &reference_interfaces_[EE_GRIPPER]));
+    reference_interfaces.push_back(make_ci("ee/gripper", &reference_interfaces_[EE_GRIPPER_RAD]));
 
     return reference_interfaces;
 }
