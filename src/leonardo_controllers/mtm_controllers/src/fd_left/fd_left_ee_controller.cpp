@@ -1,8 +1,6 @@
 #include "mtm_controllers/fd_left/fd_left_ee_controller.hpp"
-
-#include <hardware_interface/types/hardware_interface_type_values.hpp>
-
 #include <algorithm>
+#include <hardware_interface/types/hardware_interface_type_values.hpp>
 #include <limits>
 
 namespace mtm_controllers {
@@ -14,9 +12,6 @@ controller_interface::CallbackReturn FDLeftEeController::on_init() {
     try {
         if (!get_node()->has_parameter("joints")) {
             get_node()->declare_parameter<std::vector<std::string>>("joints", std::vector<std::string>{});
-        }
-        if (!get_node()->has_parameter("buttons")) {
-            get_node()->declare_parameter<std::vector<std::string>>("buttons", std::vector<std::string>{});
         }
         if (!get_node()->has_parameter("transform_translation")) {
             get_node()->declare_parameter<std::vector<double>>("transform_translation", std::vector<double>{});
@@ -37,11 +32,10 @@ controller_interface::CallbackReturn FDLeftEeController::on_init() {
 // ============================================================================
 controller_interface::CallbackReturn FDLeftEeController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
     joints_name_ = get_node()->get_parameter("joints").as_string_array();
-    buttons_name_ = get_node()->get_parameter("buttons").as_string_array();
 
     if (joints_name_.size() < 7) {
         RCLCPP_ERROR(get_node()->get_logger(),
-                     "YAML 参数 joints 项数不足：需要 7 项（依次为 x,y,z,roll,pitch,yaw,gripper_rad），"
+                     "YAML 参数 joints 项数不足：需要 7 项（依次为 x,y,z,roll,pitch,yaw,gripper），"
                      "当前只有 %zu 项。请检查控制器 YAML 中 ros__parameters.joints 的配置",
                      joints_name_.size());
         return controller_interface::CallbackReturn::ERROR;
@@ -105,9 +99,6 @@ controller_interface::InterfaceConfiguration FDLeftEeController::state_interface
     for (const auto &joint : joints_name_) {
         config.names.push_back(joint + "/" + hardware_interface::HW_IF_POSITION);
     }
-    for (const auto &button : buttons_name_) {
-        config.names.push_back(button + "/" + hardware_interface::HW_IF_POSITION);
-    }
     return config;
 }
 
@@ -115,9 +106,8 @@ controller_interface::InterfaceConfiguration FDLeftEeController::state_interface
 // 生命周期
 // ============================================================================
 controller_interface::CallbackReturn FDLeftEeController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
-    if (state_interfaces_.size() != (joints_name_.size() + buttons_name_.size())) {
-        RCLCPP_ERROR(get_node()->get_logger(), "状态接口数量不符：期望 %zu，实际 %zu", joints_name_.size() + buttons_name_.size(),
-                     state_interfaces_.size());
+    if (state_interfaces_.size() != joints_name_.size()) {
+        RCLCPP_ERROR(get_node()->get_logger(), "状态接口数量不符：期望 %zu，实际 %zu", joints_name_.size(), state_interfaces_.size());
         return controller_interface::CallbackReturn::ERROR;
     }
 
@@ -133,7 +123,6 @@ controller_interface::CallbackReturn FDLeftEeController::on_deactivate(const rcl
 
 controller_interface::CallbackReturn FDLeftEeController::on_cleanup(const rclcpp_lifecycle::State & /*previous_state*/) {
     joints_name_.clear();
-    buttons_name_.clear();
     transform_ = Eigen::Matrix4d::Identity();
     pose_ = Eigen::Matrix4d::Identity();
     reference_interfaces_.clear();
@@ -157,69 +146,53 @@ controller_interface::return_type FDLeftEeController::update_and_write_commands(
         }
     }
 
-    // ---- 读 rpy ----
-    double roll = 0.0, pitch = 0.0, yaw = 0.0;
-    if (joints_name_.size() >= 6) {
-        roll = lookup_state_interface_value(name_if_value_mapping_, joints_name_[3], hardware_interface::HW_IF_POSITION);
-        pitch = lookup_state_interface_value(name_if_value_mapping_, joints_name_[4], hardware_interface::HW_IF_POSITION);
-        yaw = lookup_state_interface_value(name_if_value_mapping_, joints_name_[5], hardware_interface::HW_IF_POSITION);
+    // ---- 读 rpy（joints[3..5]）----
+    const double roll = lookup_state_interface_value(name_if_value_mapping_, joints_name_[3], hardware_interface::HW_IF_POSITION);
+    const double pitch = lookup_state_interface_value(name_if_value_mapping_, joints_name_[4], hardware_interface::HW_IF_POSITION);
+    const double yaw = lookup_state_interface_value(name_if_value_mapping_, joints_name_[5], hardware_interface::HW_IF_POSITION);
 
-        if (std::isnan(roll) || std::isnan(pitch) || std::isnan(yaw)) {
-            RCLCPP_DEBUG_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                                  "fd_left 姿态数据无效（校准中或读失败），保持引用接口为 NaN");
-            return controller_interface::return_type::OK;
-        }
+    if (std::isnan(roll) || std::isnan(pitch) || std::isnan(yaw)) {
+        RCLCPP_DEBUG_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000, "fd_left 姿态数据无效（校准中或读失败），保持引用接口为 NaN");
+        return controller_interface::return_type::OK;
     }
 
-    // ---- 计算 pose ----
+    // ---- 读位置（joints[0..2]）----
+    const double p_x = lookup_state_interface_value(name_if_value_mapping_, joints_name_[0], hardware_interface::HW_IF_POSITION);
+    const double p_y = lookup_state_interface_value(name_if_value_mapping_, joints_name_[1], hardware_interface::HW_IF_POSITION);
+    const double p_z = lookup_state_interface_value(name_if_value_mapping_, joints_name_[2], hardware_interface::HW_IF_POSITION);
+
+    if (std::isnan(p_x) || std::isnan(p_y) || std::isnan(p_z)) {
+        RCLCPP_DEBUG_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000, "fd_left 位置数据无效（校准中或读失败），保持引用接口为 NaN");
+        return controller_interface::return_type::OK;
+    }
+
+    // ---- 组装 pose ----
     pose_ = Eigen::Matrix4d::Identity();
+    pose_(0, 3) = p_x;
+    pose_(1, 3) = p_y;
+    pose_(2, 3) = p_z;
 
-    if (joints_name_.size() >= 3) {
-        double p_x = lookup_state_interface_value(name_if_value_mapping_, joints_name_[0], hardware_interface::HW_IF_POSITION);
-        double p_y = lookup_state_interface_value(name_if_value_mapping_, joints_name_[1], hardware_interface::HW_IF_POSITION);
-        double p_z = lookup_state_interface_value(name_if_value_mapping_, joints_name_[2], hardware_interface::HW_IF_POSITION);
-
-        if (std::isnan(p_x) || std::isnan(p_y) || std::isnan(p_z)) {
-            RCLCPP_DEBUG_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                                  "fd_left 位置数据无效（校准中或读失败），保持引用接口为 NaN");
-            return controller_interface::return_type::OK;
-        }
-
-        pose_(0, 3) = p_x;
-        pose_(1, 3) = p_y;
-        pose_(2, 3) = p_z;
-    }
-
-    if (joints_name_.size() >= 6) {
-        Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
-        Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
-        Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
-
-        Eigen::Quaterniond q = rollAngle * pitchAngle * yawAngle;
-        pose_.block<3, 3>(0, 0) = q.normalized().toRotationMatrix();
-    }
+    Eigen::Quaterniond q_rot = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX()) * Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY()) *
+                               Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ());
+    pose_.block<3, 3>(0, 0) = q_rot.normalized().toRotationMatrix();
 
     pose_ = transform_ * pose_;
-    Eigen::Quaternion<double> q(pose_.block<3, 3>(0, 0));
+    Eigen::Quaternion<double> q_out(pose_.block<3, 3>(0, 0));
 
     // ---- 写引用接口 ----
     reference_interfaces_[EE_X] = pose_(0, 3);
     reference_interfaces_[EE_Y] = pose_(1, 3);
     reference_interfaces_[EE_Z] = pose_(2, 3);
-    reference_interfaces_[EE_QW] = q.w();
-    reference_interfaces_[EE_QX] = q.x();
-    reference_interfaces_[EE_QY] = q.y();
-    reference_interfaces_[EE_QZ] = q.z();
+    reference_interfaces_[EE_QW] = q_out.w();
+    reference_interfaces_[EE_QX] = q_out.x();
+    reference_interfaces_[EE_QY] = q_out.y();
+    reference_interfaces_[EE_QZ] = q_out.z();
     reference_interfaces_[EE_ROLL] = roll;
     reference_interfaces_[EE_PITCH] = pitch;
     reference_interfaces_[EE_YAW] = yaw;
 
-    if (!buttons_name_.empty()) {
-        double button_status = lookup_state_interface_value(name_if_value_mapping_, buttons_name_[0], hardware_interface::HW_IF_POSITION);
-        reference_interfaces_[EE_BUTTON] = (button_status > 0.5) ? 1.0 : 0.0;
-        // 连续的原始值透传给 EE_GRIPPER
-        reference_interfaces_[EE_GRIPPER_RAD] = button_status;
-    }
+    // ---- gripper（joints[6]）：无效时 NaN 透传，不影响位姿 ----
+    reference_interfaces_[EE_GRIPPER] = lookup_state_interface_value(name_if_value_mapping_, joints_name_[6], hardware_interface::HW_IF_POSITION);
 
     return controller_interface::return_type::OK;
 }
@@ -247,8 +220,7 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> FDLeftEeController:
     reference_interfaces.push_back(make_ci("ee/roll", &reference_interfaces_[EE_ROLL]));
     reference_interfaces.push_back(make_ci("ee/pitch", &reference_interfaces_[EE_PITCH]));
     reference_interfaces.push_back(make_ci("ee/yaw", &reference_interfaces_[EE_YAW]));
-    reference_interfaces.push_back(make_ci("ee/button", &reference_interfaces_[EE_BUTTON]));
-    reference_interfaces.push_back(make_ci("ee/gripper", &reference_interfaces_[EE_GRIPPER_RAD]));
+    reference_interfaces.push_back(make_ci("ee/gripper", &reference_interfaces_[EE_GRIPPER]));
 
     return reference_interfaces;
 }

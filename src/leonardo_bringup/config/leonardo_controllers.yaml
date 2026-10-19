@@ -22,6 +22,38 @@ leonardo/controller_manager:
       type: teleop_controllers/PedalMappingController
 
 # ------------------------------------------------------------------------------
+# 左侧力反馈设备末端控制器
+# ------------------------------------------------------------------------------
+leonardo/fd_left_ee_controller:
+  ros__parameters:
+    transform_translation: [0.0, 0.0, 0.0]
+    transform_rotation: [0.0, 0.0, 0.0]
+    joints:
+      - fd_left_x
+      - fd_left_y
+      - fd_left_z
+      - fd_left_roll
+      - fd_left_pitch
+      - fd_left_yaw
+      - fd_left_gripper
+
+# ------------------------------------------------------------------------------
+# 右侧力反馈设备末端控制器
+# ------------------------------------------------------------------------------
+leonardo/fd_right_ee_controller:
+  ros__parameters:
+    transform_translation: [0.0, 0.0, 0.0]
+    transform_rotation: [0.0, 0.0, 0.0]
+    joints:
+      - fd_right_x
+      - fd_right_y
+      - fd_right_z
+      - fd_right_roll
+      - fd_right_pitch
+      - fd_right_yaw
+      - fd_right_gripper
+
+# ------------------------------------------------------------------------------
 # 踏板发布节点
 # ------------------------------------------------------------------------------
 leonardo/pedal_publisher:
@@ -40,38 +72,17 @@ leonardo/pedal_mapping_controller:
     right_prefix: "fd_right_ee_controller/ee"
 
 # ------------------------------------------------------------------------------
-# 左侧力反馈设备末端控制器
+# CAN0 末端控制器（控制 psm_1、psm_2 两台从手）
 # ------------------------------------------------------------------------------
-leonardo/fd_left_ee_controller:
+leonardo/intelligent_can0_controller:
   ros__parameters:
-    transform_translation: [0.0, 0.0, 0.0]
-    transform_rotation: [0.0, 0.0, 0.0]
-    joints:
-      - fd_left_x
-      - fd_left_y
-      - fd_left_z
-      - fd_left_roll
-      - fd_left_pitch
-      - fd_left_yaw
-      - fd_left_gripper_rad
-    buttons:
-      - fd_left_button
+    psm1_prefix: "pedal_mapping_controller/psm_1"
+    psm2_prefix: "pedal_mapping_controller/psm_2"
 
 # ------------------------------------------------------------------------------
-# 右侧力反馈设备末端控制器
+# CAN1 末端控制器（控制 psm_3、ecm_1 两台从手）
 # ------------------------------------------------------------------------------
-leonardo/fd_right_ee_controller:
+leonardo/intelligent_can1_controller:
   ros__parameters:
-    transform_translation: [0.0, 0.0, 0.0]
-    transform_rotation: [0.0, 0.0, 0.0]
-    joints:
-      - fd_right_x
-      - fd_right_y
-      - fd_right_z
-      - fd_right_roll
-      - fd_right_pitch
-      - fd_right_yaw
-      - fd_right_gripper_rad
-    buttons:
-      - fd_right_button
-
+    psm3_prefix: "pedal_mapping_controller/psm_3"
+    ecm1_prefix: "pedal_mapping_controller/ecm_1"

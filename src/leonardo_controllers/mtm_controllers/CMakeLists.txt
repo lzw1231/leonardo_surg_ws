@@ -71,39 +71,23 @@ set(MTM_TARGET_LIBS
 )
 
 # ==============================================================================
-# 左臂控制器库
+# 控制器库（左右合并为一个 .so）
 # ==============================================================================
-add_library(mtm_fd_left_controllers SHARED
+add_library(mtm_controllers SHARED
         src/fd_left/fd_left_ee_controller.cpp
-        # src/fd_left/xxx_left_controller.cpp
+        src/fd_right/fd_right_ee_controller.cpp
 )
-target_include_directories(mtm_fd_left_controllers
+target_include_directories(mtm_controllers
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 # 编译 DLL 时导出符号
-target_compile_definitions(mtm_fd_left_controllers PRIVATE MTM_CONTROLLERS_BUILDING_DLL
+target_compile_definitions(mtm_controllers PRIVATE MTM_CONTROLLERS_BUILDING_DLL
 )
 # 关闭 pluginlib 对 Boost function/bind 的依赖
-target_compile_definitions(mtm_fd_left_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
-target_link_libraries(mtm_fd_left_controllers PUBLIC ${MTM_TARGET_LIBS})
-
-# ==============================================================================
-# 右臂控制器库
-# ==============================================================================
-add_library(mtm_fd_right_controllers SHARED
-        src/fd_right/fd_right_ee_controller.cpp
-        # src/fd_right/xxx_right_controller.cpp
-)
-target_include_directories(mtm_fd_right_controllers
-        PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)
-target_compile_definitions(mtm_fd_right_controllers PRIVATE MTM_CONTROLLERS_BUILDING_DLL)
-target_compile_definitions(mtm_fd_right_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
-target_link_libraries(mtm_fd_right_controllers PUBLIC ${MTM_TARGET_LIBS})
+target_compile_definitions(mtm_controllers PUBLIC PLUGINLIB__DISABLE_BOOST_FUNCTIONS)
+target_link_libraries(mtm_controllers PUBLIC ${MTM_TARGET_LIBS})
 
 # ==============================================================================
 # pluginlib 插件注册
@@ -114,8 +98,7 @@ pluginlib_export_plugin_description_file(controller_interface mtm_controllers_pl
 # 安装
 # ==============================================================================
 install(TARGETS
-        mtm_fd_left_controllers
-        mtm_fd_right_controllers
+        mtm_controllers
         EXPORT export_mtm_controllers
         RUNTIME DESTINATION bin
         ARCHIVE DESTINATION lib

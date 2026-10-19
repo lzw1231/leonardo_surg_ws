@@ -59,6 +59,7 @@ class IntelligentCan1HardwareInterface : public hardware_interface::SystemInterf
     };
 
     // ---------------- 3 号从臂（s3，CAN ID 0x443）----------------
+    Joint s3_j01_base;
     Joint s3_j03_oc;
     Joint s3_j04_oc;
     Joint s3_j07_oc;
@@ -69,6 +70,12 @@ class IntelligentCan1HardwareInterface : public hardware_interface::SystemInterf
     Joint s3_j14_oc;
     Joint s3_j17_18;
     Joint s3_j20_21;
+
+    // 虚拟电机
+    Joint s3_joint_motor_01;
+    Joint s3_joint_motor_02;
+    Joint s3_joint_motor_03;
+    Joint s3_joint_motor_04;
 
     // ---------------- CAN 运行参数 ----------------
     std::string can_interface_;

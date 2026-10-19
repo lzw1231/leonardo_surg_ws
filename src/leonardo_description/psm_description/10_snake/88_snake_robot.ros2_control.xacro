@@ -19,27 +19,32 @@
 
 
         <!-- ****************** 1号从臂的电机 ****************** -->
-        <joint name="s1__joint_motor_01">
+        <joint name="s1_joint_motor_01">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1__joint_motor_02">
+        <joint name="s1_joint_motor_02">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1__joint_motor_03">
+        <joint name="s1_joint_motor_03">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s1__joint_motor_04">
+        <joint name="s1_joint_motor_04">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
         <!-- ****************** 1号从臂的转动关节 ****************** -->
+        <joint name="s1_j01_base">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
         <joint name="s1_j03_oc">
             <command_interface name="position" />
             <state_interface name="position" />
@@ -91,27 +96,32 @@
         </joint>
 
         <!-- ****************** 1号从臂的电机 ****************** -->
-        <joint name="s2__joint_motor_01">
+        <joint name="s2_joint_motor_01">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2__joint_motor_02">
+        <joint name="s2_joint_motor_02">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2__joint_motor_03">
+        <joint name="s2_joint_motor_03">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s2__joint_motor_04">
+        <joint name="s2_joint_motor_04">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
         <!-- ****************** 2号从臂的转动关节 ****************** -->
+        <joint name="s2_j01_base">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
         <joint name="s2_j03_oc">
             <command_interface name="position" />
             <state_interface name="position" />
@@ -180,27 +190,33 @@
         </hardware>
 
         <!-- ****************** 3号从臂的电机 ****************** -->
-        <joint name="s3__joint_motor_01">
+        <joint name="s3_joint_motor_01">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3__joint_motor_02">
+        <joint name="s3_joint_motor_02">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3__joint_motor_03">
+        <joint name="s3_joint_motor_03">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
-        <joint name="s3__joint_motor_04">
+        <joint name="s3_joint_motor_04">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>
 
         <!-- ****************** 3号从臂的转动关节 ****************** -->
+
+        <joint name="s3_j01_base">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
         <joint name="s3_j03_oc">
             <command_interface name="position" />
             <state_interface name="position" />

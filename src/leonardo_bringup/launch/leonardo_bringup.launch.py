@@ -14,7 +14,7 @@ def generate_launch_description():
     share_bringup = get_package_share_directory("leonardo_bringup")
 
     robot_desc_file_path = os.path.join(share_desc, "urdf", "leonardo.urdf.xacro")
-    rviz_config_file_path = os.path.join(share_desc, "mtm_description", "rviz", "fd_bimanual_config.rviz")
+    rviz_config_file_path = os.path.join(share_bringup, "rviz", "leonardo_config.rviz")
 
     # YAML 路径
     controllers_yaml_path = os.path.join(share_bringup, "config", "leonardo_controllers.yaml")

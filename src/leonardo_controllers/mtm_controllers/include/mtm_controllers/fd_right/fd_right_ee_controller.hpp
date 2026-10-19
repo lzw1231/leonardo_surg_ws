@@ -1,28 +1,28 @@
 #pragma once
 
+#include "mtm_controllers/common/state_interface_utils.hpp"
+#include "mtm_controllers/common/visibility_control.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+#include <cmath>
 #include <controller_interface/chainable_controller_interface.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "mtm_controllers/common/state_interface_utils.hpp"
-#include "mtm_controllers/common/visibility_control.hpp"
-
 namespace mtm_controllers {
 /**
- * FDRightEeController
+ * FDRightEePoseController
  *
  * 链式控制器：读取右侧主手关节状态，计算末端执行器的位姿、RPY、按钮状态，
- * 通过引用接口（ee/）导出给下游从端控制器。
+ * 通过引用接口（ee/前缀）导出给下游从端控制器。
  *
  * 导出的引用接口（相对名，完整名为 <控制器名>/<相对名>）：
  *   ee/x, ee/y, ee/z
  *   ee/qw, ee/qx, ee/qy, ee/qz
  *   ee/roll, ee/pitch, ee/yaw
- *   ee/button
+ *   ee/gripper
  */
 class FDRightEeController : public controller_interface::ChainableControllerInterface {
   public:
@@ -57,12 +57,10 @@ class FDRightEeController : public controller_interface::ChainableControllerInte
     std::vector<hardware_interface::CommandInterface::SharedPtr> on_export_reference_interfaces_list() override;
 
     MTM_CONTROLLERS_PUBLIC
-    controller_interface::return_type update_reference_from_subscribers(const rclcpp::Time &time,
-                                                                        const rclcpp::Duration &period) override;
+    controller_interface::return_type update_reference_from_subscribers(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     MTM_CONTROLLERS_PUBLIC
-    controller_interface::return_type update_and_write_commands(const rclcpp::Time &time,
-                                                                const rclcpp::Duration &period) override;
+    controller_interface::return_type update_and_write_commands(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     // 引用接口索引
     enum RefIdx : size_t {
@@ -76,13 +74,12 @@ class FDRightEeController : public controller_interface::ChainableControllerInte
         EE_ROLL = 7,
         EE_PITCH = 8,
         EE_YAW = 9,
-        EE_BUTTON = 10,
+        EE_GRIPPER = 10,
         REF_SIZE = 11,
     };
 
     // ---- 参数 ----
-    std::vector<std::string> joints_;
-    std::vector<std::string> buttons_;
+    std::vector<std::string> joints_name_;
     Eigen::Matrix4d transform_ = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d pose_ = Eigen::Matrix4d::Identity();
 

@@ -69,7 +69,7 @@ controller_interface::CallbackReturn Pedal6KeysMappingController::on_configure(c
     RCLCPP_INFO(node->get_logger(), "  踏板话题: %s", pedal_state_topic_.c_str());
     RCLCPP_INFO(node->get_logger(), "  左手: %s", left_prefix_.c_str());
     RCLCPP_INFO(node->get_logger(), "  右手: %s", right_prefix_.c_str());
-    RCLCPP_INFO(node->get_logger(), "  导出 %zu 组（每组含 epoch + 10 个数据接口）", GROUP_COUNT);
+    RCLCPP_INFO(node->get_logger(), "  导出 %zu 组（每组含 epoch + %zu 个数据接口）", GROUP_COUNT, SRC_SIZE);
     for (size_t g = 0; g < GROUP_COUNT; ++g) {
         RCLCPP_INFO(node->get_logger(), "    %s  (+ %s/epoch)", kGroups[g], kGroups[g]);
     }
@@ -161,11 +161,13 @@ controller_interface::return_type Pedal6KeysMappingController::update_and_write_
     switch (key) {
     case 1:
         copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_1_IDX);
+        copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_2_IDX);
         break;
     case 2:
         break;
     case 3:
-        copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_1_IDX);
+        copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_2_IDX);
+        copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_3_IDX);
         break;
     case 4:
         break;
@@ -181,7 +183,7 @@ controller_interface::return_type Pedal6KeysMappingController::update_and_write_
 }
 
 // ============================================================================
-// 辅助函数（修改为拷贝 10 个数据）
+// 辅助函数（拷贝 SRC_SIZE 个数据）
 // ============================================================================
 void Pedal6KeysMappingController::copy_source_to_dest(size_t src_base, size_t dst_base) {
     for (size_t i = 0; i < SRC_SIZE; ++i) {
@@ -201,7 +203,7 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> Pedal6KeysMappingCo
 
     const std::string &ctrl_name = get_node()->get_name();
 
-    // 4 组数据（每组 10 个）
+    // 4 组数据（每组 SRC_SIZE 个）
     for (size_t g = 0; g < GROUP_COUNT; ++g) {
         for (size_t i = 0; i < SRC_SIZE; ++i) {
             std::string if_name = std::string(kGroups[g]) + "/" + kSuffixes[i];

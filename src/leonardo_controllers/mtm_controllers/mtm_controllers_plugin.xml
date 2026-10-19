@@ -1,12 +1,10 @@
-<library path="mtm_fd_left_controllers">
+<library path="mtm_controllers">
     <class name="mtm_controllers/FDLeftEeController"
         type="mtm_controllers::FDLeftEeController"
         base_class_type="controller_interface::ChainableControllerInterface">
         <description>左侧主手末端位姿链式控制器，接口以 ee/ 为前缀</description>
     </class>
-</library>
 
-<library path="mtm_fd_right_controllers">
     <class name="mtm_controllers/FDRightEeController"
         type="mtm_controllers::FDRightEeController"
         base_class_type="controller_interface::ChainableControllerInterface">

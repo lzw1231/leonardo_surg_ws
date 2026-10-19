@@ -15,11 +15,14 @@
 namespace teleop_controllers {
 
 /**
- * PedalMappingController —— 踏板映射控制器（链式）
+ * Pedal6KeysMappingController —— 踏板映射控制器（链式，纯转发）
  *
- * 读左右主手 ee/ 位姿数据及控制量，按踏板状态选源，
+ * 读左右主手 ee/ 位姿数据，按踏板状态选源，
  * 写到 4 组下游接口（psm_1/psm_2/psm_3/ecm_1）。
  * 每组额外导出 1 个 epoch 接口。
+ *
+ * 转发字段（11 个，与上游 EE 控制器导出完全一致）：
+ *   x, y, z, qw, qx, qy, qz, roll, pitch, yaw, gripper
  *
  * epoch 语义：
  *   每次踏板按键事件（收到一次话题消息）→ 所有组 epoch +1
@@ -71,31 +74,30 @@ class Pedal6KeysMappingController : public controller_interface::ChainableContro
     // ========================================================================
     // 常量
     // ========================================================================
-    static constexpr size_t POSE_SIZE = 7;                    // 位姿：x, y, z, qw, qx, qy, qz
-    static constexpr size_t CTRL_SIZE = 3;                    // 控制量：dof_five, end_angle, insertion
-    static constexpr size_t SRC_SIZE = POSE_SIZE + CTRL_SIZE; // 每组总计 10 个数据
-    static constexpr size_t GROUP_COUNT = 4;                  // 4 组下游
+    // 每组转发字段数，与上游 EE 控制器导出接口一一对应
+    static constexpr size_t SRC_SIZE = 11;
+    static constexpr size_t GROUP_COUNT = 4; // 4 组下游
 
-    // 上游源在 command_interfaces_ 里的起始索引
+    // 上游源在 state_interfaces_ 里的起始索引
     static constexpr size_t SRC_LEFT_IDX = 0;
-    static constexpr size_t SRC_RIGHT_IDX = SRC_SIZE; // 偏移量为 10
+    static constexpr size_t SRC_RIGHT_IDX = SRC_SIZE; // 偏移 11
 
     // 4 组下游在 refs_ 里的起始索引
     static constexpr size_t DST_PSM_1_IDX = 0 * SRC_SIZE; // 0
-    static constexpr size_t DST_PSM_2_IDX = 1 * SRC_SIZE; // 10
-    static constexpr size_t DST_PSM_3_IDX = 2 * SRC_SIZE; // 20
-    static constexpr size_t DST_ECM_1_IDX = 3 * SRC_SIZE; // 30
+    static constexpr size_t DST_PSM_2_IDX = 1 * SRC_SIZE; // 11
+    static constexpr size_t DST_PSM_3_IDX = 2 * SRC_SIZE; // 22
+    static constexpr size_t DST_ECM_1_IDX = 3 * SRC_SIZE; // 33
 
-    // refs_ 布局：[4 组数据(40)] [4 个 epoch(4)] = 44
-    static constexpr size_t DATA_SIZE = GROUP_COUNT * SRC_SIZE;  // 40
-    static constexpr size_t EPOCH_BASE = DATA_SIZE;              // 40
-    static constexpr size_t REFS_SIZE = DATA_SIZE + GROUP_COUNT; // 44
+    // refs_ 布局：[4 组数据(44)] [4 个 epoch(4)] = 48
+    static constexpr size_t DATA_SIZE = GROUP_COUNT * SRC_SIZE;  // 44
+    static constexpr size_t EPOCH_BASE = DATA_SIZE;              // 44
+    static constexpr size_t REFS_SIZE = DATA_SIZE + GROUP_COUNT; // 48
 
     // 第 g 组的 epoch 在 refs_ 里的索引
     static constexpr size_t epoch_idx(size_t g) { return EPOCH_BASE + g; }
 
-    // 后缀和组名
-    static constexpr std::array<const char *, SRC_SIZE> kSuffixes{"x", "y", "z", "qw", "qx", "qy", "qz", "dof_five", "end_angle", "insertion"};
+    // 后缀（顺序必须与上游 EE 控制器导出的 ee/ 接口顺序严格一致）
+    static constexpr std::array<const char *, SRC_SIZE> kSuffixes{"x", "y", "z", "qw", "qx", "qy", "qz", "roll", "pitch", "yaw", "gripper"};
     static constexpr std::array<const char *, GROUP_COUNT> kGroups{"psm_1", "psm_2", "psm_3", "ecm_1"};
 
     // ========================================================================
@@ -108,11 +110,11 @@ class Pedal6KeysMappingController : public controller_interface::ChainableContro
     // ========================================================================
     // 上游接口名（configure 时拼好）
     // ========================================================================
-    std::vector<std::string> left_interfaces_;  // 10 个
-    std::vector<std::string> right_interfaces_; // 10 个
+    std::vector<std::string> left_interfaces_;  // 11 个
+    std::vector<std::string> right_interfaces_; // 11 个
 
     // ========================================================================
-    // 导出内存：4 组 × 10 + 4 个 epoch = 44
+    // 导出内存：4 组 × 11 + 4 个 epoch = 48
     // ========================================================================
     std::vector<double> refs_;
 

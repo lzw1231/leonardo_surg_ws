@@ -147,7 +147,7 @@
     <!-- 左右手连接                                                    -->
     <!-- ============================================================ -->
     <joint name="fd_left_to_right_base" type="fixed">
-        <origin rpy="0 0 0" xyz="0.1 0.0 0.0" />
+        <origin rpy="0 0 ${pi}" xyz="0 0.01 0.0" />
         <parent link="fd_left_base" />
         <child link="fd_right_base" />
     </joint>
@@ -157,7 +157,7 @@
     <!-- ============================================================ -->
     <ros2_control name="FDLeftHardware" type="system">
         <hardware>
-            <plugin>fd_left_hardware/FDLeftHardwareInterface</plugin>
+            <plugin>mtm_hardware_interface/FDLeftHardwareInterface</plugin>
             <param name="interface_id">-1</param>
             <param name="interface_serial_number">40819</param>
             <param name="inertia_interface_name">fd_left_inertia</param>
@@ -214,7 +214,7 @@
     <!-- ============================================================ -->
     <ros2_control name="FDRightHardware" type="system">
         <hardware>
-            <plugin>fd_right_hardware/FDRightHardwareInterface</plugin>
+            <plugin>mtm_hardware_interface/FDRightHardwareInterface</plugin>
             <param name="interface_id">-1</param>
             <param name="interface_serial_number">40619</param>
             <param name="inertia_interface_name">fd_right_inertia</param>

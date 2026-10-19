@@ -35,22 +35,28 @@
     <!-- 17 生成 base_footprint_snake 固定基座 -->
     <link name="base_footprint_snake" />
 
-    <joint name="base_s1_link01" type="fixed">
+    <joint name="s1_j01_base" type="prismatic">
         <parent link="base_footprint_snake" />
         <child link="s1_01" />
         <origin xyz="0 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0" />
+        <limit effort="10.0" velocity="0.5" lower="-0.1" upper="0.1" />
     </joint>
 
-    <joint name="base_s2_link01" type="fixed">
+    <joint name="s2_j01_base" type="prismatic">
         <parent link="base_footprint_snake" />
         <child link="s2_01" />
         <origin xyz="0.05 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0" />
+        <limit effort="10.0" velocity="0.5" lower="-0.1" upper="0.1" />
     </joint>
 
-    <joint name="base_s3_link01" type="fixed">
+    <joint name="s3_j01_base" type="prismatic">
         <parent link="base_footprint_snake" />
         <child link="s3_01" />
-        <origin xyz="-0.05 0 0" rpy="0 0 0" />
+        <origin xyz="0.1 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0" />
+        <limit effort="10.0" velocity="0.5" lower="-0.1" upper="0.1" />
     </joint>
 
 </robot>

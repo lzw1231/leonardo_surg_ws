@@ -319,7 +319,7 @@
                 <geometry>
                     <mesh filename="${stl_path}/17.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 ${pi/2.0}" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link17" />
             </visual>
             <collision>

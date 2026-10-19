@@ -1,15 +1,15 @@
 #pragma once
 
+#include "mtm_controllers/common/state_interface_utils.hpp"
+#include "mtm_controllers/common/visibility_control.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+#include <cmath>
 #include <controller_interface/chainable_controller_interface.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include "mtm_controllers/common/state_interface_utils.hpp"
-#include "mtm_controllers/common/visibility_control.hpp"
 
 namespace mtm_controllers {
 /**
@@ -22,7 +22,7 @@ namespace mtm_controllers {
  *   ee/x, ee/y, ee/z
  *   ee/qw, ee/qx, ee/qy, ee/qz
  *   ee/roll, ee/pitch, ee/yaw
- *   ee/button, ee/gripper_rad
+ *   ee/gripper
  */
 class FDLeftEeController : public controller_interface::ChainableControllerInterface {
   public:
@@ -74,14 +74,12 @@ class FDLeftEeController : public controller_interface::ChainableControllerInter
         EE_ROLL = 7,
         EE_PITCH = 8,
         EE_YAW = 9,
-        EE_BUTTON = 10,
-        EE_GRIPPER_RAD = 11,
-        REF_SIZE = 12,
+        EE_GRIPPER = 10,
+        REF_SIZE = 11,
     };
 
     // ---- 参数 ----
     std::vector<std::string> joints_name_;
-    std::vector<std::string> buttons_name_;
     Eigen::Matrix4d transform_ = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d pose_ = Eigen::Matrix4d::Identity();
 

@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="leonardo">
 
-    <!-- ==================== 引入 MTM 主手 ==================== -->
+    <!-- ==================== 引入 fd 主手 ==================== -->
     <xacro:include
-        filename="$(find leonardo_description)/mtm_description/urdf/fd_bimanual.config.xacro" />
+        filename="$(find leonardo_description)/mtm_description/urdf/fd_bimanual.urdf.xacro" />
 
-    <!-- ==================== 引入 PSM 从手  ==================== -->
+    <!-- ==================== 引入 snake 从手  ==================== -->
     <xacro:include filename="$(find leonardo_description)/psm_description/urdf/snakes.urdf.xacro" />
 
     <!-- ==================== 把 PSM 从手 挂到 MTM 双手 上 ==================== -->
