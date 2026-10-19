@@ -15,14 +15,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/01.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link01" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/01.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link01_m}" r="${link01_r}" l="${link01_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -34,14 +34,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/02.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="${pi} 0 0" />
+                <origin xyz="0 0 0" rpy="${pi} 0 ${pi/2}" />
                 <material name="${prefix}_link02" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/02.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link02_m}" r="${link02_r}" l="${link02_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -53,14 +53,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/03.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link03" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/03.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link03_m}" r="${link03_r}" l="${link03_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -72,14 +72,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/04.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0} ${pi/2}" />
                 <material name="${prefix}_link04" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/04.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link04_m}" r="${link04_r}" l="${link04_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -91,14 +91,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/05.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link05" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/05.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link05_m}" r="${link05_r}" l="${link05_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -110,14 +110,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/06.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link06" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/06.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link06_m}" r="${link06_r}" l="${link06_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -129,14 +129,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/07.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="${pi} 0 0" />
+                <origin xyz="0 0 0" rpy="${pi} 0 ${pi/2}" />
                 <material name="${prefix}_link07" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/07.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link07_m}" r="${link07_r}" l="${link07_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -148,14 +148,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/08.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
+                <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} ${pi/2}" />
                 <material name="${prefix}_link08" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/08.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link08_m}" r="${link08_r}" l="${link08_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -167,14 +167,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/09.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="${pi} 0 0" />
+                <origin xyz="0 0 0" rpy="${pi} 0 ${pi/2}" />
                 <material name="${prefix}_link09" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/09.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link09_m}" r="${link09_r}" l="${link09_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -186,14 +186,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/10.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link10" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/10.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link10_m}" r="${link10_r}" l="${link10_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -205,14 +205,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/11.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link11" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/11.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link11_m}" r="${link11_r}" l="${link11_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -224,14 +224,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/12.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0} ${pi/2}" />
                 <material name="${prefix}_link12" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/12.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link12_m}" r="${link12_r}" l="${link12_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -243,14 +243,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/13.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link13" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/13.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link13_m}" r="${link13_r}" l="${link13_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -262,14 +262,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/14.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0} ${pi/2}" />
                 <material name="${prefix}_link14" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/14.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link14_m}" r="${link14_r}" l="${link14_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -281,14 +281,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/15.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link15" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/15.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link15_m}" r="${link15_r}" l="${link15_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -300,14 +300,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/16.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
                 <material name="${prefix}_link16" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/16.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link16_m}" r="${link16_r}" l="${link16_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -319,14 +319,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/17.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi}" />
                 <material name="${prefix}_link17" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/17.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link17_m}" r="${link17_r}" l="${link17_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -338,14 +338,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/18.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi * 1.5}" />
                 <material name="${prefix}_link18" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/18.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link18_m}" r="${link18_r}" l="${link18_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -357,14 +357,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/19.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="${pi/2.0} 0 0" />
+                <origin xyz="0 0 0" rpy="${pi/2.0} 0 ${pi/2}" />
                 <material name="${prefix}_link19" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/19.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link19_m}" r="${link19_r}" l="${link19_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -376,14 +376,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/20.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 -0.004" rpy="${pi/2.0} 0 0" />
+                <origin xyz="0 0 -0.004" rpy="${pi/2.0} 0 ${pi/2}" />
                 <material name="${prefix}_link20" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/20.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link20_m}" r="${link20_r}" l="${link20_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -395,14 +395,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/21.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="${pi/2.0} 0 0" />
+                <origin xyz="0 0 0" rpy="${pi/2.0} 0 ${pi/2}" />
                 <material name="${prefix}_link21" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/21.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link21_m}" r="${link21_r}" l="${link21_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
@@ -414,14 +414,14 @@
                 <geometry>
                     <mesh filename="${stl_path}/22.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="${pi/2.0} ${pi} 0" />
+                <origin xyz="0 0 0" rpy="${pi/2.0} ${pi} ${pi/2}" />
                 <material name="${prefix}_link22" />
             </visual>
             <collision>
                 <geometry>
                     <mesh filename="${stl_path}/22.stl" scale="${mesh_scale}" />
                 </geometry>
-                <origin xyz="0 0 0" rpy="0 0 0" />
+                <origin xyz="0 0 0" rpy="0 0 ${pi/2}" />
             </collision>
             <xacro:snake_cylinder_inertia m="${link22_m}" r="${link22_r}" l="${link22_l}" o_xyz="0 0 0"
                 o_rpy="0 0 0" />
