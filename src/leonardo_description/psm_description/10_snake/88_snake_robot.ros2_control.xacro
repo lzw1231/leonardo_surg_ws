@@ -39,6 +39,16 @@
             <state_interface name="position" />
         </joint>
 
+        <joint name="s1_joint_motor_05">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s1_joint_motor_06">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
         <!-- ****************** 1号从臂的转动关节 ****************** -->
         <joint name="s1_j01_base">
             <command_interface name="position" />
@@ -112,6 +122,16 @@
         </joint>
 
         <joint name="s2_joint_motor_04">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s2_joint_motor_05">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+
+        <joint name="s2_joint_motor_06">
             <command_interface name="position" />
             <state_interface name="position" />
         </joint>

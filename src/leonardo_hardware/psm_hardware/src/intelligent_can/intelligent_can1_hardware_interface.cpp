@@ -20,17 +20,20 @@ IntelligentCan1HardwareInterface::on_init(const hardware_interface::HardwareComp
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn
+IntelligentCan1HardwareInterface::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
     // TODO
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn
+IntelligentCan1HardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
     // TODO
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn
+IntelligentCan1HardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
     // TODO
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -38,7 +41,8 @@ hardware_interface::CallbackReturn IntelligentCan1HardwareInterface::on_deactiva
 // ---------------------------------------------------------------------------
 // 接口导出
 // ---------------------------------------------------------------------------
-std::vector<hardware_interface::StateInterface::ConstSharedPtr> IntelligentCan1HardwareInterface::on_export_state_interfaces() {
+std::vector<hardware_interface::StateInterface::ConstSharedPtr>
+IntelligentCan1HardwareInterface::on_export_state_interfaces() {
     return {
         // 3 号从臂
         std::make_shared<hardware_interface::StateInterface>("s3_j01_base", "position", &s3_j01_base.state),
@@ -56,10 +60,13 @@ std::vector<hardware_interface::StateInterface::ConstSharedPtr> IntelligentCan1H
         std::make_shared<hardware_interface::StateInterface>("s3_joint_motor_02", "position", &s3_joint_motor_02.state),
         std::make_shared<hardware_interface::StateInterface>("s3_joint_motor_03", "position", &s3_joint_motor_03.state),
         std::make_shared<hardware_interface::StateInterface>("s3_joint_motor_04", "position", &s3_joint_motor_04.state),
+        std::make_shared<hardware_interface::StateInterface>("s3_joint_motor_05", "position", &s3_joint_motor_05.state),
+        std::make_shared<hardware_interface::StateInterface>("s3_joint_motor_06", "position", &s3_joint_motor_06.state),
     };
 }
 
-std::vector<hardware_interface::CommandInterface::SharedPtr> IntelligentCan1HardwareInterface::on_export_command_interfaces() {
+std::vector<hardware_interface::CommandInterface::SharedPtr>
+IntelligentCan1HardwareInterface::on_export_command_interfaces() {
     return {
         // 3 号从臂
         std::make_shared<hardware_interface::CommandInterface>("s3_j01_base", "position", &s3_j01_base.command),
@@ -73,17 +80,22 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> IntelligentCan1Hard
         std::make_shared<hardware_interface::CommandInterface>("s3_j14_oc", "position", &s3_j14_oc.command),
         std::make_shared<hardware_interface::CommandInterface>("s3_j17_18", "position", &s3_j17_18.command),
         std::make_shared<hardware_interface::CommandInterface>("s3_j20_21", "position", &s3_j20_21.command),
-        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_01", "position", &s3_joint_motor_01.command),
-        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_02", "position", &s3_joint_motor_02.command),
-        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_03", "position", &s3_joint_motor_03.command),
-        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_04", "position", &s3_joint_motor_04.command),
+        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_01", "position",
+                                                               &s3_joint_motor_01.command),
+        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_02", "position",
+                                                               &s3_joint_motor_02.command),
+        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_03", "position",
+                                                               &s3_joint_motor_03.command),
+        std::make_shared<hardware_interface::CommandInterface>("s3_joint_motor_04", "position",
+                                                               &s3_joint_motor_04.command),
     };
 }
 
 // ---------------------------------------------------------------------------
 // 数据读写
 // ---------------------------------------------------------------------------
-hardware_interface::return_type IntelligentCan1HardwareInterface::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
+hardware_interface::return_type IntelligentCan1HardwareInterface::read(const rclcpp::Time & /*time*/,
+                                                                       const rclcpp::Duration & /*period*/) {
     // TODO
     return hardware_interface::return_type::OK;
 }

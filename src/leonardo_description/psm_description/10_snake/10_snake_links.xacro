@@ -8,6 +8,8 @@
         <link name="${prefix}_link_for_motor_02" />
         <link name="${prefix}_link_for_motor_03" />
         <link name="${prefix}_link_for_motor_04" />
+        <link name="${prefix}_link_for_motor_05" />
+        <link name="${prefix}_link_for_motor_06" />
 
         <!-- ==================== Link 01 ==================== -->
         <link name="${prefix}_01">

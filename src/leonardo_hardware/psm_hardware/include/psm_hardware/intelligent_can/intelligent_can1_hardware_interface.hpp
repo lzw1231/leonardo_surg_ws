@@ -27,7 +27,8 @@ class IntelligentCan1HardwareInterface : public hardware_interface::SystemInterf
 
     // 生命周期回调
     PSM_HARDWARE_PUBLIC
-    hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
+    hardware_interface::CallbackReturn
+    on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
 
     PSM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state) override;
@@ -59,7 +60,7 @@ class IntelligentCan1HardwareInterface : public hardware_interface::SystemInterf
     };
 
     // ---------------- 3 号从臂（s3，CAN ID 0x443）----------------
-    Joint s3_j01_base;
+    Joint s3_j01_base; // 末端的直线电机
     Joint s3_j03_oc;
     Joint s3_j04_oc;
     Joint s3_j07_oc;
@@ -76,6 +77,8 @@ class IntelligentCan1HardwareInterface : public hardware_interface::SystemInterf
     Joint s3_joint_motor_02;
     Joint s3_joint_motor_03;
     Joint s3_joint_motor_04;
+    Joint s3_joint_motor_05;
+    Joint s3_joint_motor_06;
 
     // ---------------- CAN 运行参数 ----------------
     std::string can_interface_;
