@@ -27,8 +27,7 @@ class IntelligentCan0HardwareInterface : public hardware_interface::SystemInterf
 
     // 生命周期回调
     PSM_HARDWARE_PUBLIC
-    hardware_interface::CallbackReturn
-    on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
+    hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
 
     PSM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state) override;
