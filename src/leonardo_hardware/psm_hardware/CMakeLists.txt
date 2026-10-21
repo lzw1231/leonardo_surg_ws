@@ -22,8 +22,9 @@ find_package(rclcpp_lifecycle REQUIRED)
 # 库构建
 # ==============================================================================
 add_library(${PROJECT_NAME} SHARED
-        src/intelligent_can/intelligent_can0_hardware_interface.cpp
-        src/intelligent_can/intelligent_can1_hardware_interface.cpp
+        src/aloe_hardware_interface/can_protocol.cpp
+        src/aloe_hardware_interface/can_socket.cpp
+        src/aloe_hardware_interface/aloe_hardware_interface.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

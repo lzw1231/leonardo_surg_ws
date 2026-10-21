@@ -136,8 +136,9 @@ controller_interface::return_type FDRightEeController::update_reference_from_sub
                                                                                          const rclcpp::Duration & /*period*/) {
     return controller_interface::return_type::OK;
 }
-
 controller_interface::return_type FDRightEeController::update_and_write_commands(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
+    auto logger = get_node()->get_logger();
+
     // ---- 缓存状态接口值 ----
     for (const auto &state_interface : state_interfaces_) {
         auto val_opt = state_interface.get_optional();
@@ -152,8 +153,7 @@ controller_interface::return_type FDRightEeController::update_and_write_commands
     const double yaw = lookup_state_interface_value(name_if_value_mapping_, joints_name_[5], hardware_interface::HW_IF_POSITION);
 
     if (std::isnan(roll) || std::isnan(pitch) || std::isnan(yaw)) {
-        RCLCPP_DEBUG_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                              "fd_right 姿态数据无效（校准中或读失败），保持引用接口为 NaN");
+        RCLCPP_DEBUG_THROTTLE(logger, *get_node()->get_clock(), 1000, "fd_right 姿态数据无效（校准中或读失败），保持引用接口为 NaN");
         return controller_interface::return_type::OK;
     }
 
@@ -163,8 +163,7 @@ controller_interface::return_type FDRightEeController::update_and_write_commands
     const double p_z = lookup_state_interface_value(name_if_value_mapping_, joints_name_[2], hardware_interface::HW_IF_POSITION);
 
     if (std::isnan(p_x) || std::isnan(p_y) || std::isnan(p_z)) {
-        RCLCPP_DEBUG_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000,
-                              "fd_right 位置数据无效（校准中或读失败），保持引用接口为 NaN");
+        RCLCPP_DEBUG_THROTTLE(logger, *get_node()->get_clock(), 1000, "fd_right 位置数据无效（校准中或读失败），保持引用接口为 NaN");
         return controller_interface::return_type::OK;
     }
 
@@ -193,7 +192,6 @@ controller_interface::return_type FDRightEeController::update_and_write_commands
     reference_interfaces_[EE_PITCH] = pitch;
     reference_interfaces_[EE_YAW] = yaw;
 
-    // ---- gripper（joints[6]）：无效时 NaN 透传，不影响位姿 ----
     reference_interfaces_[EE_GRIPPER] = lookup_state_interface_value(name_if_value_mapping_, joints_name_[6], hardware_interface::HW_IF_POSITION);
 
     return controller_interface::return_type::OK;

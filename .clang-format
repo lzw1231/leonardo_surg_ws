@@ -1,3 +1,10 @@
 BasedOnStyle: LLVM
-ColumnLimit: 130
+ColumnLimit: 140
 IndentWidth: 4
+SortIncludes: true
+IncludeBlocks: Regroup    # 按类别重新分组，而非仅排序
+IncludeCategories:
+  - Regex: '^".*\.h"'    # 本项目头文件优先
+    Priority: 0
+  - Regex: '^<.*>'       # 系统/标准库头文件其次
+    Priority: 1

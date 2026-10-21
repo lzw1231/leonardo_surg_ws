@@ -1,10 +1,10 @@
 #include "teleop_controllers/pedal_mapping/pedal_6keys_mapping_controller.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <limits>
-
 namespace teleop_controllers {
 
 // ============================================================================
@@ -65,7 +65,7 @@ controller_interface::CallbackReturn Pedal6KeysMappingController::on_configure(c
                                                                      pedal_event_counter_.fetch_add(1, std::memory_order_relaxed);
                                                                  });
 
-    RCLCPP_INFO(node->get_logger(), "PedalMappingController 配置完成");
+    RCLCPP_INFO(node->get_logger(), "Pedal6KeysMappingController 已配置完成");
     RCLCPP_INFO(node->get_logger(), "  踏板话题: %s", pedal_state_topic_.c_str());
     RCLCPP_INFO(node->get_logger(), "  左手: %s", left_prefix_.c_str());
     RCLCPP_INFO(node->get_logger(), "  右手: %s", right_prefix_.c_str());
@@ -115,7 +115,14 @@ controller_interface::CallbackReturn Pedal6KeysMappingController::on_activate(co
     pedal_key_.store(0, std::memory_order_relaxed);
     pedal_event_counter_.store(0, std::memory_order_relaxed);
 
-    RCLCPP_INFO(get_node()->get_logger(), "PedalMappingController 已激活");
+    // RCLCPP_INFO(get_node()->get_logger(), "--- command_interfaces_ 实际映射 ---");
+    // for (size_t i = 0; i < command_interfaces_.size(); ++i) {
+    //     RCLCPP_INFO(get_node()->get_logger(), "  [%2zu] %s", i, command_interfaces_[i].get_name().c_str());
+    // }
+    // RCLCPP_INFO(get_node()->get_logger(), "  期望左: %s ... %s", left_interfaces_.front().c_str(), left_interfaces_.back().c_str());
+    // RCLCPP_INFO(get_node()->get_logger(), "  期望右: %s ... %s", right_interfaces_.front().c_str(), right_interfaces_.back().c_str());
+
+    RCLCPP_INFO(get_node()->get_logger(), "Pedal6KeysMappingController 已激活成功");
     return CallbackReturn::SUCCESS;
 }
 
@@ -145,6 +152,7 @@ controller_interface::return_type Pedal6KeysMappingController::update_reference_
 
 controller_interface::return_type Pedal6KeysMappingController::update_and_write_commands(const rclcpp::Time & /*time*/,
                                                                                          const rclcpp::Duration & /*period*/) {
+
     // ---- 1. 检查是否有新的按键事件 ----
     const int ev = pedal_event_counter_.load(std::memory_order_relaxed);
     if (ev != last_event_counter_) {
@@ -160,12 +168,15 @@ controller_interface::return_type Pedal6KeysMappingController::update_and_write_
 
     switch (key) {
     case 1:
+        // RCLCPP_INFO(get_node()->get_logger(), "按键1, 左->1, 右->2");
         copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_1_IDX);
         copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_2_IDX);
         break;
     case 2:
+        // RCLCPP_INFO(get_node()->get_logger(), "按键2, NULL ");
         break;
     case 3:
+        // RCLCPP_INFO(get_node()->get_logger(), "按键3, 左->2, 右->3");
         copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_2_IDX);
         copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_3_IDX);
         break;

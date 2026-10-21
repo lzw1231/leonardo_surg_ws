@@ -1,19 +1,10 @@
 <library path="psm_hardware">
     <class
-        name="psm_hardware_interface/IntelligentCan0HardwareInterface"
-        type="psm_hardware_interface::IntelligentCan0HardwareInterface"
+        name="psm_hardware_interface/AloeHardwareInterface"
+        type="psm_hardware_interface::AloeHardwareInterface"
         base_class_type="hardware_interface::SystemInterface">
         <description>
-            主机 can0 硬件接口，绑定 Linux SocketCAN 接口 can0。
-        </description>
-    </class>
-
-    <class
-        name="psm_hardware_interface/IntelligentCan1HardwareInterface"
-        type="psm_hardware_interface::IntelligentCan1HardwareInterface"
-        base_class_type="hardware_interface::SystemInterface">
-        <description>
-            主机 can1 硬件接口，绑定 Linux SocketCAN 接口 can1。
+            主机CAN的硬件接口，can0 和 can1。
         </description>
     </class>
 </library>

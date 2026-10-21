@@ -19,7 +19,7 @@ leonardo/controller_manager:
       type: mtm_controllers/FDRightEeController
 
     pedal_mapping_controller:
-      type: teleop_controllers/PedalMappingController
+      type: teleop_controllers/Pedal6KeysMappingController
 
 # ------------------------------------------------------------------------------
 # 左侧力反馈设备末端控制器

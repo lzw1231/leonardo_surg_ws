@@ -1,291 +1,65 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <ros2_control name="IntelligentCan0Ros2Control" type="system">
+    <!-- ==================== 宏定义 ==================== -->
+
+    <!-- 最基础的关节声明：只有 position 指令/状态 -->
+    <xacro:macro name="can_joint" params="name">
+        <joint name="${name}">
+            <command_interface name="position" />
+            <state_interface name="position" />
+        </joint>
+    </xacro:macro>
+
+    <!-- 单个从臂：6 个虚拟电机 + 11 个转动关节 -->
+    <xacro:macro name="arm" params="prefix">
+        <!-- 虚拟电机 -->
+        <xacro:can_joint name="${prefix}_joint_motor_01" />
+        <xacro:can_joint name="${prefix}_joint_motor_02" />
+        <xacro:can_joint name="${prefix}_joint_motor_03" />
+        <xacro:can_joint name="${prefix}_joint_motor_04" />
+        <xacro:can_joint name="${prefix}_joint_motor_05" />
+        <xacro:can_joint name="${prefix}_joint_motor_06" />
+
+        <!-- 转动关节 -->
+        <xacro:can_joint name="${prefix}_j01_base" />
+        <xacro:can_joint name="${prefix}_j03_oc" />
+        <xacro:can_joint name="${prefix}_j04_oc" />
+        <xacro:can_joint name="${prefix}_j07_oc" />
+        <xacro:can_joint name="${prefix}_j08_oc" />
+        <xacro:can_joint name="${prefix}_j11_oc" />
+        <xacro:can_joint name="${prefix}_j12_oc" />
+        <xacro:can_joint name="${prefix}_j13_oc" />
+        <xacro:can_joint name="${prefix}_j14_oc" />
+        <xacro:can_joint name="${prefix}_j17_18" />
+        <xacro:can_joint name="${prefix}_j20_21" />
+    </xacro:macro>
+
+    <!-- ==================== 实例化 ==================== -->
+
+    <ros2_control name="psm_ros2_control" type="system">
 
         <hardware>
-            <plugin>psm_hardware_interface/IntelligentCan0HardwareInterface</plugin>
-            <!-- CAN 通道 -->
-            <param name="can_interface">can0</param>
+            <plugin>psm_hardware_interface/AloeHardwareInterface</plugin>
 
-            <!-- 本通道挂载的从臂 ID（V6 协议：从臂1=0x441，从臂2=0x442） -->
+            <!-- CAN 通道 -->
+            <param name="can0_interface">can0</param>
+            <param name="can1_interface">can1</param>
+
+            <!-- 从臂 ID（V6 协议：从臂1=0x441，从臂2=0x442，从臂3=0x443） -->
             <param name="slave_1_id">0x441</param>
             <param name="slave_2_id">0x442</param>
-
-            <!-- A3 电流/速度默认值（可不下发，只做初始化用） -->
-            <param name="max_current">100</param>   <!-- 0.01 A 单位，100 → 1.00 A -->
-            <param name="speed_level">3</param>     <!-- 1/2/3 对应 30%/60%/100% -->
-        </hardware>
-
-
-        <!-- ****************** 1号从臂的电机 ****************** -->
-        <joint name="s1_joint_motor_01">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_joint_motor_02">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_joint_motor_03">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_joint_motor_04">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_joint_motor_05">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_joint_motor_06">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <!-- ****************** 1号从臂的转动关节 ****************** -->
-        <joint name="s1_j01_base">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j03_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j04_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j07_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j08_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j11_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j12_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j13_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j14_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j17_18">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s1_j20_21">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <!-- ****************** 1号从臂的电机 ****************** -->
-        <joint name="s2_joint_motor_01">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_joint_motor_02">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_joint_motor_03">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_joint_motor_04">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_joint_motor_05">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_joint_motor_06">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <!-- ****************** 2号从臂的转动关节 ****************** -->
-        <joint name="s2_j01_base">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j03_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j04_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j07_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j08_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j11_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j12_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j13_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j14_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j17_18">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s2_j20_21">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-    </ros2_control>
-
-    <ros2_control name="IntelligentCan1Ros2Control" type="system">
-
-        <hardware>
-            <plugin>psm_hardware_interface/IntelligentCan1HardwareInterface</plugin>
-            <!-- CAN 通道 -->
-            <param name="can_interface">can1</param>
-
-            <!-- 本通道挂载的从臂 ID（V6 协议：从臂3=0x443） -->
             <param name="slave_3_id">0x443</param>
 
-            <!-- A3 电流/速度默认值（可不下发，只做初始化用） -->
-            <param name="max_current">100</param>   <!-- 0.01 A 单位，100 → 1.00 A -->
-            <param name="speed_level">3</param>     <!-- 1/2/3 对应 30%/60%/100% -->
+            <!-- A3 电流/速度默认值（max_current 单位 0.01A，100→1.00A；speed_level 1/2/3=30%/60%/100%） -->
+            <param name="max_current">100</param>
+            <param name="speed_level">3</param>
         </hardware>
 
-        <!-- ****************** 3号从臂的电机 ****************** -->
-        <joint name="s3_joint_motor_01">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_joint_motor_02">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_joint_motor_03">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_joint_motor_04">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <!-- ****************** 3号从臂的转动关节 ****************** -->
-
-        <joint name="s3_j01_base">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j03_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j04_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j07_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j08_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j11_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j12_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j13_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j14_oc">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j17_18">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
-
-        <joint name="s3_j20_21">
-            <command_interface name="position" />
-            <state_interface name="position" />
-        </joint>
+        <!-- 三个从臂结构完全一致，各一行实例化 -->
+        <xacro:arm prefix="s1" />
+        <xacro:arm prefix="s2" />
+        <xacro:arm prefix="s3" />
 
     </ros2_control>
 

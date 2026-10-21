@@ -1,14 +1,14 @@
 #include "psm_controllers/common/psm_kinematics.hpp"
+#include <cmath>
 
 namespace {
 // PSM连杆参数 LA[12] 短版本
 constexpr float32 LA[12] = {0.0F, 0.0F, 3.3F, 23.8F, 3.3F, 7.9F, 3.7F, 3.7F, 3.7F, 17.0F, 0.0F, 23.0F};
-
 // ECM内窥镜连杆参数
 constexpr float32 LA_ecm[9] = {0.0F, 0.0F, 0.0F, 4.6F, 26.9F, 4.6F, 4.6F, 4.6F, 51.0F};
 
 // PSM目标函数 fff
-float32 fff(float32 x, const RobotPost &Post) {
+float32 fff(float32 x, const Post &Post) {
     const float32 y_sin = std::cos(x);
     const float32 y_cos = std::sin(x);
     return Post.ny * (y_sin + 1.0F) * (Post.ny - 2.0F * y_cos * y_sin) -
@@ -16,29 +16,25 @@ float32 fff(float32 x, const RobotPost &Post) {
 }
 
 // PSM目标函数导数 dfff
-float32 dfff(float32 x, const RobotPost &Post) {
+float32 dfff(float32 x, const Post &Post) {
     const float32 y_sin = std::cos(x);
     const float32 y_cos = std::sin(x);
     return y_cos * y_cos * (y_cos * (Post.nx - 1.0F) - Post.ny * y_sin) -
            2.0F * y_cos * y_sin * (y_sin * (Post.nx - 1.0F) + Post.ny * y_cos) -
-           Post.ny * (y_sin + 1.0F) * 2.0F * (y_sin * y_sin - y_cos * y_cos) -
-           Post.ny * y_cos * (Post.ny - 2.0F * y_cos * y_sin);
+           Post.ny * (y_sin + 1.0F) * 2.0F * (y_sin * y_sin - y_cos * y_cos) - Post.ny * y_cos * (Post.ny - 2.0F * y_cos * y_sin);
 }
 
 // 牛顿迭代求解 q4
-bool resolve_q4(const RobotPost &Post, float32 &x1_out) {
+bool resolve_q4(const Post &Post, float32 &x1_out) {
     float32 wucha = 2.0F;
     float32 x1 = 0.0F;
-
     if (std::fabs(Post.ny) < 1e-6F) {
         x1_out = 0.0F;
         return true;
     }
-
     while (wucha > 0.0001F) {
         const float32 fx = fff(x1, Post);
         const float32 df = dfff(x1, Post);
-
         if (std::fabs(df) < 0.001F) {
             x1 = 0.0F;
             wucha = 0.0F;
@@ -60,7 +56,6 @@ float32 clamp_asin_input(float32 v) {
         return -1.0F;
     return v;
 }
-
 } // namespace
 
 void normalize_rot(float32 &nx, float32 &ny, float32 &nz) {
@@ -72,9 +67,9 @@ void normalize_rot(float32 &nx, float32 &ny, float32 &nz) {
     nz /= d;
 }
 
-bool compute_psm(const RobotPost &post, RobotDof &out_dof) {
+bool compute_psm(const Post &post, Dof &out_dof) {
     // 先归一姿态向量，避免输入非单位向量带来错误
-    RobotPost work_post = post;
+    Post work_post = post;
     normalize_rot(work_post.nx, work_post.ny, work_post.nz);
 
     bool ret_ok = true;
@@ -102,9 +97,8 @@ bool compute_psm(const RobotPost &post, RobotDof &out_dof) {
     const float32 py =
         work_post.iPosY - (q4_sin * (LA[7] + LA[8] * q3_cos) + q4_sin * q4_cos * (q3_cos + 1.0F) * (LA[9] + LA[11]));
 
-    const float32 pz =
-        work_post.iPosZ - (-LA[6] * q3_sin - q4_cos * q3_sin * (LA[7] + LA[8] * q3_cos) - LA[8] * q3_cos * q3_sin -
-                           q3_sin * (LA[9] + LA[11]) * (q4_cos + 1.0F) * (q4_cos + q3_cos * q4_cos - 1.0F));
+    const float32 pz = work_post.iPosZ - (-LA[6] * q3_sin - q4_cos * q3_sin * (LA[7] + LA[8] * q3_cos) - LA[8] * q3_cos * q3_sin -
+                                          q3_sin * (LA[9] + LA[11]) * (q4_cos + 1.0F) * (q4_cos + q3_cos * q4_cos - 1.0F));
 
     // q2
     float32 t2 = py / LA[3];
@@ -113,8 +107,7 @@ bool compute_psm(const RobotPost &post, RobotDof &out_dof) {
 
     const float32 p_temp = (LA[2] + LA[4] + LA[3] * std::sqrt(1.0F - std::sin(out_dof.q[2]) * std::sin(out_dof.q[2])));
 
-    // q1
-    float32 t1 = -pz / p_temp;
+    float32 t1 = pz / p_temp;
     t1 = clamp_asin_input(t1);
     out_dof.q[1] = -std::asin(t1);
 
@@ -128,8 +121,8 @@ bool compute_psm(const RobotPost &post, RobotDof &out_dof) {
     return ret_ok;
 }
 
-void compute_ecm(const RobotPost &post, RobotDof &out_dof) {
-    RobotPost work_post = post;
+void compute_ecm(const Post &post, Dof &out_dof) {
+    Post work_post = post;
     normalize_rot(work_post.nx, work_post.ny, work_post.nz);
 
     out_dof.q[4] = -1.0F * std::asin(work_post.nz);
