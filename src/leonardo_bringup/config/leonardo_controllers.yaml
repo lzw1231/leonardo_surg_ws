@@ -21,6 +21,9 @@ leonardo/controller_manager:
     pedal_mapping_controller:
       type: teleop_controllers/Pedal6KeysMappingController
 
+    aloe_controller:
+      type: psm_controllers/AloeController
+
 # ------------------------------------------------------------------------------
 # 左侧力反馈设备末端控制器
 # ------------------------------------------------------------------------------
@@ -72,17 +75,11 @@ leonardo/pedal_mapping_controller:
     right_prefix: "fd_right_ee_controller/ee"
 
 # ------------------------------------------------------------------------------
-# CAN0 末端控制器（控制 psm_1、psm_2 两台从手）
+# 末端控制器（控制 psm_1、psm_2 、psm_3 从臂、 ecm_1内窥镜）
 # ------------------------------------------------------------------------------
-leonardo/intelligent_can0_controller:
+leonardo/aloe_controller:
   ros__parameters:
-    psm1_prefix: "pedal_mapping_controller/psm_1"
-    psm2_prefix: "pedal_mapping_controller/psm_2"
-
-# ------------------------------------------------------------------------------
-# CAN1 末端控制器（控制 psm_3、ecm_1 两台从手）
-# ------------------------------------------------------------------------------
-leonardo/intelligent_can1_controller:
-  ros__parameters:
-    psm3_prefix: "pedal_mapping_controller/psm_3"
-    ecm1_prefix: "pedal_mapping_controller/ecm_1"
+    psm1_prefix: "pedal_mapping_controller/psm1"
+    psm2_prefix: "pedal_mapping_controller/psm2"
+    psm3_prefix: "pedal_mapping_controller/psm3"
+    ecm1_prefix: "pedal_mapping_controller/ecm1"

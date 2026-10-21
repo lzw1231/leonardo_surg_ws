@@ -57,6 +57,7 @@ def generate_launch_description():
             "fd_left_ee_controller",
             "fd_right_ee_controller",
             "pedal_mapping_controller",
+            "aloe_controller",
             "--controller-manager",
             cm,
             "--inactive",
@@ -86,6 +87,7 @@ def generate_launch_description():
             "fd_left_ee_controller",
             "fd_right_ee_controller",
             "pedal_mapping_controller",
+            "aloe_controller",
         ],
         output="screen",
     )

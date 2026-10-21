@@ -5,7 +5,12 @@
 #include <cmath>
 #include <cstdio>
 #include <limits>
+
 namespace teleop_controllers {
+namespace {
+rclcpp::Logger LOGGER = rclcpp::get_logger("Pedal6KeysMappingController");
+const double qNAN = std::numeric_limits<double>::quiet_NaN();
+} // namespace
 
 // ============================================================================
 // on_init
@@ -22,7 +27,7 @@ controller_interface::CallbackReturn Pedal6KeysMappingController::on_init() {
             get_node()->declare_parameter<std::string>("right_prefix", "fd_right_ee_controller/ee");
         }
     } catch (const std::exception &e) {
-        RCLCPP_ERROR(get_node()->get_logger(), "on_init 异常: %s", e.what());
+        RCLCPP_ERROR(LOGGER, "on_init 异常: %s", e.what());
         return CallbackReturn::ERROR;
     }
     return CallbackReturn::SUCCESS;
@@ -39,7 +44,7 @@ controller_interface::CallbackReturn Pedal6KeysMappingController::on_configure(c
     right_prefix_ = node->get_parameter("right_prefix").as_string();
 
     if (pedal_state_topic_.empty() || left_prefix_.empty() || right_prefix_.empty()) {
-        RCLCPP_ERROR(node->get_logger(), "参数不能为空");
+        RCLCPP_ERROR(LOGGER, "参数不能为空");
         return CallbackReturn::ERROR;
     }
 
@@ -51,28 +56,23 @@ controller_interface::CallbackReturn Pedal6KeysMappingController::on_configure(c
         right_interfaces_.push_back(right_prefix_ + "/" + suffix);
     }
 
-    // 导出内存：4 组数据 + 4 个 epoch
-    refs_.assign(REFS_SIZE, std::numeric_limits<double>::quiet_NaN());
-    for (size_t g = 0; g < GROUP_COUNT; ++g) {
-        refs_[epoch_idx(g)] = 0.0;
-    }
+    // 导出内存：44 数据 + 1 共享 epoch
+    refs_.assign(REFS_SIZE, qNAN);
+    refs_[EPOCH_IDX] = 0.0;
     last_event_counter_ = 0;
 
     // 订阅踏板话题（回调：记录 key + 计数事件）
-    pedal_sub_ = node->create_subscription<std_msgs::msg::Int32>(pedal_state_topic_, rclcpp::SystemDefaultsQoS(),
-                                                                 [this](const std_msgs::msg::Int32::ConstSharedPtr msg) {
-                                                                     pedal_key_.store(static_cast<int>(msg->data), std::memory_order_relaxed);
-                                                                     pedal_event_counter_.fetch_add(1, std::memory_order_relaxed);
-                                                                 });
+    pedal_sub_ = node->create_subscription<std_msgs::msg::Int32>(
+        pedal_state_topic_, rclcpp::SystemDefaultsQoS(), [this](const std_msgs::msg::Int32::ConstSharedPtr msg) {
+            pedal_key_.store(static_cast<int>(msg->data), std::memory_order_relaxed);
+            pedal_event_counter_.fetch_add(1, std::memory_order_relaxed);
+        });
 
-    RCLCPP_INFO(node->get_logger(), "Pedal6KeysMappingController 已配置完成");
-    RCLCPP_INFO(node->get_logger(), "  踏板话题: %s", pedal_state_topic_.c_str());
-    RCLCPP_INFO(node->get_logger(), "  左手: %s", left_prefix_.c_str());
-    RCLCPP_INFO(node->get_logger(), "  右手: %s", right_prefix_.c_str());
-    RCLCPP_INFO(node->get_logger(), "  导出 %zu 组（每组含 epoch + %zu 个数据接口）", GROUP_COUNT, SRC_SIZE);
-    for (size_t g = 0; g < GROUP_COUNT; ++g) {
-        RCLCPP_INFO(node->get_logger(), "    %s  (+ %s/epoch)", kGroups[g], kGroups[g]);
-    }
+    RCLCPP_INFO(LOGGER, "Pedal6KeysMappingController 已配置完成");
+    RCLCPP_INFO(LOGGER, "  踏板话题: %s", pedal_state_topic_.c_str());
+    RCLCPP_INFO(LOGGER, "  左手: %s", left_prefix_.c_str());
+    RCLCPP_INFO(LOGGER, "  右手: %s", right_prefix_.c_str());
+    RCLCPP_INFO(LOGGER, "  导出 %zu 个接口：%zu 数据 + 1 共享 epoch", REFS_SIZE, DATA_SIZE);
 
     pedal_key_.store(0, std::memory_order_relaxed);
     pedal_event_counter_.store(0, std::memory_order_relaxed);
@@ -103,31 +103,22 @@ controller_interface::InterfaceConfiguration Pedal6KeysMappingController::state_
 controller_interface::CallbackReturn Pedal6KeysMappingController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
     const size_t expected = left_interfaces_.size() + right_interfaces_.size();
     if (command_interfaces_.size() != expected) {
-        RCLCPP_ERROR(get_node()->get_logger(), "command 接口数量不符：期望 %zu，实际 %zu", expected, command_interfaces_.size());
+        RCLCPP_ERROR(LOGGER, "command 接口数量不符：期望 %zu，实际 %zu", expected, command_interfaces_.size());
         return CallbackReturn::ERROR;
     }
 
     std::fill(refs_.begin(), refs_.end(), std::numeric_limits<double>::quiet_NaN());
-    for (size_t g = 0; g < GROUP_COUNT; ++g) {
-        refs_[epoch_idx(g)] = 0.0;
-    }
+    refs_[EPOCH_IDX] = 0.0;
     last_event_counter_ = 0;
     pedal_key_.store(0, std::memory_order_relaxed);
     pedal_event_counter_.store(0, std::memory_order_relaxed);
 
-    // RCLCPP_INFO(get_node()->get_logger(), "--- command_interfaces_ 实际映射 ---");
-    // for (size_t i = 0; i < command_interfaces_.size(); ++i) {
-    //     RCLCPP_INFO(get_node()->get_logger(), "  [%2zu] %s", i, command_interfaces_[i].get_name().c_str());
-    // }
-    // RCLCPP_INFO(get_node()->get_logger(), "  期望左: %s ... %s", left_interfaces_.front().c_str(), left_interfaces_.back().c_str());
-    // RCLCPP_INFO(get_node()->get_logger(), "  期望右: %s ... %s", right_interfaces_.front().c_str(), right_interfaces_.back().c_str());
-
-    RCLCPP_INFO(get_node()->get_logger(), "Pedal6KeysMappingController 已激活成功");
+    RCLCPP_INFO(LOGGER, "Pedal6KeysMappingController 已激活成功");
     return CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn Pedal6KeysMappingController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
-    std::fill(refs_.begin(), refs_.end(), std::numeric_limits<double>::quiet_NaN());
+    std::fill(refs_.begin(), refs_.end(), qNAN);
     return CallbackReturn::SUCCESS;
 }
 
@@ -157,10 +148,8 @@ controller_interface::return_type Pedal6KeysMappingController::update_and_write_
     const int ev = pedal_event_counter_.load(std::memory_order_relaxed);
     if (ev != last_event_counter_) {
         last_event_counter_ = ev;
-        // 有按键，所有组 epoch +1（通知下游重新定位）
-        for (size_t g = 0; g < GROUP_COUNT; ++g) {
-            refs_[epoch_idx(g)] += 1.0;
-        }
+        // 有按键，共享 epoch +1
+        refs_[EPOCH_IDX] += 1.0;
     }
 
     // ---- 2. 根据当前 key 决定写什么 ----
@@ -168,15 +157,12 @@ controller_interface::return_type Pedal6KeysMappingController::update_and_write_
 
     switch (key) {
     case 1:
-        // RCLCPP_INFO(get_node()->get_logger(), "按键1, 左->1, 右->2");
         copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_1_IDX);
         copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_2_IDX);
         break;
     case 2:
-        // RCLCPP_INFO(get_node()->get_logger(), "按键2, NULL ");
         break;
     case 3:
-        // RCLCPP_INFO(get_node()->get_logger(), "按键3, 左->2, 右->3");
         copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_2_IDX);
         copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_3_IDX);
         break;
@@ -206,7 +192,7 @@ void Pedal6KeysMappingController::copy_source_to_dest(size_t src_base, size_t ds
 }
 
 // ============================================================================
-// 导出 4 组数据 + 4 个 epoch
+// 导出 45 个接口：44 数据 + 1 epoch
 // ============================================================================
 std::vector<hardware_interface::CommandInterface::SharedPtr> Pedal6KeysMappingController::on_export_reference_interfaces_list() {
     std::vector<hardware_interface::CommandInterface::SharedPtr> interfaces;
@@ -214,7 +200,7 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> Pedal6KeysMappingCo
 
     const std::string &ctrl_name = get_node()->get_name();
 
-    // 4 组数据（每组 SRC_SIZE 个）
+    // 4 组数据（每组 SRC_SIZE 个），共 44
     for (size_t g = 0; g < GROUP_COUNT; ++g) {
         for (size_t i = 0; i < SRC_SIZE; ++i) {
             std::string if_name = std::string(kGroups[g]) + "/" + kSuffixes[i];
@@ -222,11 +208,8 @@ std::vector<hardware_interface::CommandInterface::SharedPtr> Pedal6KeysMappingCo
         }
     }
 
-    // 4 个 epoch
-    for (size_t g = 0; g < GROUP_COUNT; ++g) {
-        std::string if_name = std::string(kGroups[g]) + "/epoch";
-        interfaces.push_back(std::make_shared<hardware_interface::CommandInterface>(ctrl_name, if_name, &refs_[epoch_idx(g)]));
-    }
+    // 1 个 epoch
+    interfaces.push_back(std::make_shared<hardware_interface::CommandInterface>(ctrl_name, "epoch", &refs_[EPOCH_IDX]));
 
     return interfaces;
 }

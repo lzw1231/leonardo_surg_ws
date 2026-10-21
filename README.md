@@ -17,7 +17,7 @@ source ~/.bashrc
 
 
 
-A	Aloe（芦荟）
+A	Aloe（芦荟）  ————   从臂
 B	Bamboo（竹）
 C	Cactus（仙人掌）
 D	Daisy（雏菊）

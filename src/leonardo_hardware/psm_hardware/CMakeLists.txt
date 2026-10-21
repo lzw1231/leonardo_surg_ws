@@ -22,8 +22,8 @@ find_package(rclcpp_lifecycle REQUIRED)
 # 库构建
 # ==============================================================================
 add_library(${PROJECT_NAME} SHARED
-        src/aloe_hardware_interface/can_protocol.cpp
-        src/aloe_hardware_interface/can_socket.cpp
+        src/common/can_protocol.cpp
+        src/common/can_socket.cpp
         src/aloe_hardware_interface/aloe_hardware_interface.cpp
 )
 
