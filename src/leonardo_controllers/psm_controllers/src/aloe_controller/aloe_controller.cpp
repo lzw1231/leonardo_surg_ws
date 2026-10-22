@@ -1,7 +1,7 @@
 #include "psm_controllers/aloe_controller/aloe_controller.hpp"
 
 #include <cmath>
-#include <limits>
+#include <iomanip>
 
 namespace psm_controllers {
 
@@ -11,193 +11,309 @@ const double qNaN = std::numeric_limits<double>::quiet_NaN();
 } // namespace
 
 // ============================================================================
-// 接口声明
+// 接口配置
 // ============================================================================
+
 controller_interface::InterfaceConfiguration AloeController::command_interface_configuration() const {
     controller_interface::InterfaceConfiguration config;
     config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-    config.names = command_interface_names_; // 51 个：s1/s2/s3 各 17
+
+    std::vector<std::string> suffixes = {"_j01_base/position",       "_j03_oc/position",         "_j04_oc/position",
+                                         "_j07_oc/position",         "_j08_oc/position",         "_j11_oc/position",
+                                         "_j12_oc/position",         "_j13_oc/position",         "_j14_oc/position",
+                                         "_j17_18/position",         "_j20_21/position",         "_joint_motor_01/position",
+                                         "_joint_motor_02/position", "_joint_motor_03/position", "_joint_motor_04/position",
+                                         "_joint_motor_05/position", "_joint_motor_06/position"};
+
+    for (const auto &prefix : arm_prefixes_) {
+        for (const auto &suffix : suffixes) {
+            config.names.push_back(prefix + suffix);
+        }
+    }
     return config;
 }
 
 controller_interface::InterfaceConfiguration AloeController::state_interface_configuration() const {
-    controller_interface::InterfaceConfiguration config;
-    config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-    config.names = state_interfaces_names_; // 45 个：4 臂 × 11 + 1 epoch
-    return config;
+    return controller_interface::InterfaceConfiguration{controller_interface::interface_configuration_type::NONE};
 }
 
 // ============================================================================
-// on_init
+// 生命周期管理
 // ============================================================================
+
 controller_interface::CallbackReturn AloeController::on_init() {
     try {
         auto node = get_node();
-        for (const auto *name : kPrefixParamNames) {
-            if (!node->has_parameter(name)) {
-                node->declare_parameter<std::string>(name, "");
-            }
+        if (!node->has_parameter("teleop_sub_topic")) {
+            node->declare_parameter<std::string>("teleop_sub_topic", "/leonardo/pedal_mapping_cmd");
         }
     } catch (const std::exception &e) {
-        RCLCPP_ERROR(LOGGER, "on_init 异常: %s", e.what());
+        RCLCPP_ERROR(LOGGER, "Init error: %s", e.what());
         return CallbackReturn::ERROR;
     }
     return CallbackReturn::SUCCESS;
 }
 
-// ============================================================================
-// on_configure
-// ============================================================================
-controller_interface::CallbackReturn AloeController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
+controller_interface::CallbackReturn AloeController::on_configure(const rclcpp_lifecycle::State &) {
     auto node = get_node();
+    teleop_topic_name_ = node->get_parameter("teleop_sub_topic").as_string();
 
-    // ---- 1. 读四臂上游前缀（state 侧需要 ecm1）----
-    for (size_t a = 0; a < kArmsState; ++a) {
-        prefixes_[a] = node->get_parameter(kPrefixParamNames[a]).as_string();
-        if (prefixes_[a].empty()) {
-            RCLCPP_ERROR(LOGGER, "YAML %s 不能为空", kPrefixParamNames[a]);
-            return CallbackReturn::ERROR;
-        }
+    for (int i = 0; i < NUM_ARMS; ++i) {
+        arms_[i].name = arm_prefixes_[i];
+        arms_[i].is_initialized = false;
     }
 
-    // ---- 2. state 接口名：4 臂 × 11 + 1 epoch ----
-    state_interfaces_names_.clear();
-    state_interfaces_names_.reserve(kStateSize);
-    for (size_t a = 0; a < kArmsState; ++a) {
-        for (const auto *suffix : kSuffixes) {
-            state_interfaces_names_.push_back(prefixes_[a] + "/" + suffix);
-        }
-    }
-    {
-        const auto &p = prefixes_[0];
-        const auto pos = p.rfind('/');
-        state_interfaces_names_.push_back((pos != std::string::npos) ? p.substr(0, pos) + "/epoch" : "epoch");
-    }
-    if (state_interfaces_names_.size() != kStateSize) {
-        RCLCPP_ERROR(LOGGER, "state 接口数量错误 %zu != %zu", state_interfaces_names_.size(), kStateSize);
-        return CallbackReturn::ERROR;
-    }
+    teleop_sub_ = node->create_subscription<std_msgs::msg::Float64MultiArray>(
+        teleop_topic_name_, rclcpp::QoS(1).reliable(), [this](const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
+            std::lock_guard<std::mutex> lock(data_mutex_);
+            if (msg->data.size() == TOPIC_DATA_SIZE) {
+                latest_topic_data_ = msg->data;
+            } else {
+                RCLCPP_WARN_THROTTLE(LOGGER, *get_node()->get_clock(), 2000, "Invalid topic size: %zu", msg->data.size());
+            }
+        });
 
-    // ---- 3. command 接口名：3 臂 × 17 ----
-    command_interface_names_.clear();
-    command_interface_names_.reserve(kCommandSize);
-    for (size_t a = 0; a < kArmsCommand; ++a) {
-        for (const auto *suffix : kArmCommandSuffix) {
-            command_interface_names_.push_back(std::string(kCmdPrefixes[a]) + suffix);
-        }
-    }
-    if (command_interface_names_.size() != kCommandSize) {
-        RCLCPP_ERROR(LOGGER, "command 接口数量错误 %zu != %zu", command_interface_names_.size(), kCommandSize);
-        return CallbackReturn::ERROR;
-    }
-
-    RCLCPP_INFO(LOGGER, "AloeController 配置完成");
-    for (size_t a = 0; a < kArmsState; ++a) {
-        RCLCPP_INFO(LOGGER, "  %s: %s", kPrefixParamNames[a], prefixes_[a].c_str());
-    }
-    RCLCPP_INFO(LOGGER, "  state 接口 %zu 个, command 接口 %zu 个", state_interfaces_names_.size(), command_interface_names_.size());
+    RCLCPP_INFO(LOGGER, "Configured. Subscribing to: %s", teleop_topic_name_.c_str());
     return CallbackReturn::SUCCESS;
 }
 
-// ============================================================================
-// on_activate
-// ============================================================================
-controller_interface::CallbackReturn AloeController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
-    // ---- 1. 数量校验 ----
-    if (state_interfaces_.size() != kStateSize) {
-        RCLCPP_ERROR(LOGGER, "state 接口数量不符：期望 %zu，实际 %zu", kStateSize, state_interfaces_.size());
-        return CallbackReturn::ERROR;
-    }
-    if (command_interfaces_.size() != kCommandSize) {
-        RCLCPP_ERROR(LOGGER, "command 接口数量不符：期望 %zu，实际 %zu", kCommandSize, command_interfaces_.size());
-        return CallbackReturn::ERROR;
+controller_interface::CallbackReturn AloeController::on_activate(const rclcpp_lifecycle::State &) {
+    RCLCPP_INFO(LOGGER, "Activating... Total command interfaces: %zu", command_interfaces_.size());
+
+    for (size_t i = 0; i < command_interfaces_.size(); ++i) {
+        RCLCPP_DEBUG(LOGGER, "  Cmd[%zu]: %s", i, command_interfaces_[i].get_name().c_str());
     }
 
-    // ---- 2. command 名字逐一校验 ----
-    for (size_t i = 0; i < kCommandSize; ++i) {
-        if (command_interfaces_[i].get_name() != command_interface_names_[i]) {
-            RCLCPP_ERROR(LOGGER, "command 接口名不符 idx=%zu expect=%s actual=%s", i, command_interface_names_[i].c_str(),
-                         command_interfaces_[i].get_name().c_str());
-            return CallbackReturn::ERROR;
-        }
-    }
-
-    // ---- 3. command 全部置 qNaN（安全位），基准同步 qNaN ----
     for (auto &ci : command_interfaces_) {
         (void)ci.set_value(qNaN);
     }
-    for (auto *rt : arms_) {
-        rt->master_ref_ci.fill(qNaN);
-        rt->slave_ref_ci.fill(qNaN);
-        rt->last_cmd_ci.fill(qNaN);
+
+    // 【新增】初始化位置保持缓存，初始为 0.0 防止 RViz 初始状态乱跳
+    for (int i = 0; i < NUM_ARMS; ++i) {
+        last_valid_commands_[i].fill(0.0);
     }
 
-    // ---- 4. 重置基准 / epoch / state ----
-    ref_ready_ = false;
-    last_epoch_ = std::numeric_limits<double>::quiet_NaN();
-    upstream_state_.fill(std::numeric_limits<double>::quiet_NaN());
+    last_epoch_ = qNaN;
+    latest_topic_data_.clear();
 
-    RCLCPP_INFO(LOGGER, "AloeController 已激活：state %zu, command %zu", state_interfaces_.size(), command_interfaces_.size());
+    RCLCPP_INFO(LOGGER, "Activated.");
+    return CallbackReturn::SUCCESS;
+}
+
+controller_interface::CallbackReturn AloeController::on_deactivate(const rclcpp_lifecycle::State &) {
+    for (auto &ci : command_interfaces_) {
+        (void)ci.set_value(qNaN);
+    }
+    RCLCPP_INFO(LOGGER, "Deactivated.");
+    return CallbackReturn::SUCCESS;
+}
+
+controller_interface::CallbackReturn AloeController::on_cleanup(const rclcpp_lifecycle::State &) {
+    teleop_sub_.reset();
+    latest_topic_data_.clear();
     return CallbackReturn::SUCCESS;
 }
 
 // ============================================================================
-// update
+// 核心逻辑辅助函数
 // ============================================================================
-controller_interface::return_type AloeController::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
-    // ---- 1. 读上游 state，非法值填 NaN ----
-    for (size_t i = 0; i < kStateSize; ++i) {
-        const auto opt = state_interfaces_[i].get_optional();
-        upstream_state_[i] = (opt.has_value() && std::isfinite(opt.value())) ? opt.value() : qNaN;
+
+bool AloeController::compute_arm_joints(int arm_index, const std::vector<double> &topic_data,
+                                        std::array<double, JOINTS_PER_ARM> &out_joints) {
+    int offset = arm_index * DATA_PER_ARM_IN_TOPIC;
+
+    Post post;
+    post.iPosX = topic_data[offset + 0];
+    post.iPosY = topic_data[offset + 1];
+    post.iPosZ = topic_data[offset + 2];
+
+    double qw = topic_data[offset + 3];
+    double qx = topic_data[offset + 4];
+    double qy = topic_data[offset + 5];
+    double qz = topic_data[offset + 6];
+
+    post.nx = 2.0 * (qx * qz + qw * qy);
+    post.ny = 2.0 * (qy * qz - qw * qx);
+    post.nz = 1.0 - 2.0 * (qx * qx + qy * qy);
+
+    post.DofFive = topic_data[offset + 7];
+    post.iEndAngle = topic_data[offset + 10];
+
+    Dof dof_result;
+    if (!compute_psm(post, dof_result)) {
+        return false;
     }
 
-    // ---- 2. 打印验证（1 秒一次，避免刷屏）----
-    auto S = [this](size_t arm, size_t field) { return upstream_state_[arm * kUpstreamPerArm + field]; };
-    // field: 0=x 1=y 2=z 3=qw 4=qx 5=qy 6=qz 7=roll 8=pitch 9=yaw 10=gripper
-    const double epoch = upstream_state_[kArmsState * kUpstreamPerArm];
+    out_joints[0] = dof_result.q[0];
+    out_joints[1] = dof_result.q[1];
+    out_joints[2] = dof_result.q[2];
+    out_joints[3] = dof_result.q[3];
+    out_joints[4] = dof_result.q[4];
+    out_joints[5] = dof_result.q[5];
+    out_joints[6] = dof_result.q[6];
 
-    RCLCPP_INFO_THROTTLE(LOGGER, *get_node()->get_clock(), 1000,
-                         "psm1 x=%.3f y=%.3f z=%.3f qw=%.3f roll=%.3f gripper=%.3f | "
-                         "psm2 x=%.3f y=%.3f z=%.3f qw=%.3f roll=%.3f gripper=%.3f | "
-                         "psm3 x=%.3f y=%.3f z=%.3f qw=%.3f roll=%.3f gripper=%.3f | "
-                         "ecm1 x=%.3f y=%.3f z=%.3f qw=%.3f roll=%.3f gripper=%.3f | epoch=%.0f",
-                         S(0, 0), S(0, 1), S(0, 2), S(0, 3), S(0, 7), S(0, 10), S(1, 0), S(1, 1), S(1, 2), S(1, 3), S(1, 7), S(1, 10),
-                         S(2, 0), S(2, 1), S(2, 2), S(2, 3), S(2, 7), S(2, 10), S(3, 0), S(3, 1), S(3, 2), S(3, 3), S(3, 7), S(3, 10),
-                         epoch);
+    return true;
+}
+
+void AloeController::write_to_hardware(int arm_index, const std::array<double, JOINTS_PER_ARM> &joints, bool send_nan) {
+    size_t base_idx = static_cast<size_t>(arm_index) * CMD_INTERFACES_PER_ARM;
+
+    if (base_idx >= command_interfaces_.size()) {
+        RCLCPP_ERROR(LOGGER, "Invalid arm_index %d, base_idx %zu >= size %zu", arm_index, base_idx, command_interfaces_.size());
+        return;
+    }
+
+    for (size_t i = 0; i < CMD_INTERFACES_PER_ARM; ++i) {
+        double val = qNaN;
+
+        if (!send_nan && i < 11) {
+            // 正常计算逻辑
+            switch (i) {
+            case 0:
+                val = joints[0];
+                break;
+            case 1:
+                val = joints[1];
+                break;
+            case 2:
+                val = joints[2];
+                break;
+            case 3:
+                val = -joints[2];
+                break;
+            case 4:
+                val = -joints[1];
+                break;
+            case 5:
+                val = joints[3];
+                break;
+            case 6:
+                val = joints[4];
+                break;
+            case 7:
+                val = joints[3];
+                break;
+            case 8:
+                val = joints[4];
+                break;
+            case 9:
+                val = joints[5];
+                break;
+            case 10:
+                val = joints[6];
+                break;
+            default:
+                break;
+            }
+            // 【关键修改】计算成功后，更新缓存，供后续“保持”使用
+            last_valid_commands_[arm_index][i] = val;
+        } else {
+            // 【关键修改】当 send_nan 为 true (离合器/异常) 时，不再发送真正的 NaN，
+            // 而是发送上一帧缓存的有效值，从而实现 RViz 和物理电机的“位置保持”
+            val = last_valid_commands_[arm_index][i];
+        }
+
+        size_t target_idx = base_idx + i;
+        if (target_idx < command_interfaces_.size()) {
+            (void)command_interfaces_[target_idx].set_value(val);
+        } else {
+            RCLCPP_ERROR(LOGGER, "Target index %zu out of bounds!", target_idx);
+        }
+    }
+}
+
+void AloeController::reset_all_references() {
+    for (int i = 0; i < NUM_ARMS; ++i) {
+        arms_[i].master_ref_joints = arms_[i].current_master_joints;
+        arms_[i].is_initialized = true;
+    }
+    RCLCPP_INFO(LOGGER, "References reset due to Clutch.");
+}
+
+// ============================================================================
+// Update 循环
+// ============================================================================
+controller_interface::return_type AloeController::update(const rclcpp::Time &, const rclcpp::Duration &) {
+    std::vector<double> topic_data;
+    double current_epoch = qNaN;
+
+    // --- 1. 线程安全地获取最新话题数据 ---
+    {
+        std::lock_guard<std::mutex> lock(data_mutex_);
+
+        if (latest_topic_data_.empty()) {
+            static bool warned_no_data = false;
+            if (!warned_no_data) {
+                RCLCPP_WARN(LOGGER, "No topic data received yet. Holding position.");
+                warned_no_data = true;
+            }
+            // 无数据时，触发保持逻辑
+            for (int i = 0; i < NUM_ARMS; ++i)
+                write_to_hardware(i, {}, true);
+
+            return controller_interface::return_type::OK;
+        }
+
+        topic_data = latest_topic_data_;
+        current_epoch = topic_data[44];
+    }
+
+    // --- 2. 离合器（Clutch）检测逻辑 ---
+    bool clutch_active = std::isfinite(current_epoch) && std::isfinite(last_epoch_) && (current_epoch - last_epoch_) > 0.5;
+
+    if (std::isfinite(current_epoch)) {
+        last_epoch_ = current_epoch;
+    }
+
+    if (clutch_active) {
+        RCLCPP_INFO_THROTTLE(LOGGER, *get_node()->get_clock(), 1000, "Clutch Triggered! Holding Position.");
+
+        reset_all_references();
+
+        // 【核心修复】传入 true，write_to_hardware 内部会自动使用 last_valid_commands_ 进行保持
+        for (int a = 0; a < NUM_ARMS; ++a)
+            write_to_hardware(a, {}, true);
+
+        return controller_interface::return_type::OK;
+    }
+
+    // --- 3. 主控制循环：遍历每个机械臂 ---
+    for (int i = 0; i < NUM_ARMS; ++i) {
+        std::array<double, JOINTS_PER_ARM> current_joints;
+
+        if (!compute_arm_joints(i, topic_data, current_joints)) {
+            RCLCPP_WARN_THROTTLE(LOGGER, *get_node()->get_clock(), 1000, "IK Failed for arm %d. Holding position.", i);
+            // IK 失败时，触发保持逻辑
+            write_to_hardware(i, {}, true);
+            continue;
+        }
+
+        arms_[i].current_master_joints = current_joints;
+
+        if (!arms_[i].is_initialized) {
+            RCLCPP_INFO(LOGGER, "Arm %d initialized. Ref joints set.", i);
+
+            arms_[i].master_ref_joints = current_joints;
+            arms_[i].slave_ref_joints.fill(0.0);
+            arms_[i].is_initialized = true;
+
+            // 初始化阶段触发一次保持（此时缓存里是 0.0）
+            write_to_hardware(i, {}, true);
+            continue;
+        }
+
+        // 3.3 主从映射计算 (Delta Control)
+        std::array<double, JOINTS_PER_ARM> output_joints;
+        for (int j = 0; j < JOINTS_PER_ARM; ++j) {
+            double delta = current_joints[j] - arms_[i].master_ref_joints[j];
+            output_joints[j] = arms_[i].slave_ref_joints[j] + delta;
+        }
+
+        // 3.4 发送控制指令 (传入 false，正常计算并更新缓存)
+        write_to_hardware(i, output_joints, false);
+    }
 
     return controller_interface::return_type::OK;
-}
-
-// ============================================================================
-// on_deactivate
-// ============================================================================
-controller_interface::CallbackReturn AloeController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
-
-    for (auto &ci : command_interfaces_) {
-        (void)ci.set_value(qNaN);
-    }
-    for (auto *rt : arms_) {
-        rt->master_ref_ci.fill(qNaN);
-        rt->slave_ref_ci.fill(qNaN);
-        rt->last_cmd_ci.fill(qNaN);
-    }
-
-    ref_ready_ = false;
-    last_epoch_ = std::numeric_limits<double>::quiet_NaN();
-    upstream_state_.fill(std::numeric_limits<double>::quiet_NaN());
-    return CallbackReturn::SUCCESS;
-}
-
-// ============================================================================
-// on_cleanup（待实现）
-// ============================================================================
-controller_interface::CallbackReturn AloeController::on_cleanup(const rclcpp_lifecycle::State & /*previous_state*/) {
-    state_interfaces_names_.clear();
-    command_interface_names_.clear();
-    upstream_state_.fill(std::numeric_limits<double>::quiet_NaN());
-    ref_ready_ = false;
-    last_epoch_ = std::numeric_limits<double>::quiet_NaN();
-    return CallbackReturn::SUCCESS;
 }
 
 } // namespace psm_controllers

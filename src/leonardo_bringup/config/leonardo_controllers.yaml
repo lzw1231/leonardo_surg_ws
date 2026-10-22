@@ -70,16 +70,14 @@ leonardo/pedal_publisher:
 # ------------------------------------------------------------------------------
 leonardo/pedal_mapping_controller:
   ros__parameters:
-    pedal_state_topic: /leonardo/pedal_state
     left_prefix:  "fd_left_ee_controller/ee"
     right_prefix: "fd_right_ee_controller/ee"
+    pedal_state_topic: /leonardo/pedal_state    
+    teleop_mapping_topic: "/leonardo/pedal_mapping_cmd"
 
 # ------------------------------------------------------------------------------
 # 末端控制器（控制 psm_1、psm_2 、psm_3 从臂、 ecm_1内窥镜）
 # ------------------------------------------------------------------------------
 leonardo/aloe_controller:
   ros__parameters:
-    psm1_prefix: "pedal_mapping_controller/psm1"
-    psm2_prefix: "pedal_mapping_controller/psm2"
-    psm3_prefix: "pedal_mapping_controller/psm3"
-    ecm1_prefix: "pedal_mapping_controller/ecm1"
+    teleop_sub_topic: "/leonardo/pedal_mapping_cmd"

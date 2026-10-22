@@ -1,4 +1,5 @@
 #include "psm_controllers/common/psm_kinematics.hpp"
+
 #include <cmath>
 
 namespace {
@@ -11,8 +12,7 @@ constexpr float32 LA_ecm[9] = {0.0F, 0.0F, 0.0F, 4.6F, 26.9F, 4.6F, 4.6F, 4.6F, 
 float32 fff(float32 x, const Post &Post) {
     const float32 y_sin = std::cos(x);
     const float32 y_cos = std::sin(x);
-    return Post.ny * (y_sin + 1.0F) * (Post.ny - 2.0F * y_cos * y_sin) -
-           ((Post.nx - 1.0F) * y_sin + Post.ny * y_cos) * (y_cos * y_cos);
+    return Post.ny * (y_sin + 1.0F) * (Post.ny - 2.0F * y_cos * y_sin) - ((Post.nx - 1.0F) * y_sin + Post.ny * y_cos) * (y_cos * y_cos);
 }
 
 // PSM目标函数导数 dfff
@@ -89,13 +89,11 @@ bool compute_psm(const Post &post, Dof &out_dof) {
     const float32 q3_cos = std::sqrt(1.0F - q3_sin * q3_sin);
 
     const float32 px =
-        work_post.iPosX -
-        (LA[5] - LA[8] * q3_sin * q3_sin + LA[6] * q3_cos -
-         (LA[9] + LA[11]) * (q3_cos * q4_sin * q4_sin + q4_cos * q3_sin * q3_sin - q3_cos * q3_cos * q4_cos * q4_cos) +
-         q3_cos * q4_cos * (LA[7] + LA[8] * q3_cos));
+        work_post.iPosX - (LA[5] - LA[8] * q3_sin * q3_sin + LA[6] * q3_cos -
+                           (LA[9] + LA[11]) * (q3_cos * q4_sin * q4_sin + q4_cos * q3_sin * q3_sin - q3_cos * q3_cos * q4_cos * q4_cos) +
+                           q3_cos * q4_cos * (LA[7] + LA[8] * q3_cos));
 
-    const float32 py =
-        work_post.iPosY - (q4_sin * (LA[7] + LA[8] * q3_cos) + q4_sin * q4_cos * (q3_cos + 1.0F) * (LA[9] + LA[11]));
+    const float32 py = work_post.iPosY - (q4_sin * (LA[7] + LA[8] * q3_cos) + q4_sin * q4_cos * (q3_cos + 1.0F) * (LA[9] + LA[11]));
 
     const float32 pz = work_post.iPosZ - (-LA[6] * q3_sin - q4_cos * q3_sin * (LA[7] + LA[8] * q3_cos) - LA[8] * q3_cos * q3_sin -
                                           q3_sin * (LA[9] + LA[11]) * (q4_cos + 1.0F) * (q4_cos + q3_cos * q4_cos - 1.0F));
@@ -113,6 +111,7 @@ bool compute_psm(const Post &post, Dof &out_dof) {
 
     // q0
     out_dof.q[0] = px - LA[4] - p_temp * std::sqrt(1.0F - std::sin(out_dof.q[1]) * std::sin(out_dof.q[1]));
+    out_dof.q[0] /= 1000.0F; // 毫米 -> 米
 
     // q5 q6 外部输入
     out_dof.q[5] = work_post.DofFive;
@@ -136,8 +135,7 @@ void compute_ecm(const Post &post, Dof &out_dof) {
     p_temp = clamp_asin_input(p_temp);
     out_dof.q[2] = std::asin(p_temp);
 
-    p_temp = -1.0F * (work_post.iPosZ + LA_ecm[8] * std::sin(out_dof.q[4])) /
-             (LA_ecm[3] + LA_ecm[5] + LA_ecm[4] * std::cos(out_dof.q[2]));
+    p_temp = -1.0F * (work_post.iPosZ + LA_ecm[8] * std::sin(out_dof.q[4])) / (LA_ecm[3] + LA_ecm[5] + LA_ecm[4] * std::cos(out_dof.q[2]));
     p_temp = clamp_asin_input(p_temp);
     out_dof.q[1] = std::asin(p_temp);
 

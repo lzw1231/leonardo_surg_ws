@@ -1,13 +1,13 @@
 #pragma once
 
+#include <atomic>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/int32.hpp>
-
-#include <atomic>
 #include <string>
 #include <thread>
 
 namespace leonardo_teleop {
+
 /**
  * 踏板状态发布者
  *
@@ -32,6 +32,7 @@ class PedalPublisher : public rclcpp::Node {
     };
 
     // 键码（evdev 常量值）
+    // 注意：请根据 evtest 的实际输出确认这些值是否正确
     static constexpr int KEY_CODE_1 = 2; // KEY_1
     static constexpr int KEY_CODE_2 = 3; // KEY_2
     static constexpr int KEY_CODE_3 = 4; // KEY_3
@@ -53,4 +54,5 @@ class PedalPublisher : public rclcpp::Node {
     std::atomic<bool> running_{true};
     std::thread evdev_thread_;
 };
+
 } // namespace leonardo_teleop

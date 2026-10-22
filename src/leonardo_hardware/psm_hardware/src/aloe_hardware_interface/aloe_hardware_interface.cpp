@@ -1,6 +1,5 @@
 #include "psm_hardware/aloe_hardware_interface/aloe_hardware_interface.hpp"
 
-#include <algorithm>
 #include <chrono>
 #include <stdexcept>
 #include <system_error>
@@ -13,12 +12,11 @@ rclcpp::Logger LOGGER = rclcpp::get_logger("AloeHardwareInterface");
 const double qNAN = std::numeric_limits<double>::quiet_NaN();
 } // namespace
 
-// ---------------------------------------------------------------------------
-// 生命周期回调
-// ---------------------------------------------------------------------------
+// ============================================================================
+// 初始化与配置
+// ============================================================================
 
 hardware_interface::CallbackReturn AloeHardwareInterface::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
-
     if (hardware_interface::SystemInterface::on_init(params) != hardware_interface::CallbackReturn::SUCCESS) {
         return hardware_interface::CallbackReturn::ERROR;
     }
@@ -26,242 +24,244 @@ hardware_interface::CallbackReturn AloeHardwareInterface::on_init(const hardware
     const auto &hp = info_.hardware_parameters;
 
     try {
+        // 1. 解析基础参数
         can0_interface_ = hp.at("can0_interface");
         can1_interface_ = hp.at("can1_interface");
-        snake_1_id_ = std::stoul(hp.at("slave_1_id"), nullptr, 0);
-        snake_2_id_ = std::stoul(hp.at("slave_2_id"), nullptr, 0);
-        snake_3_id_ = std::stoul(hp.at("slave_3_id"), nullptr, 0);
+
+        uint32_t id1 = std::stoul(hp.at("slave_1_id"), nullptr, 0);
+        uint32_t id2 = std::stoul(hp.at("slave_2_id"), nullptr, 0);
+        uint32_t id3 = std::stoul(hp.at("slave_3_id"), nullptr, 0);
+
         max_current_ = std::stoi(hp.at("max_current"));
         speed_level_ = std::stoi(hp.at("speed_level"));
 
+        // 参数校验
         if (max_current_ < 0 || max_current_ > 255) {
-            RCLCPP_ERROR(LOGGER, "max_current=%d 超出 0~255（0.01A 单位）", max_current_);
-            return hardware_interface::CallbackReturn::ERROR;
+            throw std::invalid_argument("max_current must be 0-255");
         }
         if (speed_level_ < 1 || speed_level_ > 3) {
-            RCLCPP_ERROR(LOGGER, "speed_level=%d 必须为 1/2/3", speed_level_);
+            throw std::invalid_argument("speed_level must be 1-3");
+        }
+
+        // 2. 定义机械臂结构 (数据驱动核心)
+        // 这里集中定义了所有关节的后缀，清晰易读，修改只需改这里
+        std::vector<std::string> common_suffixes = {
+            "_j01_base",       "_j03_oc",         "_j04_oc",         "_j07_oc",         "_j08_oc",        "_j11_oc",
+            "_j12_oc",         "_j13_oc",         "_j14_oc",         "_j17_18",         "_j20_21",        "_joint_motor_01",
+            "_joint_motor_02", "_joint_motor_03", "_joint_motor_04", "_joint_motor_05", "_joint_motor_06"};
+
+        arm_definitions_.emplace_back("s1", id1, common_suffixes);
+        arm_definitions_.emplace_back("s2", id2, common_suffixes);
+        arm_definitions_.emplace_back("s3", id3, common_suffixes);
+
+        // 3. 动态构建关节映射
+        if (!build_dynamic_joint_map()) {
             return hardware_interface::CallbackReturn::ERROR;
         }
-    } catch (const std::exception &e) {
-        RCLCPP_ERROR(LOGGER, "硬件参数解析失败: %s", e.what());
-        return hardware_interface::CallbackReturn::ERROR;
-    }
 
-    // 建立关节名 → Joint* 映射并校验 URDF
-    if (!build_joint_map()) {
+    } catch (const std::exception &e) {
+        RCLCPP_ERROR(LOGGER, "Init failed: %s", e.what());
         return hardware_interface::CallbackReturn::ERROR;
     }
 
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn AloeHardwareInterface::on_configure(const rclcpp_lifecycle::State & /*previous_state*/) {
+hardware_interface::CallbackReturn AloeHardwareInterface::on_configure(const rclcpp_lifecycle::State &) {
     try {
         can0_.open(can0_interface_);
         can1_.open(can1_interface_);
+        RCLCPP_INFO(LOGGER, "CAN sockets opened: %s, %s", can0_.ifname().c_str(), can1_.ifname().c_str());
     } catch (const std::system_error &e) {
-        RCLCPP_ERROR(LOGGER, "CAN 接口初始化失败: %s", e.what());
-        return hardware_interface::CallbackReturn::ERROR; // 成员析构自动 close
+        RCLCPP_ERROR(LOGGER, "Failed to open CAN: %s", e.what());
+        return hardware_interface::CallbackReturn::ERROR;
     }
-
-    // 缓存重置：Joint 构造时已是 NaN，无需再 fill
-    RCLCPP_INFO(LOGGER, "CAN 已绑定: %s(handle=%d), %s(handle=%d)", can0_.ifname().c_str(), can0_.handle(), can1_.ifname().c_str(),
-                can1_.handle());
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn AloeHardwareInterface::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
+// ============================================================================
+// 激活与去激活
+// ============================================================================
 
+hardware_interface::CallbackReturn AloeHardwareInterface::on_activate(const rclcpp_lifecycle::State &) {
     try {
-        // 1. 先使能三个从臂
-        can0_.send(CanProtocol::make_enable_all(snake_1_id_));
-        can0_.send(CanProtocol::make_enable_all(snake_2_id_));
-        can1_.send(CanProtocol::make_enable_all(snake_3_id_));
+        // 遍历所有定义的臂，执行使能、设置参数、回零
+        for (const auto &arm : arm_definitions_) {
+            CanSocket &can = get_can_socket_for_arm(arm.prefix);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            // 1. 使能
+            can.send(CanProtocol::make_enable_all(arm.can_id));
 
-        // 2. 使能后再设置电流/速度
-        const auto current = static_cast<uint8_t>(max_current_);
-        const auto speed = static_cast<uint8_t>(speed_level_);
+            // 2. 设置电流/速度
+            can.send(
+                CanProtocol::make_set_current_speed(arm.can_id, static_cast<uint8_t>(max_current_), static_cast<uint8_t>(speed_level_)));
 
-        can0_.send(CanProtocol::make_set_current_speed(snake_1_id_, current, speed));
-        can0_.send(CanProtocol::make_set_current_speed(snake_2_id_, current, speed));
-        can1_.send(CanProtocol::make_set_current_speed(snake_3_id_, current, speed));
+            // 3. 回零
+            can.send(CanProtocol::make_home_all(arm.can_id));
+        }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-        // 3. 全部轴回零
-        can0_.send(CanProtocol::make_home_all(snake_1_id_));
-        can0_.send(CanProtocol::make_home_all(snake_2_id_));
-        can1_.send(CanProtocol::make_home_all(snake_3_id_));
-
+        // 等待回零完成 (假设需要 3秒)
         std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
-        // 回零后位置同步为 0，避免下一次 write() 从旧值突跳到 0
-        for (auto &[name, j] : joint_map_) {
-            j->state = 0.0;
-            j->command = qNAN;
+        // 初始化状态：回零后假设所有关节为 0
+        for (auto &[name, joint] : joint_map_) {
+            joint->state = 0.0;
+            joint->command = qNAN;
         }
 
-    } catch (const std::system_error &e) {
-        RCLCPP_ERROR(LOGGER, "CAN 发送失败: %s", e.what());
-        return hardware_interface::CallbackReturn::ERROR;
-    } catch (const std::invalid_argument &e) {
-        RCLCPP_ERROR(LOGGER, "参数非法: %s", e.what());
+        RCLCPP_INFO(LOGGER, "All arms activated and homed.");
+    } catch (const std::exception &e) {
+        RCLCPP_ERROR(LOGGER, "Activation error: %s", e.what());
         return hardware_interface::CallbackReturn::ERROR;
     }
-
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn AloeHardwareInterface::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
-
+hardware_interface::CallbackReturn AloeHardwareInterface::on_deactivate(const rclcpp_lifecycle::State &) {
     try {
-        // 1. 先停止：按当前位置保持位置伺服
-        can0_.send(CanProtocol::make_stop_all(snake_1_id_));
-        can0_.send(CanProtocol::make_stop_all(snake_2_id_));
-        can1_.send(CanProtocol::make_stop_all(snake_3_id_));
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-        // 2. 再全部轴去使能，释放电机进入待机
-        can0_.send(CanProtocol::make_disable_all(snake_1_id_));
-        can0_.send(CanProtocol::make_disable_all(snake_2_id_));
-        can1_.send(CanProtocol::make_disable_all(snake_3_id_));
-
-        for (auto &[name, j] : joint_map_) {
-            j->state = qNAN;
-            j->command = qNAN;
+        for (const auto &arm : arm_definitions_) {
+            CanSocket &can = get_can_socket_for_arm(arm.prefix);
+            can.send(CanProtocol::make_stop_all(arm.can_id));
+            can.send(CanProtocol::make_disable_all(arm.can_id));
         }
 
-        RCLCPP_INFO(LOGGER, "3 条从臂已停止并去使能");
-    } catch (const std::system_error &e) {
-        // 去激活失败不应阻止生命周期继续，记录错误后仍返回 SUCCESS 让框架完成清理
-        RCLCPP_ERROR(LOGGER, "发送停止/去使能指令失败: %s", e.what());
+        // 重置数据
+        for (auto &[name, joint] : joint_map_) {
+            joint->state = qNAN;
+            joint->command = qNAN;
+        }
+        RCLCPP_INFO(LOGGER, "All arms deactivated.");
+    } catch (const std::exception &e) {
+        RCLCPP_ERROR(LOGGER, "Deactivation error: %s", e.what());
     }
-
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-// ---------------------------------------------------------------------------
-// 接口导出
-// ---------------------------------------------------------------------------
+// ============================================================================
+// 接口导出 (基于 Map 自动匹配)
+// ============================================================================
 
 std::vector<hardware_interface::StateInterface::ConstSharedPtr> AloeHardwareInterface::on_export_state_interfaces() {
-    std::vector<hardware_interface::StateInterface::ConstSharedPtr> state_interfaces;
-    state_interfaces.reserve(info_.joints.size());
+    std::vector<hardware_interface::StateInterface::ConstSharedPtr> interfaces;
+    interfaces.reserve(info_.joints.size());
 
     for (const auto &ji : info_.joints) {
-        Joint *j = joint_map_.at(ji.name);
-        state_interfaces.push_back(
-            std::make_shared<hardware_interface::StateInterface>(ji.name, hardware_interface::HW_IF_POSITION, &j->state));
+        auto it = joint_map_.find(ji.name);
+        if (it != joint_map_.end()) {
+            interfaces.push_back(
+                std::make_shared<hardware_interface::StateInterface>(ji.name, hardware_interface::HW_IF_POSITION, &it->second->state));
+        } else {
+            RCLCPP_ERROR(LOGGER, "State interface missing for joint: %s", ji.name.c_str());
+        }
     }
-    return state_interfaces;
+    return interfaces;
 }
 
 std::vector<hardware_interface::CommandInterface::SharedPtr> AloeHardwareInterface::on_export_command_interfaces() {
-    std::vector<hardware_interface::CommandInterface::SharedPtr> command_interfaces;
-    command_interfaces.reserve(info_.joints.size());
+    std::vector<hardware_interface::CommandInterface::SharedPtr> interfaces;
+    interfaces.reserve(info_.joints.size());
 
     for (const auto &ji : info_.joints) {
-        Joint *j = joint_map_.at(ji.name);
-        command_interfaces.push_back(
-            std::make_shared<hardware_interface::CommandInterface>(ji.name, hardware_interface::HW_IF_POSITION, &j->command));
-    }
-    return command_interfaces;
-}
-
-// ---------------------------------------------------------------------------
-// 数据读写
-// ---------------------------------------------------------------------------
-hardware_interface::return_type AloeHardwareInterface::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
-
-    return hardware_interface::return_type::OK;
-}
-
-hardware_interface::return_type AloeHardwareInterface::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
-
-    return hardware_interface::return_type::OK;
-}
-
-// ---------------------------------------------------------------------------
-// 关节映射表
-// ---------------------------------------------------------------------------
-
-bool AloeHardwareInterface::build_joint_map() {
-    joint_map_.clear();
-    auto reg = [this](const char *name, Joint &j) { joint_map_.emplace(name, &j); };
-
-    // s1
-    reg("s1_j01_base", s1_j01_base);
-    reg("s1_j03_oc", s1_j03_oc);
-    reg("s1_j04_oc", s1_j04_oc);
-    reg("s1_j07_oc", s1_j07_oc);
-    reg("s1_j08_oc", s1_j08_oc);
-    reg("s1_j11_oc", s1_j11_oc);
-    reg("s1_j12_oc", s1_j12_oc);
-    reg("s1_j13_oc", s1_j13_oc);
-    reg("s1_j14_oc", s1_j14_oc);
-    reg("s1_j17_18", s1_j17_18);
-    reg("s1_j20_21", s1_j20_21);
-    reg("s1_joint_motor_01", s1_joint_motor_01);
-    reg("s1_joint_motor_02", s1_joint_motor_02);
-    reg("s1_joint_motor_03", s1_joint_motor_03);
-    reg("s1_joint_motor_04", s1_joint_motor_04);
-    reg("s1_joint_motor_05", s1_joint_motor_05);
-    reg("s1_joint_motor_06", s1_joint_motor_06);
-
-    // s2
-    reg("s2_j01_base", s2_j01_base);
-    reg("s2_j03_oc", s2_j03_oc);
-    reg("s2_j04_oc", s2_j04_oc);
-    reg("s2_j07_oc", s2_j07_oc);
-    reg("s2_j08_oc", s2_j08_oc);
-    reg("s2_j11_oc", s2_j11_oc);
-    reg("s2_j12_oc", s2_j12_oc);
-    reg("s2_j13_oc", s2_j13_oc);
-    reg("s2_j14_oc", s2_j14_oc);
-    reg("s2_j17_18", s2_j17_18);
-    reg("s2_j20_21", s2_j20_21);
-    reg("s2_joint_motor_01", s2_joint_motor_01);
-    reg("s2_joint_motor_02", s2_joint_motor_02);
-    reg("s2_joint_motor_03", s2_joint_motor_03);
-    reg("s2_joint_motor_04", s2_joint_motor_04);
-    reg("s2_joint_motor_05", s2_joint_motor_05);
-    reg("s2_joint_motor_06", s2_joint_motor_06);
-
-    // s3
-    reg("s3_j01_base", s3_j01_base);
-    reg("s3_j03_oc", s3_j03_oc);
-    reg("s3_j04_oc", s3_j04_oc);
-    reg("s3_j07_oc", s3_j07_oc);
-    reg("s3_j08_oc", s3_j08_oc);
-    reg("s3_j11_oc", s3_j11_oc);
-    reg("s3_j12_oc", s3_j12_oc);
-    reg("s3_j13_oc", s3_j13_oc);
-    reg("s3_j14_oc", s3_j14_oc);
-    reg("s3_j17_18", s3_j17_18);
-    reg("s3_j20_21", s3_j20_21);
-    reg("s3_joint_motor_01", s3_joint_motor_01);
-    reg("s3_joint_motor_02", s3_joint_motor_02);
-    reg("s3_joint_motor_03", s3_joint_motor_03);
-    reg("s3_joint_motor_04", s3_joint_motor_04);
-    reg("s3_joint_motor_05", s3_joint_motor_05);
-    reg("s3_joint_motor_06", s3_joint_motor_06);
-
-    // 校验：数量一致 + 每个 URDF 关节名都能查到
-    if (info_.joints.size() != joint_map_.size()) {
-        RCLCPP_ERROR(LOGGER, "URDF 关节数 %zu != 代码映射表 %zu", info_.joints.size(), joint_map_.size());
-        return false;
-    }
-    for (const auto &ji : info_.joints) {
-        if (joint_map_.find(ji.name) == joint_map_.end()) {
-            RCLCPP_ERROR(LOGGER, "URDF 关节 [%s] 在代码映射表中不存在", ji.name.c_str());
-            return false;
+        auto it = joint_map_.find(ji.name);
+        if (it != joint_map_.end()) {
+            interfaces.push_back(
+                std::make_shared<hardware_interface::CommandInterface>(ji.name, hardware_interface::HW_IF_POSITION, &it->second->command));
+        } else {
+            RCLCPP_ERROR(LOGGER, "Command interface missing for joint: %s", ji.name.c_str());
         }
     }
-    RCLCPP_INFO(LOGGER, "关节映射表建立完成，共 %zu 个关节", joint_map_.size());
+    return interfaces;
+}
+
+// ============================================================================
+// 数据读写
+// ============================================================================
+
+hardware_interface::return_type AloeHardwareInterface::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
+    static rclcpp::Clock steady_clock(RCL_STEADY_TIME);
+    int valid_cmd_count = 0;
+
+    // 用于构建日志字符串
+    std::string debug_log;
+
+    for (auto &[name, joint] : joint_map_) {
+        // 检查 command 是否为有效数值
+        if (std::isfinite(joint->command)) {
+            valid_cmd_count++;
+
+            // 将 Command 同步给 State (用于 RViz 可视化)
+            // 注意：如果这里不赋值，RViz 中的模型将不会动
+            joint->state = joint->command;
+
+            // 仅记录前几个关节的值用于调试，避免日志过长
+            if (debug_log.length() < 200) {
+                char buffer[64];
+                snprintf(buffer, sizeof(buffer), "[%s: %.3f] ", name.c_str(), joint->command);
+                debug_log += buffer;
+            }
+        } else {
+            // 如果 command 是 NaN，保持 state 不变（或者根据需要设为 NaN）
+            // 当前逻辑：保持上一次的有效 state
+        }
+    }
+
+    // 每 1000ms (1秒) 打印一次接收到的命令状态
+    RCLCPP_INFO_THROTTLE(LOGGER, steady_clock, 1000, "Read Cycle: Received %d valid commands. Sample: %s", valid_cmd_count,
+                         debug_log.empty() ? "None" : debug_log.c_str());
+
+    return hardware_interface::return_type::OK;
+}
+
+hardware_interface::return_type AloeHardwareInterface::write(const rclcpp::Time &, const rclcpp::Duration &) {
+    // 暂时留空，不发送 CAN 数据
+    return hardware_interface::return_type::OK;
+}
+
+// ============================================================================
+// 私有辅助方法实现
+// ============================================================================
+
+bool AloeHardwareInterface::build_dynamic_joint_map() {
+    joint_map_.clear();
+
+    // 遍历所有臂的定义
+    for (const auto &arm : arm_definitions_) {
+        // 遍历该臂的所有关节后缀
+        for (const auto &suffix : arm.joint_suffixes) {
+            std::string joint_name = arm.prefix + suffix;
+
+            // 创建新的 JointData 并存入 Map
+            // 使用 make_unique 自动管理内存
+            joint_map_[joint_name] = std::make_unique<JointData>();
+        }
+    }
+
+    // 校验：确保 URDF 中声明的所有关节都在我们的 Map 中
+    if (info_.joints.size() != joint_map_.size()) {
+        RCLCPP_ERROR(LOGGER, "Joint count mismatch! URDF: %zu, Code: %zu", info_.joints.size(), joint_map_.size());
+        // 打印缺失或多余的关节以便调试
+        for (const auto &ji : info_.joints) {
+            if (joint_map_.find(ji.name) == joint_map_.end()) {
+                RCLCPP_ERROR(LOGGER, "  Missing in code: %s", ji.name.c_str());
+            }
+        }
+        return false;
+    }
+
+    RCLCPP_INFO(LOGGER, "Joint map built successfully with %zu joints.", joint_map_.size());
     return true;
+}
+
+CanSocket &AloeHardwareInterface::get_can_socket_for_arm(const std::string &prefix) {
+    // 根据前缀判断使用哪个 CAN 口
+    // s1, s2 -> can0_
+    // s3 -> can1_
+    if (prefix == "s1" || prefix == "s2") {
+        return can0_;
+    } else if (prefix == "s3") {
+        return can1_;
+    }
+    throw std::runtime_error("Unknown arm prefix: " + prefix);
 }
 
 } // namespace psm_hardware_interface

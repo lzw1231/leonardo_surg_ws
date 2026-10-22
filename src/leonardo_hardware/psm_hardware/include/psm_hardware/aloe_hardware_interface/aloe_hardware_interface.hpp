@@ -1,5 +1,4 @@
 #pragma once
-
 #include "psm_hardware/common/can_protocol.hpp"
 #include "psm_hardware/common/can_socket.hpp"
 #include "psm_hardware/common/visibility_control.hpp"
@@ -15,10 +14,12 @@
 namespace psm_hardware_interface {
 
 /**
- * @brief 主端——智能边缘计算机
+ * @brief 主端——智能边缘计算机 (Aloe版)
  *
- * PSM（患者侧机械臂）系自主研制的从端机械臂。  aloe_芦荟版
- * 本类绑定 Linux SocketCAN 接口， can0控制 1、2号从臂；can1控制 3号从臂 、ecm 内窥镜
+ * 优化点：
+ * 1. 使用 ArmDefinition 结构体管理配置，避免硬编码字符串。
+ * 2. 动态生成 Joint 对象和映射表，减少重复代码。
+ * 3. 接口导出基于 Map 自动匹配，增强鲁棒性。
  */
 class AloeHardwareInterface : public hardware_interface::SystemInterface {
   public:
@@ -27,7 +28,7 @@ class AloeHardwareInterface : public hardware_interface::SystemInterface {
     PSM_HARDWARE_PUBLIC
     ~AloeHardwareInterface() override = default;
 
-    // 生命周期回调
+    // --- ROS2 Control 生命周期回调 ---
     PSM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
 
@@ -40,14 +41,14 @@ class AloeHardwareInterface : public hardware_interface::SystemInterface {
     PSM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &previous_state) override;
 
-    // 接口导出
+    // --- 接口导出 ---
     PSM_HARDWARE_PUBLIC
     std::vector<hardware_interface::StateInterface::ConstSharedPtr> on_export_state_interfaces() override;
 
     PSM_HARDWARE_PUBLIC
     std::vector<hardware_interface::CommandInterface::SharedPtr> on_export_command_interfaces() override;
 
-    // 数据读写
+    // --- 数据读写 ---
     PSM_HARDWARE_PUBLIC
     hardware_interface::return_type read(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
@@ -55,41 +56,52 @@ class AloeHardwareInterface : public hardware_interface::SystemInterface {
     hardware_interface::return_type write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
   private:
-    CanSocket can0_, can1_;
+    // --- 内部数据结构 ---
 
-    // 每个关节的状态与命令成对存放；默认 NaN 表示"未读到 / 未下发"
-    struct Joint {
+    // 单个关节的数据容器
+    struct JointData {
         double state{std::numeric_limits<double>::quiet_NaN()};
         double command{std::numeric_limits<double>::quiet_NaN()};
     };
 
-    using JointMap = std::unordered_map<std::string, Joint *>;
+    // 机械臂定义结构体：将 CAN ID、前缀和关节后缀绑定在一起
+    struct ArmDefinition {
+        std::string prefix;                      // 例如 "s1"
+        uint32_t can_id;                         // 例如 0x441
+        std::vector<std::string> joint_suffixes; // 该臂包含的所有关节后缀
 
-    // 建立关节名 → Joint* 映射，并校验 URDF 中每个关节名都能查到
-    bool build_joint_map();
+        // 构造函数方便初始化
+        ArmDefinition(const std::string &p, uint32_t id, std::vector<std::string> suffixes)
+            : prefix(p), can_id(id), joint_suffixes(std::move(suffixes)) {}
+    };
 
-    // ---------------- 1 号从臂（s1，CAN ID 0x441）----------------
-    // 末端直线电机 + 公转关节 + 6虚拟电机
-    Joint s1_j01_base, s1_j03_oc, s1_j04_oc, s1_j07_oc, s1_j08_oc, s1_j11_oc, s1_j12_oc, s1_j13_oc, s1_j14_oc, s1_j17_18, s1_j20_21,
-        s1_joint_motor_01, s1_joint_motor_02, s1_joint_motor_03, s1_joint_motor_04, s1_joint_motor_05, s1_joint_motor_06;
+    // 存储所有机械臂的定义
+    std::vector<ArmDefinition> arm_definitions_;
 
-    // ---------------- 2 号从臂（s2，CAN ID 0x442）----------------
-    // 末端直线电机 + 公转关节 + 6虚拟电机
-    Joint s2_j01_base, s2_j03_oc, s2_j04_oc, s2_j07_oc, s2_j08_oc, s2_j11_oc, s2_j12_oc, s2_j13_oc, s2_j14_oc, s2_j17_18, s2_j20_21,
-        s2_joint_motor_01, s2_joint_motor_02, s2_joint_motor_03, s2_joint_motor_04, s2_joint_motor_05, s2_joint_motor_06;
+    // 全局关节映射表: Joint Name -> JointData*
+    // 使用 unique_ptr 管理内存，避免手动 new/delete
+    std::unordered_map<std::string, std::unique_ptr<JointData>> joint_map_;
 
-    // ---------------- 3 号从臂（s3，CAN ID 0x443）----------------
-    // 末端直线电机 + 公转关节 + 6虚拟电机
-    Joint s3_j01_base, s3_j03_oc, s3_j04_oc, s3_j07_oc, s3_j08_oc, s3_j11_oc, s3_j12_oc, s3_j13_oc, s3_j14_oc, s3_j17_18, s3_j20_21,
-        s3_joint_motor_01, s3_joint_motor_02, s3_joint_motor_03, s3_joint_motor_04, s3_joint_motor_05, s3_joint_motor_06;
-
-    // 关节名 → Joint* 映射表，on_init 建立，export 使用
-    JointMap joint_map_;
-
-    // ---------------- CAN 运行参数 ----------------
+    // --- CAN 通信相关 ---
+    CanSocket can0_, can1_;
     std::string can0_interface_, can1_interface_;
-    uint32_t snake_1_id_{0}, snake_2_id_{0}, snake_3_id_{0};
-    int max_current_{0}, speed_level_{0};
+
+    // 运行参数
+    int max_current_{0};
+    int speed_level_{0};
+
+    // --- 辅助方法 ---
+
+    /**
+     * @brief 根据 arm_definitions_ 动态构建 joint_map_
+     * @return true if success
+     */
+    bool build_dynamic_joint_map();
+
+    /**
+     * @brief 获取指定前缀的 CAN Socket 引用
+     */
+    CanSocket &get_can_socket_for_arm(const std::string &prefix);
 };
 
 } // namespace psm_hardware_interface

@@ -49,6 +49,7 @@ set(PSM_TARGET_LIBS
 # psm从端控制器
 # ==============================================================================
 add_library(psm_controllers SHARED
+        src/common/psm_kinematics.cpp  
         src/aloe_controller/aloe_controller.cpp
 )
 target_include_directories(psm_controllers
