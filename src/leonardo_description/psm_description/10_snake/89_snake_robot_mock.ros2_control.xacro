@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ==================== 宏定义 ==================== -->
+    <!-- 注意：Mock 组件通常只需要声明 joint 名字，interface 类型由 GenericSystem 自动处理或显式指定 -->
+    <xacro:macro name="mock_joint" params="name">
+        <joint name="${name}">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <limits enable="true" />
+            <!-- 可选：添加速度/加速度状态以便更真实的仿真，但位置控制通常只需 position -->
+            <!-- <state_interface name="velocity" /> -->
+        </joint>
+    </xacro:macro>
+
+    <!-- 单个从臂：6 个虚拟电机 + 11 个转动关节 -->
+    <xacro:macro name="arm" params="prefix">
+        <!-- 虚拟电机 -->
+        <xacro:mock_joint name="${prefix}_joint_motor_01" />
+        <xacro:mock_joint name="${prefix}_joint_motor_02" />
+        <xacro:mock_joint name="${prefix}_joint_motor_03" />
+        <xacro:mock_joint name="${prefix}_joint_motor_04" />
+        <xacro:mock_joint name="${prefix}_joint_motor_05" />
+        <xacro:mock_joint name="${prefix}_joint_motor_06" />
+
+        <!-- 转动关节 -->
+        <xacro:mock_joint name="${prefix}_j01_base" />
+        <xacro:mock_joint name="${prefix}_j03_oc" />
+        <xacro:mock_joint name="${prefix}_j04_oc" />
+        <xacro:mock_joint name="${prefix}_j07_oc" />
+        <xacro:mock_joint name="${prefix}_j08_oc" />
+        <xacro:mock_joint name="${prefix}_j11_oc" />
+        <xacro:mock_joint name="${prefix}_j12_oc" />
+        <xacro:mock_joint name="${prefix}_j13_oc" />
+        <xacro:mock_joint name="${prefix}_j14_oc" />
+        <xacro:mock_joint name="${prefix}_j17_18" />
+        <xacro:mock_joint name="${prefix}_j20_21" />
+    </xacro:macro>
+
+    <!-- ==================== 实例化 ==================== -->
+
+    <ros2_control name="psm_ros2_control_mock" type="system">
+
+        <hardware>
+            <plugin>mock_components/GenericSystem</plugin>
+        </hardware>
+
+        <!-- 三个从臂结构完全一致 -->
+        <xacro:arm prefix="s1" />
+        <xacro:arm prefix="s2" />
+        <xacro:arm prefix="s3" />
+
+    </ros2_control>
+
+</robot>

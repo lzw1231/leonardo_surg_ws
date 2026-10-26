@@ -2,19 +2,37 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- ==========  偏移量  ========== -->
-    <xacro:property name="y_offset_01_02" value="0.0514" />
-    <xacro:property name="y_offset_02_03" value="0.0013" />
-    <xacro:property name="y_offset_05_06" value="0.0084" />
-    <xacro:property name="y_offset_06_07" value="0.0084" />
-    <xacro:property name="y_offset_09_10" value="0.0055" />
-    <xacro:property name="y_offset_10_11" value="0.0" />
-    <xacro:property name="y_offset_15_16" value="0.0015" />
-    <xacro:property name="y_offset_16_17" value="0.01172" />
-    <xacro:property name="y_offset_17_18" value="0.00728" />
-    <xacro:property name="y_offset_18_19" value="-0.0013" /> <!-- 注意：这个是负数 -->
-    <xacro:property name="y_offset_19_20" value="0.005" />
-    <xacro:property name="y_offset_20_21" value="0.0" />
-    <xacro:property name="y_offset_20_22" value="0.0" />
+    <xacro:property name="x_offset_01_02" value="0.0514" />
+    <xacro:property name="x_offset_02_03" value="0.0013" />
+    <xacro:property name="x_offset_05_06" value="0.0084" />
+    <xacro:property name="x_offset_06_07" value="0.0084" />
+    <xacro:property name="x_offset_09_10" value="0.0055" />
+    <xacro:property name="x_offset_10_11" value="0.0" />
+    <xacro:property name="x_offset_15_16" value="0.0015" />
+    <xacro:property name="x_offset_16_17" value="0.01172" />
+    <xacro:property name="x_offset_17_18" value="0.00728" />
+    <xacro:property name="x_offset_18_19" value="-0.0013" />
+    <xacro:property name="x_offset_19_20" value="0.005" />
+    <xacro:property name="x_offset_20_21" value="0.0" />
+    <xacro:property name="x_offset_20_22" value="0.0" />
+
+    <!-- 蛇骨自身原点相对自身齿轮中心的偏移 -->
+    <xacro:property name="origin_gear_center_03_L" value="0.0" />
+    <xacro:property name="origin_gear_center_04_R" value="0.0015" />
+    <xacro:property name="origin_gear_center_04_L" value="0.0" />
+    <xacro:property name="origin_gear_center_05_R" value="0.0015" />
+    <xacro:property name="origin_gear_center_07_L" value="0.0015" />
+    <xacro:property name="origin_gear_center_08_R" value="0.0" />
+    <xacro:property name="origin_gear_center_08_L" value="0.0015" />
+    <xacro:property name="origin_gear_center_09_R" value="0.0" />
+    <xacro:property name="origin_gear_center_11_L" value="0.0" />
+    <xacro:property name="origin_gear_center_12_R" value="0.0015" />
+    <xacro:property name="origin_gear_center_12_L" value="0.0" />
+    <xacro:property name="origin_gear_center_13_R" value="0.0015" />
+    <xacro:property name="origin_gear_center_13_L" value="0.0" />
+    <xacro:property name="origin_gear_center_14_R" value="0.0015" />
+    <xacro:property name="origin_gear_center_14_L" value="0.0" />
+    <xacro:property name="origin_gear_center_15_R" value="0.0015" />
 
     <!-- 蛇骨公转半径 -->
     <xacro:property name="orbit_r" value="0.0025" />
@@ -23,23 +41,6 @@
     <xacro:property name="orbit_lower" value="${-pi/8.0}" />
     <xacro:property name="orbit_upper" value="${pi/8.0}" />
 
-    <!-- 蛇骨自身原点相对自身齿轮中心的偏移 -->
-    <xacro:property name="origin_gear_center_03_L" value="0.0" />
-    <xacro:property name="origin_gear_center_04_R" value="0.00145" />
-    <xacro:property name="origin_gear_center_04_L" value="0.0" />
-    <xacro:property name="origin_gear_center_05_R" value="0.00145" />
-    <xacro:property name="origin_gear_center_07_L" value="0.00145" />
-    <xacro:property name="origin_gear_center_08_R" value="0.0" />
-    <xacro:property name="origin_gear_center_08_L" value="0.00145" />
-    <xacro:property name="origin_gear_center_09_R" value="0.0" />
-    <xacro:property name="origin_gear_center_11_L" value="0.0" />
-    <xacro:property name="origin_gear_center_12_R" value="0.00145" />
-    <xacro:property name="origin_gear_center_12_L" value="0.0" />
-    <xacro:property name="origin_gear_center_13_R" value="0.00145" />
-    <xacro:property name="origin_gear_center_13_L" value="0.0" />
-    <xacro:property name="origin_gear_center_14_R" value="0.00145" />
-    <xacro:property name="origin_gear_center_14_L" value="0.0" />
-    <xacro:property name="origin_gear_center_15_R" value="0.00145" />
 
     <!-- ========= 最大力矩 ======== -->
     <xacro:property name="effort" value="1000" />
@@ -98,14 +99,14 @@
         <joint name="${prefix}_joint_01_02" type="fixed">
             <parent link="${prefix}_01" />
             <child link="${prefix}_02" />
-            <origin xyz="-${y_offset_01_02} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_01_02} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link02 -> link03 -->
         <joint name="${prefix}_joint_02_03" type="fixed">
             <parent link="${prefix}_02" />
             <child link="${prefix}_03" />
-            <origin xyz="-${y_offset_02_03} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_02_03} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link03 -> link04 -->
@@ -160,14 +161,14 @@
         <joint name="${prefix}_joint_05_06" type="fixed">
             <parent link="${prefix}_05" />
             <child link="${prefix}_06" />
-            <origin xyz="-${y_offset_05_06} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_05_06} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link06 -> link07 -->
         <joint name="${prefix}_joint_06_07" type="fixed">
             <parent link="${prefix}_06" />
             <child link="${prefix}_07" />
-            <origin xyz="-${y_offset_06_07} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_06_07} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link07 -> link08 -->
@@ -222,14 +223,14 @@
         <joint name="${prefix}_joint_09_10" type="fixed">
             <parent link="${prefix}_09" />
             <child link="${prefix}_10" />
-            <origin xyz="-${y_offset_09_10} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_09_10} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link10 -> link11 -->
         <joint name="${prefix}_joint_10_11" type="fixed">
             <parent link="${prefix}_10" />
             <child link="${prefix}_11" />
-            <origin xyz="-${y_offset_10_11} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_10_11} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link11 -> link12 -->
@@ -332,21 +333,21 @@
         <joint name="${prefix}_joint_15_16" type="fixed">
             <parent link="${prefix}_15" />
             <child link="${prefix}_16" />
-            <origin xyz="-${y_offset_15_16} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_15_16} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link16 -> link17 -->
         <joint name="${prefix}_joint_16_17" type="fixed">
             <parent link="${prefix}_16" />
             <child link="${prefix}_17" />
-            <origin xyz="-${y_offset_16_17} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_16_17} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link17 -> link18 -->
         <joint name="${prefix}_j17_18" type="revolute">
             <parent link="${prefix}_17" />
             <child link="${prefix}_18" />
-            <origin xyz="-${y_offset_17_18} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_17_18} 0 0" rpy="0 0 0" />
             <axis xyz="-1 0 0" />
             <limit effort="${effort}" velocity="${velocity}" lower="${-pi/2.0}" upper="${pi/2.0}" />
         </joint>
@@ -355,22 +356,22 @@
         <joint name="${prefix}_joint_18_19" type="fixed">
             <parent link="${prefix}_18" />
             <child link="${prefix}_19" />
-            <!-- 核心修复：改为 ${-y_offset_18_19}，防止出现双负号 -->
-            <origin xyz="${-y_offset_18_19} 0 0" rpy="0 0 0" />
+            <!-- 核心修复：改为 ${-x_offset_18_19}，防止出现双负号 -->
+            <origin xyz="${-x_offset_18_19} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link19 -> link20 -->
         <joint name="${prefix}_joint_19_20" type="fixed">
             <parent link="${prefix}_19" />
             <child link="${prefix}_20" />
-            <origin xyz="-${y_offset_19_20} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_19_20} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link20 -> link21 -->
         <joint name="${prefix}_j20_21" type="revolute">
             <parent link="${prefix}_20" />
             <child link="${prefix}_21" />
-            <origin xyz="-${y_offset_20_21} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_20_21} 0 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" lower="0" upper="${pi/6.0}" />
         </joint>
@@ -379,7 +380,7 @@
         <joint name="${prefix}_joint_20_22" type="revolute">
             <parent link="${prefix}_20" />
             <child link="${prefix}_22" />
-            <origin xyz="-${y_offset_20_22} 0 0" rpy="0 0 0" />
+            <origin xyz="-${x_offset_20_22} 0 0" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" lower="${-pi/3.0}" upper="${0}" />
             <mimic joint="${prefix}_j20_21" multiplier="-1.0" offset="0.0" />
