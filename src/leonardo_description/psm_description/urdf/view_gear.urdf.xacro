@@ -10,7 +10,7 @@
     <!-- ========== 固定齿轮1（红色） ========== -->
     <link name="gear1_link">
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 -${width/2.0}" rpy="0 0 0" />
             <geometry>
                 <cylinder radius="${r}" length="${width}" />
             </geometry>
@@ -39,7 +39,7 @@
     <!-- ========== 滚动齿轮2（蓝色） ========== -->
     <link name="gear2_link">
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 -${width/2.0}" rpy="0 0 0" />
             <geometry>
                 <cylinder radius="${r}" length="${width}" />
             </geometry>

@@ -1,7 +1,8 @@
-#include "psm_controllers/common/surgical_kinematics.hpp"
+#include "kinematics_test/surgical_kinematics.hpp"
 
 #include <algorithm>
 
+namespace kinematics_test {
 // ======================== 静态常量定义 ========================
 constexpr float32 SurgicalKinematics::LA_PSM_[12];
 constexpr float32 SurgicalKinematics::LA_ECM_[9];
@@ -145,3 +146,4 @@ bool SurgicalKinematics::solveEcm(const Post &post, Dof &out_dof) {
 
     return true;
 }
+} // namespace kinematics_test

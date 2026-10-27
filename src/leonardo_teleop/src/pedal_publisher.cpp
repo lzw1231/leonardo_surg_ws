@@ -10,6 +10,10 @@
 
 namespace leonardo_teleop {
 
+namespace {
+rclcpp::Logger LOGGER = rclcpp::get_logger("PedalPublisher");
+}
+
 PedalPublisher::PedalPublisher() : Node("pedal_publisher") {
     // -------------------------------------------------------------------------
     // 1. 读取参数
@@ -24,8 +28,8 @@ PedalPublisher::PedalPublisher() : Node("pedal_publisher") {
     int test_fd = ::open(pedal_device_path_.c_str(), O_RDONLY | O_NONBLOCK);
     if (test_fd < 0) {
         std::string err_msg = "无法打开踏板设备 [" + pedal_device_path_ + "]: " + std::strerror(errno);
-        RCLCPP_FATAL(get_logger(), "%s", err_msg.c_str());
-        RCLCPP_FATAL(get_logger(), "请检查: 1. 设备是否连接 2. udev 规则是否正确 3. 当前用户是否有权限");
+        RCLCPP_FATAL(LOGGER, "%s", err_msg.c_str());
+        RCLCPP_FATAL(LOGGER, "请检查: 1. 设备是否连接 2. udev 规则是否正确 3. 当前用户是否有权限");
 
         // 抛出异常，中断节点初始化
         throw std::runtime_error(err_msg);
@@ -45,9 +49,9 @@ PedalPublisher::PedalPublisher() : Node("pedal_publisher") {
     running_ = true;
     evdev_thread_ = std::thread(&PedalPublisher::evdevLoop, this);
 
-    RCLCPP_INFO(get_logger(), "PedalPublisher 已启动");
-    RCLCPP_INFO(get_logger(), "  踏板状态话题: %s", pedal_state_topic_.c_str());
-    RCLCPP_INFO(get_logger(), "  踏板设备    : %s", pedal_device_path_.c_str());
+    RCLCPP_INFO(LOGGER, "PedalPublisher 已启动");
+    RCLCPP_INFO(LOGGER, "  踏板状态话题: %s", pedal_state_topic_.c_str());
+    RCLCPP_INFO(LOGGER, "  踏板设备    : %s", pedal_device_path_.c_str());
 }
 
 PedalPublisher::~PedalPublisher() {
@@ -67,7 +71,7 @@ void PedalPublisher::evdevLoop() {
     // 打开设备（非阻塞，配合 poll）
     int fd = ::open(pedal_device_path_.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0) {
-        RCLCPP_ERROR(get_logger(), "线程中无法打开踏板设备 [%s]: %s", pedal_device_path_.c_str(), std::strerror(errno));
+        RCLCPP_ERROR(LOGGER, "线程中无法打开踏板设备 [%s]: %s", pedal_device_path_.c_str(), std::strerror(errno));
         return;
     }
 
@@ -75,12 +79,12 @@ void PedalPublisher::evdevLoop() {
     struct libevdev *dev = nullptr;
     int rc = libevdev_new_from_fd(fd, &dev);
     if (rc < 0) {
-        RCLCPP_ERROR(get_logger(), "libevdev 初始化失败: %s", std::strerror(-rc));
+        RCLCPP_ERROR(LOGGER, "libevdev 初始化失败: %s", std::strerror(-rc));
         ::close(fd);
         return;
     }
 
-    RCLCPP_INFO(get_logger(), "踏板设备已连接: %s", libevdev_get_name(dev));
+    RCLCPP_INFO(LOGGER, "踏板设备已连接: %s", libevdev_get_name(dev));
 
     // 事件循环
     while (running_.load(std::memory_order_relaxed) && rclcpp::ok()) {
@@ -94,7 +98,7 @@ void PedalPublisher::evdevLoop() {
         if (poll_rc < 0) {
             if (errno == EINTR)
                 continue; // 被信号中断，重试
-            RCLCPP_ERROR(get_logger(), "poll 错误: %s", std::strerror(errno));
+            RCLCPP_ERROR(LOGGER, "poll 错误: %s", std::strerror(errno));
             break;
         }
 
@@ -138,7 +142,7 @@ void PedalPublisher::evdevLoop() {
                     std_msgs::msg::Int32 msg;
                     msg.data = new_state;
                     pedal_state_pub_->publish(msg);
-                    RCLCPP_INFO(get_logger(), "发布踏板状态: %d", new_state);
+                    RCLCPP_INFO(LOGGER, "发布踏板状态: %d", new_state);
                 }
             }
         } else if (rc == -EAGAIN) {
@@ -148,7 +152,7 @@ void PedalPublisher::evdevLoop() {
             // 同步事件，通常发生在设备断开重连后，忽略或重新初始化
             continue;
         } else {
-            RCLCPP_ERROR(get_logger(), "libevdev_next_event 错误: %s", std::strerror(-rc));
+            RCLCPP_ERROR(LOGGER, "libevdev_next_event 错误: %s", std::strerror(-rc));
             break;
         }
     }
@@ -156,7 +160,7 @@ void PedalPublisher::evdevLoop() {
     // 清理资源
     libevdev_free(dev);
     ::close(fd);
-    RCLCPP_INFO(get_logger(), "踏板事件监听线程已退出");
+    RCLCPP_INFO(LOGGER, "踏板事件监听线程已退出");
 }
 
 } // namespace leonardo_teleop

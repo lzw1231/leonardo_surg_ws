@@ -15,6 +15,7 @@ include_directories(include)
 # ==================== 编译目标 ====================
 add_executable(surgical_kinematics 
   src/surgical_kinematics.cpp
+  src/main.cpp
 )
 
 ament_target_dependencies(surgical_kinematics

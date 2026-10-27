@@ -1,6 +1,5 @@
 #pragma once
 
-#include "mtm_controllers/common/state_interface_utils.hpp"
 #include "mtm_controllers/common/visibility_control.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -8,14 +7,13 @@
 #include <controller_interface/chainable_controller_interface.hpp>
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace mtm_controllers {
 /**
- * FDLeftEePoseController
+ * FDLeftEeController
  *
- * 链式控制器：读取左侧主手关节状态，计算末端执行器的位姿、RPY、按钮状态，
+ * 链式控制器：读取左侧主手关节状态，计算末端执行器的位姿、RPY、夹爪状态，
  * 通过引用接口（ee/前缀）导出给下游从端控制器。
  *
  * 导出的引用接口（相对名，完整名为 <控制器名>/<相对名>）：
@@ -23,6 +21,12 @@ namespace mtm_controllers {
  *   ee/qw, ee/qx, ee/qy, ee/qz
  *   ee/roll, ee/pitch, ee/yaw
  *   ee/gripper
+ *
+ * 状态接口绑定策略：
+ *   - on_init 读取 joints 参数并做基本校验；
+ *   - on_activate 时按 (joint_name, HW_IF_POSITION) 在 state_interfaces_ 中查找下标，
+ *     绑定到 state_index_；任一关节绑定失败则激活失败；
+ *   - update 循环只按下标直读，不再做字符串比较 / 哈希查找。
  */
 class FDLeftEeController : public controller_interface::ChainableControllerInterface {
   public:
@@ -62,6 +66,12 @@ class FDLeftEeController : public controller_interface::ChainableControllerInter
     MTM_CONTROLLERS_PUBLIC
     controller_interface::return_type update_and_write_commands(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
+    /**
+     * 按 joints_name_ 在 state_interfaces_ 中查找 position 接口下标，填充 state_index_。
+     * 任一关节找不到则返回 false。
+     */
+    bool bind_state_indices();
+
     // 引用接口索引
     enum RefIdx : size_t {
         EE_X = 0,
@@ -83,10 +93,10 @@ class FDLeftEeController : public controller_interface::ChainableControllerInter
     Eigen::Matrix4d transform_ = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d pose_ = Eigen::Matrix4d::Identity();
 
-    // ---- 引用接口存储 ----
+    // ---- 引用接口存储（大小固定 REF_SIZE，on_init 中一次性分配，之后不 resize）----
     std::vector<double> reference_interfaces_;
 
-    // ---- 状态接口缓存 ----
-    std::unordered_map<std::string, std::unordered_map<std::string, double>> name_if_value_mapping_;
+    // ---- 状态接口下标缓存（-1 表示未绑定）----
+    std::vector<int> state_index_;
 };
 } // namespace mtm_controllers
