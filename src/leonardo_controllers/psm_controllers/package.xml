@@ -4,7 +4,7 @@
     <name>psm_controllers</name>
     <version>0.0.0</version>
     <description>TODO: Package description</description>
-    <maintainer email="luozhw.bit@gmail.com">lzw</maintainer>
+    <maintainer email="luozhw.bit@email.com">lzw</maintainer>
     <license>TODO: License declaration</license>
 
     <buildtool_depend>ament_cmake</buildtool_depend>

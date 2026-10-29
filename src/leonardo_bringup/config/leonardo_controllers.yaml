@@ -60,11 +60,10 @@ leonardo/fd_right_ee_controller:
 # ------------------------------------------------------------------------------
 # 踏板发布节点
 # ------------------------------------------------------------------------------
-leonardo/pedal_publisher:
-  ros__parameters:
-    # 踏板设备（by-id 路径稳定，不随 event 号变化）
-    device_path: /dev/input/by-id/usb-PCsensor_FS20Pro-event-kbd
-    pedal_state_topic: /leonardo/pedal_state
+leonardo/pedal_teleop_node:
+  ros__parameters:    
+    pedal_device_path: /dev/input/by-id/usb-PCsensor_FS20Pro-event-kbd
+    pedal_pressed_key_topic: /leonardo/pedal_pressed_key
 
 # ------------------------------------------------------------------------------
 # 踏板映射控制器
@@ -73,7 +72,7 @@ leonardo/pedal_mapping_controller:
   ros__parameters:
     left_prefix:  "fd_left_ee_controller/ee"
     right_prefix: "fd_right_ee_controller/ee"
-    pedal_state_topic: /leonardo/pedal_state    
+    pedal_pressed_key_topic: /leonardo/pedal_pressed_key    
     teleop_mapping_topic: "/leonardo/pedal_mapping_cmd"
 
 # ------------------------------------------------------------------------------

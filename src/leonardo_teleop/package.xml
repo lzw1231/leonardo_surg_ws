@@ -4,12 +4,13 @@
     <name>leonardo_teleop</name>
     <version>0.0.0</version>
     <description>Leonardo teleop pedal state publisher</description>
-    <maintainer email="luozhw.bit@gmail.com">lzw</maintainer>
+    <maintainer email="luozhw.bit@email.com">lzw</maintainer>
     <license>Apache-2.0</license>
 
     <buildtool_depend>ament_cmake</buildtool_depend>
 
     <depend>rclcpp</depend>
+    <depend>rclcpp_lifecycle</depend>
     <depend>std_msgs</depend>
 
     <test_depend>ament_lint_auto</test_depend>

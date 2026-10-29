@@ -14,8 +14,8 @@ const double qNaN = std::numeric_limits<double>::quiet_NaN();
 
 controller_interface::CallbackReturn Pedal6KeysMappingController::on_init() {
     try {
-        if (!get_node()->has_parameter("pedal_state_topic")) {
-            get_node()->declare_parameter<std::string>("pedal_state_topic", "/leonardo/pedal_state");
+        if (!get_node()->has_parameter("pedal_pressed_key_topic")) {
+            get_node()->declare_parameter<std::string>("pedal_pressed_key_topic", "/leonardo/pedal_pressed_key");
         }
         if (!get_node()->has_parameter("left_prefix")) {
             get_node()->declare_parameter<std::string>("left_prefix", "fd_left_ee_controller/ee");
@@ -38,7 +38,7 @@ controller_interface::CallbackReturn Pedal6KeysMappingController::on_configure(c
     auto node = get_node();
 
     msg_.data.assign(REFS_SIZE, qNaN);
-    pedal_state_topic_ = node->get_parameter("pedal_state_topic").as_string();
+    pedal_state_topic_ = node->get_parameter("pedal_pressed_key_topic").as_string();
     left_prefix_ = node->get_parameter("left_prefix").as_string();
     right_prefix_ = node->get_parameter("right_prefix").as_string();
     teleop_mapping_topic_ = node->get_parameter("teleop_mapping_topic").as_string();

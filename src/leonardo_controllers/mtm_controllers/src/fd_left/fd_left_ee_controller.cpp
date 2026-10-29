@@ -8,7 +8,7 @@
 namespace mtm_controllers {
 
 namespace {
-constexpr double kNaN = std::numeric_limits<double>::quiet_NaN();
+constexpr double qNaN = std::numeric_limits<double>::quiet_NaN();
 rclcpp::Logger LOGGER = rclcpp::get_logger("FDLeftEeController");
 } // namespace
 
@@ -46,7 +46,7 @@ controller_interface::CallbackReturn FDLeftEeController::on_init() {
         transform_(2, 3) = t_trans[2];
 
         // ---- 引用接口存储：一次性分配，之后只 fill，不 resize，保证指针稳定 ----
-        reference_interfaces_.assign(REF_SIZE, kNaN);
+        reference_interfaces_.assign(REF_SIZE, qNaN);
     } catch (const std::exception &e) {
         RCLCPP_ERROR(LOGGER, "on_init 失败: %s", e.what());
         return controller_interface::CallbackReturn::ERROR;
@@ -65,7 +65,7 @@ controller_interface::CallbackReturn FDLeftEeController::on_configure(const rclc
     }
 
     // 重置导出值，避免下游读到 0
-    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), kNaN);
+    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), qNaN);
     state_index_.clear();
 
     return controller_interface::CallbackReturn::SUCCESS;
@@ -126,21 +126,21 @@ controller_interface::CallbackReturn FDLeftEeController::on_activate(const rclcp
         // 绑定失败属于配置错误，不可恢复
         return controller_interface::CallbackReturn::ERROR;
     }
-    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), kNaN);
+    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), qNaN);
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn FDLeftEeController::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) {
     // 清空绑定，重新激活时 on_activate 会重新 bind
     std::fill(state_index_.begin(), state_index_.end(), -1);
-    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), kNaN);
+    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), qNaN);
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn FDLeftEeController::on_cleanup(const rclcpp_lifecycle::State & /*previous_state*/) {
     state_index_.clear();
     // reference_interfaces_ 不 clear，只重置值，保持导出指针稳定
-    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), kNaN);
+    std::fill(reference_interfaces_.begin(), reference_interfaces_.end(), qNaN);
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
@@ -154,14 +154,14 @@ controller_interface::return_type FDLeftEeController::update_and_write_commands(
                                                                                 const rclcpp::Duration & /*period*/) {
     auto read = [&](size_t j) -> double {
         if (j >= state_index_.size()) {
-            return kNaN;
+            return qNaN;
         }
         const int idx = state_index_[j];
         if (idx < 0) {
-            return kNaN;
+            return qNaN;
         }
         const auto opt = state_interfaces_[static_cast<size_t>(idx)].get_optional();
-        return opt.value_or(kNaN);
+        return opt.value_or(qNaN);
     };
 
     // ---- 位置 joints[0..2] ----
@@ -221,3 +221,5 @@ controller_interface::return_type FDLeftEeController::update_and_write_commands(
 }
 
 } // namespace mtm_controllers
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(mtm_controllers::FDLeftEeController, controller_interface::ChainableControllerInterface)
