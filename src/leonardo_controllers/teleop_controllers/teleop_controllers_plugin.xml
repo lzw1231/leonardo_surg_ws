@@ -1,6 +1,6 @@
 <library path="teleop_controllers">
-    <class name="teleop_controllers/Pedal6KeysMappingController"
-        type="teleop_controllers::Pedal6KeysMappingController"
+    <class name="teleop_controllers/ArmMappingController"
+        type="teleop_controllers::ArmMappingController"
         base_class_type="controller_interface::ControllerInterface">
         <description>6按键版——踏板映射控制器（订阅踏板状态，选择上游主手，发布主手数据）</description>
     </class>

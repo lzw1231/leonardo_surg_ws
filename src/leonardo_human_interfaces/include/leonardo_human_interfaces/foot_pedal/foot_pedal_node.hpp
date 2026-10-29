@@ -13,14 +13,16 @@ extern "C" {
 #include <libevdev/libevdev.h>
 }
 
-namespace leonardo_pedal_teleop {
+namespace leonardo_human_interfaces {
 
+namespace {
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+}
 
-class PedalTeleopNode : public rclcpp_lifecycle::LifecycleNode {
+class FootPedalNode : public rclcpp_lifecycle::LifecycleNode {
   public:
-    explicit PedalTeleopNode(const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
-    ~PedalTeleopNode() override = default;
+    explicit FootPedalNode(const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
+    ~FootPedalNode() override = default;
 
     // 状态迁移回调
     CallbackReturn on_configure(const rclcpp_lifecycle::State &state) override;
@@ -32,12 +34,12 @@ class PedalTeleopNode : public rclcpp_lifecycle::LifecycleNode {
 
   private:
     enum PedalState : int {
-        STATE_1 = 1,
-        STATE_2 = 2,
-        STATE_3 = 3,
-        STATE_4 = 4,
-        STATE_5 = 5,
-        STATE_6 = 6,
+        KEY1 = 1,
+        KEY2 = 2,
+        KEY3 = 3,
+        KEY4 = 4,
+        KEY5 = 5,
+        KEY6 = 6,
     };
 
     static constexpr int KEY_CODE_1 = 2; // KEY_1
@@ -49,11 +51,11 @@ class PedalTeleopNode : public rclcpp_lifecycle::LifecycleNode {
 
     void evdevLoop();
 
-    // 发布者：踏板按键状态
-    rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>::SharedPtr pedal_pressed_key_pub_;
+    // 发布者：脚踏板按键事件
+    rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>::SharedPtr pedal_key_event_pub_;
 
     // 参数
-    std::string pedal_pressed_key_topic_;
+    std::string pedal_key_event_topic_;
     std::string pedal_device_path_;
 
     // 设备句柄
@@ -68,4 +70,4 @@ class PedalTeleopNode : public rclcpp_lifecycle::LifecycleNode {
     std::thread evdev_thread_;
 };
 
-} // namespace leonardo_pedal_teleop
+} // namespace leonardo_human_interfaces

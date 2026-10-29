@@ -52,7 +52,7 @@ set(TELEOP_TARGET_LIBS
 # 遥操作映射控制器
 # ==============================================================================
 add_library(teleop_controllers SHARED
-        src/pedal_mapping/pedal_6keys_mapping_controller.cpp
+        src/pedal_mapping/arm_mapping_controller.cpp
 )
 target_include_directories(teleop_controllers
         PUBLIC

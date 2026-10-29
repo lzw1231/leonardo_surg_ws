@@ -13,7 +13,7 @@
 namespace teleop_controllers {
 
 /**
- * Pedal6KeysMappingController —— 踏板映射控制器【普通Controller，上游chain输入，下游topic输出】
+ * ArmMappingController —— 踏板映射控制器【普通Controller，上游chain输入，下游topic输出】
  *
  * 读左右主手 ee/ 位姿数据（来自上游chain command interfaces），
  * 按踏板状态选源，填充4组psm1/psm2/psm3/ecm1数据 + epoch，打包发布topic。
@@ -31,10 +31,10 @@ namespace teleop_controllers {
  *   其他  → 不拷贝数据（保持上次值）
  *   任何键 → epoch +1
  */
-class Pedal6KeysMappingController : public controller_interface::ControllerInterface {
+class ArmMappingController : public controller_interface::ControllerInterface {
   public:
     TELEOP_CONTROLLERS_PUBLIC
-    Pedal6KeysMappingController() = default;
+    ArmMappingController() = default;
 
     TELEOP_CONTROLLERS_PUBLIC
     controller_interface::CallbackReturn on_init() override;
@@ -86,8 +86,8 @@ class Pedal6KeysMappingController : public controller_interface::ControllerInter
     // ========================================================================
     std::string left_prefix_;
     std::string right_prefix_;
-    std::string pedal_state_topic_;
-    std::string teleop_mapping_topic_;
+    std::string pedal_key_event_topic_;
+    std::string arm_mapping_cmd_topic_;
     std_msgs::msg::Float64MultiArray msg_;
 
     // ========================================================================
@@ -104,8 +104,8 @@ class Pedal6KeysMappingController : public controller_interface::ControllerInter
     // ========================================================================
     // 订阅 & 发布
     // ========================================================================
-    rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr pedal_sub_;
-    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr teleop_pub_;
+    rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr pedal_key_event_sub_;
+    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr arm_mapping_cmd_pub_;
 
     std::atomic<int> pedal_key_{0};
     std::atomic<int> pedal_event_counter_{0};

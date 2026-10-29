@@ -7,7 +7,7 @@ namespace psm_controllers {
 
 // --- 常量定义 (移至此处以避免编译依赖问题) ---
 namespace {
-rclcpp::Logger LOGGER = rclcpp::get_logger("AloeController");
+rclcpp::Logger LOGGER = rclcpp::get_logger("aloe_controller_node");
 const double qNaN = std::numeric_limits<double>::quiet_NaN();
 
 static constexpr int NUM_ARMS = 3;
@@ -51,8 +51,8 @@ controller_interface::InterfaceConfiguration AloeController::state_interface_con
 controller_interface::CallbackReturn AloeController::on_init() {
     try {
         auto node = get_node();
-        if (!node->has_parameter("teleop_sub_topic")) {
-            node->declare_parameter<std::string>("teleop_sub_topic", "/leonardo/pedal_mapping_cmd");
+        if (!node->has_parameter("arm_mapping_cmd_topic")) {
+            node->declare_parameter<std::string>("arm_mapping_cmd_topic", "/leonardo/arm_mapping/arm_mapping_cmd");
         }
     } catch (const std::exception &e) {
         RCLCPP_ERROR(LOGGER, "Init error: %s", e.what());
@@ -63,7 +63,7 @@ controller_interface::CallbackReturn AloeController::on_init() {
 
 controller_interface::CallbackReturn AloeController::on_configure(const rclcpp_lifecycle::State &) {
     auto node = get_node();
-    teleop_topic_name_ = node->get_parameter("teleop_sub_topic").as_string();
+    arm_mapping_cmd_topic_name_ = node->get_parameter("arm_mapping_cmd_topic").as_string();
 
     // 初始化手臂上下文
     for (int i = 0; i < NUM_ARMS; ++i) {
@@ -75,13 +75,13 @@ controller_interface::CallbackReturn AloeController::on_configure(const rclcpp_l
     }
 
     // 订阅遥操作数据
-    teleop_sub_ = node->create_subscription<std_msgs::msg::Float64MultiArray>(
-        teleop_topic_name_, rclcpp::QoS(1).reliable(), [this](const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
-            std::lock_guard<std::mutex> lock(data_mutex_);
-            if (msg->data.size() == TOPIC_DATA_SIZE) {
-                latest_topic_data_ = msg->data;
-            }
-        });
+    topic_sub_ = node->create_subscription<std_msgs::msg::Float64MultiArray>(arm_mapping_cmd_topic_name_, rclcpp::QoS(1).reliable(),
+                                                                             [this](const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
+                                                                                 std::lock_guard<std::mutex> lock(data_mutex_);
+                                                                                 if (msg->data.size() == TOPIC_DATA_SIZE) {
+                                                                                     latest_topic_data_ = msg->data;
+                                                                                 }
+                                                                             });
 
     RCLCPP_INFO(LOGGER, "Configured with Base-Frame Mapping Logic.");
     return CallbackReturn::SUCCESS;
@@ -105,7 +105,7 @@ controller_interface::CallbackReturn AloeController::on_deactivate(const rclcpp_
 }
 
 controller_interface::CallbackReturn AloeController::on_cleanup(const rclcpp_lifecycle::State &) {
-    teleop_sub_.reset();
+    topic_sub_.reset();
     latest_topic_data_.clear();
     return CallbackReturn::SUCCESS;
 }

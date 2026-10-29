@@ -1,6 +1,3 @@
-// ============================================================================
-// 文件 1: aloe_controller.hpp
-// ============================================================================
 #pragma once
 
 #include "controller_interface/controller_interface.hpp"
@@ -48,8 +45,8 @@ class AloeController : public controller_interface::ControllerInterface {
     const std::vector<std::string> arm_prefixes_ = {"s1", "s2", "s3"};
 
     // --- 通信与状态 ---
-    std::string teleop_topic_name_;
-    rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr teleop_sub_;
+    std::string arm_mapping_cmd_topic_name_;
+    rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr topic_sub_;
     std::mutex data_mutex_;
     std::vector<double> latest_topic_data_;
     double last_epoch_ = -1.0;

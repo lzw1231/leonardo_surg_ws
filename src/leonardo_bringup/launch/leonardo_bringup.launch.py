@@ -50,7 +50,7 @@ def generate_launch_description():
     robot_desc_cmd = ParameterValue(Command(["xacro ", robot_desc_file_path]), value_type=str)
 
     # =========================================================================
-    # 2. robot模型发布与控制器管理
+    # 2. robot模型发布与控制器管理器
     # =========================================================================
 
     # 2.1 Robot State Publisher：发布 URDF 与 TF
@@ -85,7 +85,7 @@ def generate_launch_description():
             "joint_state_broadcaster",
             "fd_left_ee_controller",
             "fd_right_ee_controller",
-            "pedal_mapping_controller",
+            "arm_mapping_controller",
             "aloe_controller",
             "--controller-manager",
             cm,
@@ -107,7 +107,7 @@ def generate_launch_description():
             "joint_state_broadcaster",
             "fd_left_ee_controller",
             "fd_right_ee_controller",
-            "pedal_mapping_controller",
+            "arm_mapping_controller",
             "aloe_controller",
         ],
         output="screen",
@@ -126,11 +126,11 @@ def generate_launch_description():
     # =========================================================================
 
     # 4.1 生命周期节点定义
-    pedal_teleop_node = LifecycleNode(
-        package="leonardo_teleop",
-        executable="pedal_teleop_node",
+    foot_pedal_node = LifecycleNode(
+        package="leonardo_human_interfaces",
+        executable="foot_pedal_node",
         namespace=ns,
-        name="pedal_teleop_node",
+        name="foot_pedal_node",
         parameters=[controllers_yaml_path],
         output="screen",
     )
@@ -138,7 +138,7 @@ def generate_launch_description():
     # 4.2 配置请求：unconfigured → inactive
     start_pedal_configure = EmitEvent(
         event=ChangeState(
-            lifecycle_node_matcher=matches_action(pedal_teleop_node),
+            lifecycle_node_matcher=matches_action(foot_pedal_node),
             transition_id=Transition.TRANSITION_CONFIGURE,
         )
     )
@@ -146,13 +146,13 @@ def generate_launch_description():
     # 4.3 激活请求：inactive → active
     on_pedal_configured = RegisterEventHandler(
         OnStateTransition(
-            target_lifecycle_node=pedal_teleop_node,
+            target_lifecycle_node=foot_pedal_node,
             goal_state="inactive",
             entities=[
                 LogInfo(msg="[Pedal] Configured. Activating..."),
                 EmitEvent(
                     event=ChangeState(
-                        lifecycle_node_matcher=matches_action(pedal_teleop_node),
+                        lifecycle_node_matcher=matches_action(foot_pedal_node),
                         transition_id=Transition.TRANSITION_ACTIVATE,
                     )
                 ),
@@ -163,7 +163,7 @@ def generate_launch_description():
     # 4.4 故障保护：节点退出即终止整个进程组 [fail-fast]
     on_pedal_exit_fatal = RegisterEventHandler(
         OnProcessExit(
-            target_action=pedal_teleop_node,
+            target_action=foot_pedal_node,
             on_exit=[
                 LogInfo(msg="[FATAL] pedal_teleop_node exited. Killing all..."),
                 OpaqueFunction(function=kill_all_and_exit),
@@ -201,7 +201,7 @@ def generate_launch_description():
             load_all_controllers_spawner,
             on_controllers_loaded,
             # 踏板生命周期
-            pedal_teleop_node,
+            foot_pedal_node,
             on_pedal_exit_fatal,  # 先挂故障保护
             start_pedal_configure,  # 再发起 configure
             on_pedal_configured,  # 最后挂 activate 链
