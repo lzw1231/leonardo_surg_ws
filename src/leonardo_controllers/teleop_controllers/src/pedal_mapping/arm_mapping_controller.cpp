@@ -146,10 +146,24 @@ controller_interface::return_type ArmMappingController::update(const rclcpp::Tim
         copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_1_IDX);
         copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_2_IDX);
         break;
+
+    case 2:
+        break;
+
     case 3:
         copy_source_to_dest(SRC_LEFT_IDX, DST_PSM_2_IDX);
         copy_source_to_dest(SRC_RIGHT_IDX, DST_PSM_3_IDX);
         break;
+
+    case 4:
+        break;
+
+    case 5:
+        break;
+
+    case 6:
+        break;
+
     default:
         break;
     }

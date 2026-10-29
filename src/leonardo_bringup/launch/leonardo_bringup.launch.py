@@ -76,7 +76,7 @@ def generate_launch_description():
     # 3. 控制器生命周期：加载 → 激活
     # =========================================================================
 
-    # 3.1 加载并配置全部控制器，保持 inactive（--stopped）
+    # 3.1 加载并配置全部控制器，保持 inactive
     load_all_controllers_spawner = Node(
         package="controller_manager",
         executable="spawner",
