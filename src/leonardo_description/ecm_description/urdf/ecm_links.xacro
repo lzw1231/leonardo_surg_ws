@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ============ 全局参数 米制=1 1 1，毫米制=0.001 0.001 0.001 ============ -->
+    <xacro:property name="mesh_scale" value="0.001 0.001 0.001" />
+
+    <!-- ============ 引入材质库 ============ -->
+    <xacro:include filename="$(find ecm_description)/materials/ecm_materials.xacro" />
+
+    <!-- ============================================================
+       LINK: ecm_base
+       ============================================================ -->
+    <link name="ecm_base">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_base.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_base" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_base.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_02
+       ============================================================ -->
+    <link name="ecm_02">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_02.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_02" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_02.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_03
+       ============================================================ -->
+    <link name="ecm_03">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_03.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_03" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_03.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_04
+       ============================================================ -->
+    <link name="ecm_04">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_04.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_04" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_04.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_05
+       ============================================================ -->
+    <link name="ecm_05">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_05.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_05" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_05.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_06
+       ============================================================ -->
+    <link name="ecm_06">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_06.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_06" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_06.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_07
+       ============================================================ -->
+    <link name="ecm_07">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_07.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_07" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_07.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_08
+       ============================================================ -->
+    <link name="ecm_08">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_08.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_08" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_08.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_09
+       ============================================================ -->
+    <link name="ecm_09">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_09.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_09" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_09.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_10
+       ============================================================ -->
+    <link name="ecm_10">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_10.stl" scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_10" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://ecm_description/meshes/stl/ecm_10.stl" scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+</robot>

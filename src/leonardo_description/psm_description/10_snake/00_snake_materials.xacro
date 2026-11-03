@@ -24,7 +24,8 @@
         <color rgba="1.00 0.40 0.00 ${alpha}" />
     </material>
     <material name="s1_link07">
-        <color rgba="1.00 0.50 0.00 ${alpha}" />e </material>
+        <color rgba="1.00 0.50 0.00 ${alpha}" />
+    </material>
     <material name="s1_link08">
         <color rgba="1.00 0.60 0.00 ${alpha}" />
     </material>

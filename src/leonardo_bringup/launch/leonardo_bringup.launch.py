@@ -4,13 +4,13 @@ import sys
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, RegisterEventHandler, EmitEvent, LogInfo, OpaqueFunction
+from launch.actions import EmitEvent, ExecuteProcess, LogInfo, OpaqueFunction, RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 from launch.events import matches_action
-from launch_ros.event_handlers import OnStateTransition
-from launch_ros.events.lifecycle import ChangeState
 from launch.substitutions import Command
 from launch_ros.actions import LifecycleNode, Node
+from launch_ros.event_handlers import OnStateTransition
+from launch_ros.events.lifecycle import ChangeState
 from launch_ros.parameter_descriptions import ParameterValue
 from lifecycle_msgs.msg import Transition
 
@@ -122,11 +122,9 @@ def generate_launch_description():
     )
 
     # =========================================================================
-    # 4. 踏板生命周期节点：配置 → 激活 + 故障保护
+    # 4. 踏板节点
     # =========================================================================
-
-    # 4.1 生命周期节点定义
-    foot_pedal_node = LifecycleNode(
+    foot_pedal_node = Node(
         package="leonardo_human_interfaces",
         executable="foot_pedal_node",
         namespace=ns,
@@ -135,37 +133,11 @@ def generate_launch_description():
         output="screen",
     )
 
-    # 4.2 配置请求：unconfigured → inactive
-    start_pedal_configure = EmitEvent(
-        event=ChangeState(
-            lifecycle_node_matcher=matches_action(foot_pedal_node),
-            transition_id=Transition.TRANSITION_CONFIGURE,
-        )
-    )
-
-    # 4.3 激活请求：inactive → active
-    on_pedal_configured = RegisterEventHandler(
-        OnStateTransition(
-            target_lifecycle_node=foot_pedal_node,
-            goal_state="inactive",
-            entities=[
-                LogInfo(msg="[Pedal] Configured. Activating..."),
-                EmitEvent(
-                    event=ChangeState(
-                        lifecycle_node_matcher=matches_action(foot_pedal_node),
-                        transition_id=Transition.TRANSITION_ACTIVATE,
-                    )
-                ),
-            ],
-        )
-    )
-
-    # 4.4 故障保护：节点退出即终止整个进程组 [fail-fast]
     on_pedal_exit_fatal = RegisterEventHandler(
         OnProcessExit(
             target_action=foot_pedal_node,
             on_exit=[
-                LogInfo(msg="[FATAL] pedal_teleop_node exited. Killing all..."),
+                LogInfo(msg="[FATAL] foot_pedal_node exited. Killing all..."),
                 OpaqueFunction(function=kill_all_and_exit),
             ],
         )
@@ -174,8 +146,6 @@ def generate_launch_description():
     # =========================================================================
     # 5. 可视化
     # =========================================================================
-
-    # 5.1 RViz2：加载预设配置与命名空间重映射
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -190,22 +160,16 @@ def generate_launch_description():
     )
 
     # =========================================================================
-    # 6. 启动项组装（按运行顺序）
+    # 6. 启动项组装
     # =========================================================================
     return LaunchDescription(
         [
-            # 模型与控制器管理
             robot_state_publisher_node,
             controller_manager_node,
-            # 控制器生命周期
             load_all_controllers_spawner,
             on_controllers_loaded,
-            # 踏板生命周期
             foot_pedal_node,
-            on_pedal_exit_fatal,  # 先挂故障保护
-            start_pedal_configure,  # 再发起 configure
-            on_pedal_configured,  # 最后挂 activate 链
-            # 可视化
+            on_pedal_exit_fatal,
             rviz_node,
         ]
     )

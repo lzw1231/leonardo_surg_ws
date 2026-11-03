@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 内窥镜材质库 -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="alpha" value="1" />
+
+    <material name="ecm_material_base">
+        <color rgba="0.55 0.00 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_02">
+        <color rgba="0.75 0.05 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_03">
+        <color rgba="0.95 0.10 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_04">
+        <color rgba="1.00 0.20 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_05">
+        <color rgba="1.00 0.30 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_06">
+        <color rgba="1.00 0.40 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_07">
+        <color rgba="1.00 0.50 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_08">
+        <color rgba="1.00 0.60 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_09">
+        <color rgba="1.00 0.70 0.00 ${alpha}" />
+    </material>
+    <material name="ecm_material_10">
+        <color rgba="1.00 0.80 0.00 ${alpha}" />
+    </material>
+
+</robot>
