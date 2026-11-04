@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="ecm_desc" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:include filename="ecm_links.xacro" />
     <xacro:include filename="ecm_joints.xacro" />

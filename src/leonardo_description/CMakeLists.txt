@@ -19,6 +19,7 @@ install(
         urdf
         psm_description
         mtm_description
+        ecm_description
         ft3215_description
         DESTINATION share/${PROJECT_NAME}
 )
