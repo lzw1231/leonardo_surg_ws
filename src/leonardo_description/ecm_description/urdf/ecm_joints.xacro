@@ -32,6 +32,14 @@
     <xacro:property name="origin_gear_center_03_L" value="0.0023" />
     <xacro:property name="origin_gear_center_03_R" value="0.0" />
     <xacro:property name="origin_gear_center_04_L" value="0.0" />
+    <xacro:property name="origin_gear_center_06_R" value="0.0" />
+    <xacro:property name="origin_gear_center_07_L" value="0.0023" />
+    <xacro:property name="origin_gear_center_07_R" value="0.0" />
+    <xacro:property name="origin_gear_center_08_L" value="0.00116" />
+    <xacro:property name="origin_gear_center_08_R" value="0.00215" />
+    <xacro:property name="origin_gear_center_09_L" value="0.0023" />
+    <xacro:property name="origin_gear_center_09_R" value="0.0" />
+    <xacro:property name="origin_gear_center_10_L" value="0.0" />
 
     <!-- ============================================================
          JOINT 定义
@@ -113,28 +121,116 @@
         <origin xyz="0 ${offset_y_05_06} 0" rpy="0 0 0" />
     </joint>
 
-    <joint name="offset_joint_06_07" type="fixed">
+    <!-- link06-> link07 -->
+    <link name="ecm_orbit_carrier_06" />
+    <link name="ecm_gear_center_07" />
+
+    <joint name="ecm_j06_oc" type="revolute"> <!-- 公转关节 -->
         <parent link="ecm_06" />
+        <child link="ecm_orbit_carrier_06" />
+        <origin xyz="0 ${origin_gear_center_06_R} 0" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <limit effort="${effort}" velocity="${velocity}" lower="${orbit_lower}" upper="${orbit_upper}" />
+    </joint>
+
+    <joint name="ecm_joint_07_spin" type="continuous"> <!-- 自转关节 -->
+        <parent link="ecm_orbit_carrier_06" />
+        <child link="ecm_gear_center_07" />
+        <origin xyz="0 ${orbit_r} 0 " rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <limit effort="${effort}" velocity="${velocity}" />
+        <mimic joint="ecm_j06_oc" multiplier="1" offset="0" />
+    </joint>
+
+    <joint name="ecm_joint_07_mount" type="fixed">  <!-- 固连关节 -->
+        <parent link="ecm_gear_center_07" />
         <child link="ecm_07" />
-        <origin xyz="0 ${offset_y_06_07} 0" rpy="0 0 0" />
+        <origin xyz="0 ${origin_gear_center_07_L} 0" rpy="0 0 0" />
     </joint>
 
-    <joint name="offset_joint_07_08" type="fixed">
+
+    <!-- link07-> link08 -->
+    <link name="ecm_orbit_carrier_07" />
+    <link name="ecm_gear_center_08" />
+
+    <joint name="ecm_j07_oc" type="revolute"> <!-- 公转关节 -->
         <parent link="ecm_07" />
+        <child link="ecm_orbit_carrier_07" />
+        <origin xyz="0 ${origin_gear_center_07_R} 0" rpy="0 0 0" />
+        <axis xyz="1 0 0" />
+        <limit effort="${effort}" velocity="${velocity}" lower="${orbit_lower}" upper="${orbit_upper}" />
+    </joint>
+
+    <joint name="ecm_joint_08_spin" type="continuous"> <!-- 自转关节 -->
+        <parent link="ecm_orbit_carrier_07" />
+        <child link="ecm_gear_center_08" />
+        <origin xyz="0 ${orbit_r} 0 " rpy="0 0 0" />
+        <axis xyz="1 0 0" />
+        <limit effort="${effort}" velocity="${velocity}" />
+        <mimic joint="ecm_j07_oc" multiplier="1" offset="0" />
+    </joint>
+
+    <joint name="ecm_joint_08_mount" type="fixed">  <!-- 固连关节 -->
+        <parent link="ecm_gear_center_08" />
         <child link="ecm_08" />
-        <origin xyz="0 ${offset_y_07_08} 0" rpy="0 0 0" />
+        <origin xyz="0 ${origin_gear_center_08_L} 0" rpy="0 0 0" />
     </joint>
 
-    <joint name="offset_joint_08_09" type="fixed">
+
+    <!-- link08-> link09 -->
+    <link name="ecm_orbit_carrier_08" />
+    <link name="ecm_gear_center_09" />
+
+    <joint name="ecm_j08_oc" type="revolute"> <!-- 公转关节 -->
         <parent link="ecm_08" />
-        <child link="ecm_09" />
-        <origin xyz="0 ${offset_y_08_09} 0" rpy="0 0 0" />
+        <child link="ecm_orbit_carrier_08" />
+        <origin xyz="0 ${origin_gear_center_08_R} 0" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <limit effort="${effort}" velocity="${velocity}" lower="${orbit_lower}" upper="${orbit_upper}" />
     </joint>
 
-    <joint name="offset_joint_09_10" type="fixed">
-        <parent link="ecm_09" />
-        <child link="ecm_10" />
-        <origin xyz="0 ${offset_y_09_10} 0" rpy="0 0 0" />
+    <joint name="ecm_joint_09_spin" type="continuous"> <!-- 自转关节 -->
+        <parent link="ecm_orbit_carrier_08" />
+        <child link="ecm_gear_center_09" />
+        <origin xyz="0 ${orbit_r} 0 " rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <limit effort="${effort}" velocity="${velocity}" />
+        <mimic joint="ecm_j08_oc" multiplier="1" offset="0" />
     </joint>
+
+    <joint name="ecm_joint_09_mount" type="fixed">  <!-- 固连关节 -->
+        <parent link="ecm_gear_center_09" />
+        <child link="ecm_09" />
+        <origin xyz="0 ${origin_gear_center_09_L} 0" rpy="0 0 0" />
+    </joint>
+
+
+    <!-- link09-> link10 -->
+    <link name="ecm_orbit_carrier_09" />
+    <link name="ecm_gear_center_10" />
+
+    <joint name="ecm_j09_oc" type="revolute"> <!-- 公转关节 -->
+        <parent link="ecm_09" />
+        <child link="ecm_orbit_carrier_09" />
+        <origin xyz="0 ${origin_gear_center_09_R} 0" rpy="0 0 0" />
+        <axis xyz="1 0 0" />
+        <limit effort="${effort}" velocity="${velocity}" lower="${orbit_lower}" upper="${orbit_upper}" />
+    </joint>
+
+    <joint name="ecm_joint_10_spin" type="continuous"> <!-- 自转关节 -->
+        <parent link="ecm_orbit_carrier_09" />
+        <child link="ecm_gear_center_10" />
+        <origin xyz="0 ${orbit_r} 0 " rpy="0 0 0" />
+        <axis xyz="1 0 0" />
+        <limit effort="${effort}" velocity="${velocity}" />
+        <mimic joint="ecm_j09_oc" multiplier="1" offset="0" />
+    </joint>
+
+    <joint name="ecm_joint_10_mount" type="fixed">  <!-- 固连关节 -->
+        <parent link="ecm_gear_center_10" />
+        <child link="ecm_10" />
+        <origin xyz="0 ${origin_gear_center_10_L} 0" rpy="0 0 0" />
+    </joint>
+
 
 </robot>

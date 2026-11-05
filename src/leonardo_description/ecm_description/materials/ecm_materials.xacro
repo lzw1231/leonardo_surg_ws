@@ -20,19 +20,19 @@
         <color rgba="0.77 0.68 0.51 ${alpha}" />
     </material>
     <material name="ecm_material_06">
-        <color rgba="0.82 0.75 0.62 ${alpha}" />
+        <color rgba="0.82 0.76 0.63 ${alpha}" />
     </material>
     <material name="ecm_material_07">
-        <color rgba="0.86 0.81 0.73 ${alpha}" />
+        <color rgba="0.87 0.82 0.74 ${alpha}" />
     </material>
     <material name="ecm_material_08">
-        <color rgba="0.90 0.87 0.82 ${alpha}" />
+        <color rgba="0.91 0.88 0.81 ${alpha}" />
     </material>
     <material name="ecm_material_09">
-        <color rgba="0.93 0.91 0.88 ${alpha}" />
+        <color rgba="0.94 0.92 0.87 ${alpha}" />
     </material>
     <material name="ecm_material_10">
-        <color rgba="0.95 0.94 0.91 ${alpha}" />
+        <color rgba="0.96 0.94 0.90 ${alpha}" />
     </material>
 
 
