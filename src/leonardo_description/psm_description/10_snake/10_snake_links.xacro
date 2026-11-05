@@ -11,6 +11,25 @@
         <link name="${prefix}_link_for_motor_05" />
         <link name="${prefix}_link_for_motor_06" />
 
+        <!-- ==================== Link 00 ==================== -->
+        <link name="${prefix}_00">
+            <visual>
+                <geometry>
+                    <mesh filename="${stl_path}/00.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0} ${-pi/2}" />
+                <material name="${prefix}_link00" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="${stl_path}/00.stl" scale="${mesh_scale}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 ${pi/2.0}  ${-pi/2}" />
+            </collision>
+            <xacro:snake_cylinder_inertia m="${link00_m}" r="${link00_r}" l="${link00_l}" o_xyz="0 0 0"
+                o_rpy="0 0 0" />
+        </link>
+
         <!-- ==================== Link 01 ==================== -->
         <link name="${prefix}_01">
             <visual>

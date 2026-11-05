@@ -2,6 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- ==========  偏移量  ========== -->
+    <xacro:property name="x_offset_00_01" value="0.0044" />
     <xacro:property name="x_offset_01_02" value="0.0514" />
     <xacro:property name="x_offset_02_03" value="0.0013" />
     <xacro:property name="x_offset_05_06" value="0.0084" />
@@ -93,6 +94,13 @@
             <origin xyz="0 0.025 0.01" rpy="0 0 0" />
             <axis xyz="0 0 1" />
             <limit effort="${effort}" velocity="${velocity}" lower="${-pi/2.0}" upper="${pi/2.0}" />
+        </joint>
+
+        <!-- link00 -> link01 -->
+        <joint name="${prefix}_joint_00_01" type="fixed">
+            <parent link="${prefix}_00" />
+            <child link="${prefix}_01" />
+            <origin xyz="${x_offset_00_01} 0 0" rpy="0 0 0" />
         </joint>
 
         <!-- link01 -> link02 -->

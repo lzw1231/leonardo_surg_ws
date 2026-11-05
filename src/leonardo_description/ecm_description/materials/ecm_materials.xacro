@@ -4,35 +4,36 @@
 
     <xacro:property name="alpha" value="1" />
 
+    <!-- ==================== ECM 香槟金棕 ==================== -->
     <material name="ecm_material_01">
-        <color rgba="0.42 0.36 0.24 ${alpha}" />
+        <color rgba="0.40 0.34 0.26 ${alpha}" />
     </material>
     <material name="ecm_material_02">
-        <color rgba="0.52 0.44 0.30 ${alpha}" />
+        <color rgba="0.46 0.39 0.31 ${alpha}" />
     </material>
     <material name="ecm_material_03">
-        <color rgba="0.62 0.52 0.36 ${alpha}" />
+        <color rgba="0.52 0.44 0.36 ${alpha}" />
     </material>
     <material name="ecm_material_04">
-        <color rgba="0.70 0.60 0.42 ${alpha}" />
+        <color rgba="0.58 0.49 0.41 ${alpha}" />
     </material>
     <material name="ecm_material_05">
-        <color rgba="0.77 0.68 0.51 ${alpha}" />
+        <color rgba="0.64 0.55 0.46 ${alpha}" />
     </material>
     <material name="ecm_material_06">
-        <color rgba="0.82 0.76 0.63 ${alpha}" />
+        <color rgba="0.70 0.61 0.52 ${alpha}" />
     </material>
     <material name="ecm_material_07">
-        <color rgba="0.87 0.82 0.74 ${alpha}" />
+        <color rgba="0.75 0.67 0.59 ${alpha}" />
     </material>
     <material name="ecm_material_08">
-        <color rgba="0.91 0.88 0.81 ${alpha}" />
+        <color rgba="0.80 0.73 0.66 ${alpha}" />
     </material>
     <material name="ecm_material_09">
-        <color rgba="0.94 0.92 0.87 ${alpha}" />
+        <color rgba="0.84 0.78 0.73 ${alpha}" />
     </material>
     <material name="ecm_material_10">
-        <color rgba="0.96 0.94 0.90 ${alpha}" />
+        <color rgba="0.88 0.83 0.80 ${alpha}" />
     </material>
 
 

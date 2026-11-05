@@ -2,17 +2,11 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- ============================================================
-        各关节 y 轴偏移（单位：m）
+        固定关节的 y 轴偏移（单位：m）
          ============================================================ -->
     <xacro:property name="offset_y_01_02" value="0.0023" />
-    <xacro:property name="offset_y_02_03" value="0.0046" />
-    <xacro:property name="offset_y_03_04" value="0.01" />
     <xacro:property name="offset_y_04_05" value="0.0029" />
     <xacro:property name="offset_y_05_06" value="0.0225" />
-    <xacro:property name="offset_y_06_07" value="0.00575" />
-    <xacro:property name="offset_y_07_08" value="0.01" />
-    <xacro:property name="offset_y_08_09" value="0.01" />
-    <xacro:property name="offset_y_09_10" value="0.01" />
 
     <!-- ========= 最大力矩 ======== -->
     <xacro:property name="effort" value="1000" />
@@ -46,7 +40,7 @@
          ============================================================ -->
 
     <!-- link01 -> link02  -->
-    <joint name="offset_joint_01_02" type="fixed">
+    <joint name="ecm_joint_01_02" type="fixed">
         <parent link="ecm_01" />
         <child link="ecm_02" />
         <origin xyz="0 ${offset_y_01_02} 0" rpy="0 0 0" />
@@ -108,14 +102,14 @@
     </joint>
 
     <!-- link04-> link05 -->
-    <joint name="offset_joint_04_05" type="fixed">
+    <joint name="ecm_joint_04_05" type="fixed">
         <parent link="ecm_04" />
         <child link="ecm_05" />
         <origin xyz="0 ${offset_y_04_05} 0" rpy="0 0 0" />
     </joint>
 
     <!-- link05-> link06 -->
-    <joint name="offset_joint_05_06" type="fixed">
+    <joint name="ecm_joint_05_06" type="fixed">
         <parent link="ecm_05" />
         <child link="ecm_06" />
         <origin xyz="0 ${offset_y_05_06} 0" rpy="0 0 0" />
