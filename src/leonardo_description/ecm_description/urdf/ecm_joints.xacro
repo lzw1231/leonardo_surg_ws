@@ -6,29 +6,74 @@
          ============================================================ -->
     <xacro:property name="offset_y_01_02" value="0.0023" />
     <xacro:property name="offset_y_02_03" value="0.0046" />
-    <xacro:property name="offset_y_03_04" value="0.0277" />
-    <xacro:property name="offset_y_04_05" value="0.0046" />
-    <xacro:property name="offset_y_05_06" value="0.00445" />
+    <xacro:property name="offset_y_03_04" value="0.01" />
+    <xacro:property name="offset_y_04_05" value="0.0029" />
+    <xacro:property name="offset_y_05_06" value="0.0225" />
     <xacro:property name="offset_y_06_07" value="0.00575" />
-    <xacro:property name="offset_y_07_08" value="0.0023" />
+    <xacro:property name="offset_y_07_08" value="0.01" />
+    <xacro:property name="offset_y_08_09" value="0.01" />
+    <xacro:property name="offset_y_09_10" value="0.01" />
 
+    <!-- ========= 最大力矩 ======== -->
+    <xacro:property name="effort" value="1000" />
+
+    <!-- ========= 最大速度 rad/s ======== -->
+    <xacro:property name="velocity" value="${4.0 * pi}" />
+
+    <!-- 蛇骨公转半径 -->
+    <xacro:property name="orbit_r" value="0.0023" />
+
+    <!-- 蛇骨公转角度限位（±22.5°） -->
+    <xacro:property name="orbit_lower" value="${-pi/8.0}" />
+    <xacro:property name="orbit_upper" value="${pi/8.0}" />
+
+    <!-- 蛇骨自身原点相对自身齿轮中心的偏移 -->
+    <xacro:property name="origin_gear_center_02_R" value="0.0" />
+    <xacro:property name="origin_gear_center_03_L" value="0.0023" />
 
     <!-- ============================================================
          JOINT 定义
          ============================================================ -->
 
+    <!-- link01 -> link02  -->
     <joint name="offset_joint_01_02" type="fixed">
         <parent link="ecm_01" />
         <child link="ecm_02" />
         <origin xyz="0 ${offset_y_01_02} 0" rpy="0 0 0" />
     </joint>
 
-    <joint name="offset_joint_02_03" type="fixed">
+    <!-- link02 -> link03  -->
+    <link name="ecm_orbit_carrier_02" />
+    <link name="ecm_gear_center_03" />
+
+    <!-- 公转关节：ecm_02 → 公转架 orbit_carrier_02，revolute -->
+    <joint name="ecm_j02_oc" type="revolute">
         <parent link="ecm_02" />
-        <child link="ecm_03" />
-        <origin xyz="0 ${offset_y_02_03} 0" rpy="0 0 0" />
+        <child link="ecm_orbit_carrier_02" />
+        <origin xyz="0 ${origin_gear_center_02_R} 0" rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <limit effort="${effort}" velocity="${velocity}" lower="${orbit_lower}" upper="${orbit_upper}" />
     </joint>
 
+    <!-- 自转关节：公转架 → gear_center_03，continuous，mimic跟随公转关节 -->
+    <joint name="ecm_joint_03_spin" type="continuous">
+        <parent link="ecm_orbit_carrier_02" />
+        <child link="ecm_gear_center_03" />
+        <origin xyz="0 ${orbit_r} 0 " rpy="0 0 0" />
+        <axis xyz="0 0 1" />
+        <limit effort="${effort}" velocity="${velocity}" />
+        <mimic joint="ecm_j02_oc" multiplier="1" offset="0" />
+    </joint>
+
+    <!-- 固连关节：gear_center_03 → ecm_03 -->
+    <joint name="ecm_joint_03_mount" type="fixed">
+        <parent link="ecm_gear_center_03" />
+        <child link="ecm_03" />
+        <origin xyz="0 ${origin_gear_center_03_L} 0" rpy="0 0 0" />
+    </joint>
+
+
+    <!-- link03-> link04 -->
     <joint name="offset_joint_03_04" type="fixed">
         <parent link="ecm_03" />
         <child link="ecm_04" />
@@ -57,6 +102,18 @@
         <parent link="ecm_07" />
         <child link="ecm_08" />
         <origin xyz="0 ${offset_y_07_08} 0" rpy="0 0 0" />
+    </joint>
+
+    <joint name="offset_joint_08_09" type="fixed">
+        <parent link="ecm_08" />
+        <child link="ecm_09" />
+        <origin xyz="0 ${offset_y_08_09} 0" rpy="0 0 0" />
+    </joint>
+
+    <joint name="offset_joint_09_10" type="fixed">
+        <parent link="ecm_09" />
+        <child link="ecm_10" />
+        <origin xyz="0 ${offset_y_09_10} 0" rpy="0 0 0" />
     </joint>
 
 </robot>

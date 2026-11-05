@@ -8,7 +8,10 @@ Panels:
         - /Status1
         - /Grid1
         - /RobotModel1
+        - /RobotModel1/Description Topic1
         - /TF1
+        - /TF1/Frames1
+        - /TF1/Tree1
       Splitter Ratio: 0.5
     Tree Height: 720
   - Class: rviz_common/Selection
@@ -47,7 +50,7 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 10
+      Plane Cell Count: 20
       Reference Frame: <Fixed Frame>
       Value: true
     - Alpha: 1
@@ -78,6 +81,54 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        ecm_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_04:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_05:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_06:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_07:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_08:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_09:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_10:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ecm_gear_center_03:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        ecm_orbit_carrier_02:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Mass Properties:
         Inertia: false
         Mass: false
@@ -97,6 +148,26 @@ Visualization Manager:
           Value: true
         ecm_02:
           Value: true
+        ecm_03:
+          Value: true
+        ecm_04:
+          Value: true
+        ecm_05:
+          Value: true
+        ecm_06:
+          Value: true
+        ecm_07:
+          Value: true
+        ecm_08:
+          Value: true
+        ecm_09:
+          Value: true
+        ecm_10:
+          Value: true
+        ecm_gear_center_03:
+          Value: true
+        ecm_orbit_carrier_02:
+          Value: true
       Marker Scale: 0.029999999329447746
       Name: TF
       Show Arrows: true
@@ -105,7 +176,17 @@ Visualization Manager:
       Tree:
         ecm_01:
           ecm_02:
-            {}
+            ecm_orbit_carrier_02:
+              ecm_gear_center_03:
+                ecm_03:
+                  ecm_04:
+                    ecm_05:
+                      ecm_06:
+                        ecm_07:
+                          ecm_08:
+                            ecm_09:
+                              ecm_10:
+                                {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -154,25 +235,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.5490938425064087
+      Distance: 0.07366110384464264
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.09608060121536255
-        Y: 0.14340780675411224
-        Z: -0.07282891869544983
+        X: -0.00012002402218058705
+        Y: 0.009815034456551075
+        Z: -0.004945229273289442
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6403981447219849
+      Pitch: 0.7953979969024658
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 6.278585433959961
+      Yaw: 0.14539815485477448
     Saved: ~
 Window Geometry:
   Displays:

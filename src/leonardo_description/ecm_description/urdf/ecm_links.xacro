@@ -8,21 +8,21 @@
     <xacro:include filename="$(find leonardo_description)/ecm_description/materials/ecm_materials.xacro" />
 
     <!-- ============================================================
-       LINK: ecm_base
+       LINK: ecm_01
        ============================================================ -->
     <link name="ecm_01">
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_01.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_01.stl"
                     scale="${mesh_scale}" />
             </geometry>
-            <material name="ecm_material_base" />
+            <material name="ecm_material_01" />
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_01.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_01.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
@@ -40,7 +40,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_02.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_02.stl"
                     scale="${mesh_scale}" />
             </geometry>
             <material name="ecm_material_02" />
@@ -48,7 +48,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_02.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_02.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
@@ -66,7 +66,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_03.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_03.stl"
                     scale="${mesh_scale}" />
             </geometry>
             <material name="ecm_material_03" />
@@ -74,7 +74,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_03.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_03.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
@@ -90,22 +90,22 @@
        ============================================================ -->
     <link name="ecm_04">
         <visual>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_04.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_04.stl"
                     scale="${mesh_scale}" />
             </geometry>
             <material name="ecm_material_04" />
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_04.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_04.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
         <inertial>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
             <mass value="0.1" />
             <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
         </inertial>
@@ -116,22 +116,22 @@
        ============================================================ -->
     <link name="ecm_05">
         <visual>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_05.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_05.stl"
                     scale="${mesh_scale}" />
             </geometry>
             <material name="ecm_material_05" />
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_05.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_05.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
         <inertial>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <mass value="0.1" />
             <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
         </inertial>
@@ -142,22 +142,22 @@
        ============================================================ -->
     <link name="ecm_06">
         <visual>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_06.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_06.stl"
                     scale="${mesh_scale}" />
             </geometry>
             <material name="ecm_material_06" />
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_06.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_06.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
         <inertial>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <mass value="0.1" />
             <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
         </inertial>
@@ -168,42 +168,95 @@
        ============================================================ -->
     <link name="ecm_07">
         <visual>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_07.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_07.stl"
                     scale="${mesh_scale}" />
             </geometry>
             <material name="ecm_material_07" />
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_07.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_07.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
         <inertial>
-            <origin xyz="0 0 0" rpy="0 ${pi/2.0} 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
             <mass value="0.1" />
             <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
         </inertial>
     </link>
+
     <!-- ============================================================
        LINK: ecm_08
        ============================================================ -->
     <link name="ecm_08">
         <visual>
-            <origin xyz="0 0 0" rpy="${pi} 0 0" />
+            <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_08.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_08.stl"
                     scale="${mesh_scale}" />
             </geometry>
             <material name="ecm_material_08" />
         </visual>
         <collision>
+            <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
+            <geometry>
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_08.stl"
+                    scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="${pi} ${pi/2.0} 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_09
+       ============================================================ -->
+    <link name="ecm_09">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_09.stl"
+                    scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_09" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_09.stl"
+                    scale="${mesh_scale}" />
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1" />
+            <inertia ixx="1e-3" ixy="0" ixz="0" iyy="1e-3" iyz="0" izz="1e-3" />
+        </inertial>
+    </link>
+
+    <!-- ============================================================
+       LINK: ecm_10
+       ============================================================ -->
+    <link name="ecm_10">
+        <visual>
             <origin xyz="0 0 0" rpy="${pi} 0 0" />
             <geometry>
-                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1104/ecm_08.stl"
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_10.stl"
+                    scale="${mesh_scale}" />
+            </geometry>
+            <material name="ecm_material_10" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi} 0 0" />
+            <geometry>
+                <mesh filename="package://leonardo_description/ecm_description/meshes/stl_1105/ecm_10.stl"
                     scale="${mesh_scale}" />
             </geometry>
         </collision>
