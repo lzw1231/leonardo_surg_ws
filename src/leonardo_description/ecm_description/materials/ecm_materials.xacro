@@ -23,16 +23,17 @@
         <color rgba="0.82 0.75 0.62 ${alpha}" />
     </material>
     <material name="ecm_material_07">
-        <color rgba="0.85 0.80 0.72 ${alpha}" />
+        <color rgba="0.86 0.81 0.73 ${alpha}" />
     </material>
     <material name="ecm_material_08">
-        <color rgba="0.87 0.84 0.80 ${alpha}" />
+        <color rgba="0.90 0.87 0.82 ${alpha}" />
     </material>
     <material name="ecm_material_09">
-        <color rgba="0.88 0.87 0.86 ${alpha}" />
+        <color rgba="0.93 0.91 0.88 ${alpha}" />
     </material>
     <material name="ecm_material_10">
-        <color rgba="0.88 0.89 0.91 ${alpha}" />
+        <color rgba="0.95 0.94 0.91 ${alpha}" />
     </material>
+
 
 </robot>
